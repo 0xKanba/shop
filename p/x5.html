@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>مظلة زجاج أمامي للسيارة — MyOrders</title>
+  <link rel="shortcut icon" href="/images/pro.webp" type="image/webp">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/p.css">
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════
+       شريط ثابت في الأعلى دائماً
+       ══════════════════════════════════════ -->
+  <div class="sticky-bar">
+    <button class="back-btn" onclick="history.back()">
+      <i class="fas fa-arrow-right"></i>
+    </button>
+
+    <div class="sticky-center">
+      <span class="sticky-price">20,000 <small>د.ع</small></span>
+    </div>
+
+    <div class="sticky-actions">
+      <div class="qty-ctrl">
+        <button onclick="changeQty(-1)">−</button>
+        <span id="qty">1</span>
+        <button onclick="changeQty(1)">+</button>
+      </div>
+      <button
+        id="add-to-cart-btn"
+        class="buy-btn"
+        onclick="addToCart()"
+        data-product-id="p5"
+        data-product-name="مظلة زجاج أمامي للسيارة"
+        data-product-price="20000">
+        <i class="fas fa-cart-plus"></i>
+        <span>أضف للسلة</span>
+      </button>
+      <a class="checkout-btn" href="/checkout.html">
+        <i class="fas fa-bag-shopping"></i>
+        <span>السلة</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       محتوى الصفحة
+       ══════════════════════════════════════ -->
+  <main class="page-wrap">
+
+    <!-- 1. عنوان المنتج -->
+    <div class="prod-header">
+      <span class="brand-tag">AutoShield</span>
+      <h1 class="prod-name">مظلة زجاج أمامي قابلة للطي</h1>
+      <div class="prod-price-row">
+        <span class="p-val">20,000</span>
+        <span class="p-cur">د.ع</span>
+        <span class="p-avail">✅ متوفر</span>
+      </div>
+    </div>
+
+    <!-- 2. فيديو يوتيوب عمودي -->
+    <div class="video-wrap">
+      <!-- استبدل VIDEO_ID بمعرف الفيديو الخاص بالمنتج -->
+      <iframe
+        src="https://www.youtube.com/embed/VIDEO_ID?rel=0&modestbranding=1&playsinline=1"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen
+        loading="lazy">
+      </iframe>
+    </div>
+
+    <!-- 3. ثلاث صور مصغرة ديناميكية -->
+    <div class="thumbs-row">
+      <div class="thumb-card active" onclick="openModal('/images/x5a.webp')">
+        <img src="/images/x5a.webp" alt="مظلة السيارة - صورة 1" loading="eager">
+        <div class="thumb-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="thumb-card" onclick="openModal('/images/x5b.webp')">
+        <img src="/images/x5b.webp" alt="مظلة السيارة - صورة 2" loading="lazy">
+        <div class="thumb-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="thumb-card" onclick="openModal('/images/x5c.webp')">
+        <img src="/images/x5c.webp" alt="مظلة السيارة - صورة 3" loading="lazy">
+        <div class="thumb-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+    </div>
+
+    <!-- 4. الوصف والمواصفات -->
+    <div class="desc-wrap">
+      <p class="prod-desc">
+        حرارة الصيف صارت لا تُطاق؟ 🌡️ مظلة السيارة بتصميم المظلة تفتح بثوانٍ، تغطي الزجاج بالكامل، وتعكس الحرارة والأشعة فوق البنفسجية. خفيفة، قابلة للطي، وتحافظ على طبلونك من التشققات وبهتان اللون. الحل الأمثل لراحة قيادتك اليومية وحماية سيارتك من الفرن الصيفي.
+      </p>
+      <div class="cta-line">☀️ حماية فورية — وبرودة تدوم!</div>
+    </div>
+
+    <div class="specs-wrap">
+      <h2 class="specs-title">المواصفات</h2>
+      <div class="specs-grid">
+        <div class="spec"><span class="sk">📐 الأبعاد</span><span class="sv">130 × 80 سم</span></div>
+        <div class="spec"><span class="sk">🎛️ المقبض</span><span class="sv">40 سم (تحكم مريح)</span></div>
+        <div class="spec"><span class="sk">🛡️ المادة</span><span class="sv">عاكس مزدوج الطبقة</span></div>
+        <div class="spec"><span class="sk">🦴 الهيكل</span><span class="sv">أضلاع معدنية متينة</span></div>
+        <div class="spec"><span class="sk">⚡ الآلية</span><span class="sv">زر فتح/قفل سريع</span></div>
+        <div class="spec"><span class="sk">📦 حجم الطي</span><span class="sv">35 × 6 × 7 سم</span></div>
+        <div class="spec"><span class="sk">🎨 الألوان</span><span class="sv">فضي عاكس / أسود</span></div>
+        <div class="spec"><span class="sk">📎 المحتويات</span><span class="sv">مظلة + حزام فيلكرو + علبة</span></div>
+        <div class="spec"><span class="sk">🚗 التوافق</span><span class="sv">مناسبة لمعظم السيارات</span></div>
+        <div class="spec"><span class="sk">💡 ملاحظة</span><span class="sv">أغلق بلطف لإطالة العمر</span></div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- مودال الصورة الكاملة -->
+  <div id="img-modal" onclick="closeModal()">
+    <div class="modal-inner" onclick="e=>e.stopPropagation()">
+      <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+      <img id="modal-img" src="" alt="">
+    </div>
+  </div>
+
+  <script src="/js/p.js"></script>
+</body>
+</html>

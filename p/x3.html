@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>قاصة وسط سلفر كلاس — MyOrders</title>
+  <link rel="shortcut icon" href="/images/pro.webp" type="image/webp">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/p.css">
+</head>
+<body>
+
+  <!-- شريط ثابت في الأعلى -->
+  <div class="sticky-bar">
+    <button class="back-btn" onclick="history.back()">
+      <i class="fas fa-arrow-right"></i>
+    </button>
+
+    <div class="sticky-center">
+      <span class="sticky-price">50,000 <small>د.ع</small></span>
+    </div>
+
+    <div class="sticky-actions">
+      <div class="qty-ctrl">
+        <button onclick="changeQty(-1)">−</button>
+        <span id="qty">1</span>
+        <button onclick="changeQty(1)">+</button>
+      </div>
+      <button
+        id="add-to-cart-btn"
+        class="buy-btn"
+        onclick="addToCart()"
+        data-product-id="p2"
+        data-product-name="قاصة وسط سلفر كلاس"
+        data-product-price="50000">
+        <i class="fas fa-cart-plus"></i>
+        <span>أضف للسلة</span>
+      </button>
+      <a class="checkout-btn" href="/checkout.html">
+        <i class="fas fa-bag-shopping"></i>
+        <span>السلة</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- محتوى الصفحة -->
+  <main class="page-wrap">
+
+    <!-- عنوان المنتج -->
+    <div class="prod-header">
+      <span class="brand-tag">Silver Class</span>
+      <h1 class="prod-name">قاصة حجم وسط</h1>
+      <div class="prod-price-row">
+        <span class="p-val">50,000</span>
+        <span class="p-cur">د.ع</span>
+        <span class="p-avail">✅ متوفر</span>
+      </div>
+    </div>
+
+    <!-- فيديو يوتيوب -->
+    <div class="video-wrap">
+      <iframe
+        src="https://www.youtube.com/embed/wXmN6jne0wM"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen
+        loading="lazy">
+      </iframe>
+    </div>
+
+    <!-- الصور المصغرة -->
+    <div class="thumbs-row">
+      <div class="thumb-card active" onclick="openModal('/images/x3a.webp')">
+        <img src="/images/x3a.webp" alt="صورة 1" loading="eager">
+        <div class="thumb-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="thumb-card" onclick="openModal('/images/x3b.webp')">
+        <img src="/images/x3b.webp" alt="صورة 2" loading="lazy">
+        <div class="thumb-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+      <div class="thumb-card" onclick="openModal('/images/x3c.webp')">
+        <img src="/images/x3c.webp" alt="صورة 3" loading="lazy">
+        <div class="thumb-overlay"><i class="fas fa-expand"></i></div>
+      </div>
+    </div>
+
+    <!-- الوصف -->
+    <div class="desc-wrap">
+      <p class="prod-desc">
+        قاصة أمان متوسطة الحجم من <strong>سلفر كلاس</strong>، مثالية للاستخدام المنزلي.
+        هيكل خارجي من المعدن عالي الجودة مع إمكانية وضع رمز حماية مكون من 1-8 أرقام.
+        بطانة سجاد داخلية لحماية مجوهراتك ومقتنياتك الثمينة.
+      </p>
+      <div class="cta-line">🔐 أمان موثوق لمقتنياتك الثمينة</div>
+    </div>
+
+    <!-- المواصفات -->
+    <div class="specs-wrap">
+      <h2 class="specs-title">المواصفات</h2>
+      <div class="specs-grid">
+        <div class="spec"><span class="sk">📦 النوع</span><span class="sv">قاصة وسط</span></div>
+        <div class="spec"><span class="sk">🏗️ الهيكل</span><span class="sv">معدن عالي الجودة</span></div>
+        <div class="spec"><span class="sk">🔐 رمز الحماية</span><span class="sv">1-8 أرقام</span></div>
+        <div class="spec"><span class="sk">🧵 البطانة الداخلية</span><span class="sv">سجاد واقي</span></div>
+        <div class="spec"><span class="sk">⚖️ الوزن</span><span class="sv">6.5 كغ</span></div>
+        <div class="spec"><span class="sk">🌍 المنشأ</span><span class="sv">الصين</span></div>
+        <div class="spec"><span class="sk">📏 الارتفاع</span><span class="sv">25 سم</span></div>
+        <div class="spec"><span class="sk">📐 الطول</span><span class="sv">25 سم</span></div>
+        <div class="spec"><span class="sk">📏 العرض</span><span class="sv">35 سم</span></div>
+        <div class="spec"><span class="sk">🛡️ الضمان</span><span class="sv">سنة كاملة</span></div>
+      </div>
+    </div>
+
+    <!-- طريقة البرمجة -->
+    <div class="specs-wrap">
+      <h2 class="specs-title">طريقة برمجة الكود</h2>
+      <div class="programming-steps">
+        <div class="step">
+          <span class="step-num">1</span>
+          <span class="step-text">افتح باب الخزانة</span>
+        </div>
+        <div class="step">
+          <span class="step-num">2</span>
+          <span class="step-text">اضغط على الزر الأحمر الموجود في الجزء الخلفي عند المفصل لغاية سماع صفرتين مع إضاءة الضوء الأصفر</span>
+        </div>
+        <div class="step">
+          <span class="step-num">3</span>
+          <span class="step-text">أدخل الرمز الذي تود أن تعتمده للخزانة (يمكن استخدام 1 إلى 8 أرقام)</span>
+        </div>
+        <div class="step">
+          <span class="step-num">4</span>
+          <span class="step-text">تأكيد الرمز اضغط على حرف A</span>
+        </div>
+        <div class="step">
+          <span class="step-num">5</span>
+          <span class="step-text">خلال 15 ثانية ستصدر الخزانة صوت تصفير مرتين مع إضاءة الضوء الأصفر</span>
+        </div>
+        <div class="step">
+          <span class="step-num">6</span>
+          <span class="step-text">تم الآن ضبط الرمز الشخصي للخزانة الخاص بك</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ملاحظات هامة -->
+    <div class="specs-wrap notes-section">
+      <h2 class="specs-title">ملاحظات هامة</h2>
+      <ul class="notes-list">
+        <li><i class="fas fa-key"></i> لفتح الخزانة قم بإزالة الغطاء البلاستيكي الصغير، بعدها أدخل المفتاح وأدر بعكس اتجاه عقارب الساعة، وأدر المقبض مع عقارب الساعة (أي بالاتجاه المعاكس)</li>
+        <li><i class="fas fa-battery-quarter"></i> عند نفاد البطارية يتم تشغيل إضاءة باللون الأحمر</li>
+        <li><i class="fas fa-exclamation-triangle"></i> لا تقم بخزن المفتاح داخل الخزانة</li>
+      </ul>
+    </div>
+
+  </main>
+
+  <!-- مودال الصورة -->
+  <div id="img-modal" onclick="closeModal()">
+    <div class="modal-inner" onclick="e=>e.stopPropagation()">
+      <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+      <img id="modal-img" src="" alt="">
+    </div>
+  </div>
+
+  <script src="/js/p.js"></script>
+</body>
+</html>
