@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>MyOrders — تسجيل الدخول</title>
+  <link rel="icon" href="/images/pro.webp">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/enter.css">
+</head>
+<body>
+  <div id="stars"></div>
+
+  <section id="panel">
+    <img id="logo" src="/images/pro.webp" alt="MyOrders">
+    <h1><span class="g">My</span>Orders</h1>
+
+    <!-- تسجيل الدخول -->
+    <form class="form active" id="loginForm">
+      <input type="text" id="login-username" placeholder="اسم المستخدم" autocomplete="username" required>
+      <input type="password" id="login-password" placeholder="كلمة المرور" autocomplete="current-password" required>
+      <button type="submit">تسجيل الدخول</button>
+      <span class="flip" data-to="signup">ليس لديك حساب؟ إنشاء حساب</span>
+    </form>
+
+    <!-- إنشاء حساب -->
+    <form class="form" id="signupForm">
+      <input type="text" id="signup-username" placeholder="مثال: abc" autocomplete="username" required minlength="3">
+      <input type="password" id="signup-password" placeholder="مثال: abc123" autocomplete="new-password" required minlength="6">
+      <button type="submit">إنشاء حساب</button>
+      <span class="flip" data-to="login">لدي حساب بالفعل</span>
+    </form>
+
+    <div id="error" class="hidden"></div>
+  </section>
+
+  <script src="/js/enter.js"></script>
+</body>
+</html>
