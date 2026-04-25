@@ -1,6 +1,8 @@
+
 <!-- TREE START -->
 ```text
 .
+├── README.md
 ├── checkout.html
 ├── css
 │   ├── checkout.css
@@ -8,7 +10,7 @@
 │   ├── index.css
 │   └── p.css
 ├── enter.html
-├── imagss
+├── images
 │   ├── pro.webp
 │   ├── x1a.webp
 │   ├── x1b.webp
@@ -41,6 +43,6 @@
 ├── pay.html
 └── tree.txt
 
-6 directories, 34 files
+6 directories, 35 files
 ```
 <!-- TREE END -->
