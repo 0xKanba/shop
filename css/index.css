@@ -1,0 +1,352 @@
+/* ==============================================
+   index.css — MyOrders | أخضر داكن
+   ============================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap');
+
+:root {
+  --green:      #22c55e;
+  --green-d:    #16a34a;
+  --green-gl:   rgba(34,197,94,.14);
+  --bg:         #0a0f0d;
+  --surface:    #111a14;
+  --card:       linear-gradient(145deg,#141f18 0%,#0e1810 100%);
+  --text:       #e6f4ec;
+  --text-light: #7a9e87;
+  --border:     rgba(34,197,94,.13);
+  --shadow:     0 8px 32px rgba(0,0,0,.45);
+  --radius:     16px;
+  --transition: .25s cubic-bezier(.4,0,.2,1);
+  --glass:      rgba(34,197,94,.06);
+  --backdrop:   blur(16px);
+  /* للتوافق مع مودال navbar */
+  --notification-bg: #ef4444;
+  --notification-color: #fff;
+  --main-blue: var(--green);
+  --primary: linear-gradient(135deg,#22c55e 0%,#16a34a 100%);
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  font-family: 'Tajawal', system-ui, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── لودر ── */
+.loader {
+  position: fixed; top:0; left:0;
+  width:100%; height:3px;
+  background: rgba(34,197,94,.2);
+  overflow:hidden; z-index:1000;
+}
+.lr {
+  position:absolute; height:3px;
+  width:50%; background:var(--green);
+  animation: 1.5s ease-in-out infinite loading;
+}
+@keyframes loading {
+  0%   { transform:translateX(-100%); }
+  100% { transform:translateX(200%); }
+}
+.loaded .loader { opacity:0; transition:opacity .5s; }
+
+/* ── خلفية ── */
+.background-gradient {
+  position:fixed; inset:0; z-index:-1;
+  background:
+    radial-gradient(ellipse 70% 40% at 50% 0%, rgba(34,197,94,.07) 0%, transparent 60%),
+    var(--bg);
+}
+
+/* ── Navbar (navbar.js يبنيه) ── */
+.nav-center {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 12px;
+  background: rgba(10,15,13,.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 50px;
+  padding: 10px 22px;
+  box-shadow: 0 4px 24px rgba(0,0,0,.4), 0 0 0 1px var(--border);
+  z-index: 1000;
+  transition: .3s;
+}
+
+.nav-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 10px 20px;
+  background: var(--green);
+  color: #000;
+  border: none;
+  border-radius: 50px;
+  font-family: 'Tajawal', sans-serif;
+  font-weight: 700;
+  font-size: .95rem;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: 0 4px 14px var(--green-gl);
+  overflow: hidden;
+  z-index: 1;
+}
+.nav-button:hover {
+  transform: translateY(-2px);
+  background: var(--green-d);
+  box-shadow: 0 6px 20px rgba(34,197,94,.35);
+}
+.nav-button:active { transform:translateY(0); }
+.nav-button i { font-size:1.05rem; }
+
+/* عداد السلة */
+.cart-count {
+  position: absolute; top:-8px; right:-8px;
+  background: #ef4444;
+  color: #fff;
+  font-family: 'Tajawal', sans-serif;
+  font-size: .7rem; font-weight:700;
+  min-width: 20px; height:20px;
+  border-radius: 50%;
+  display: flex; align-items:center; justify-content:center;
+  padding: 0 4px;
+  z-index:2;
+  animation: pulse 2s infinite;
+  border: 2px solid var(--bg);
+}
+.cart-count.no-items { animation:none; opacity:.6; }
+
+.notification-envelope {
+  position:absolute; top:-5px; left:-5px;
+  width:18px; height:18px;
+  background:#ef4444; color:#fff;
+  border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:.58rem; font-weight:700;
+  opacity:0; transform:scale(.5);
+  transition:.3s; z-index:2;
+}
+.login-btn.logged-in .notification-envelope {
+  opacity:1; transform:scale(1);
+}
+
+@keyframes pulse {
+  0%   { box-shadow:0 0 0 0 rgba(239,68,68,.7); }
+  70%  { box-shadow:0 0 0 8px rgba(239,68,68,0); }
+  100% { box-shadow:0 0 0 0 rgba(239,68,68,0); }
+}
+
+/* مودال تأكيد الخروج */
+.confirm-modal {
+  position:fixed; inset:0;
+  background:rgba(0,0,0,.6);
+  backdrop-filter:blur(8px);
+  display:flex; align-items:center; justify-content:center;
+  z-index:2000;
+  opacity:0; pointer-events:none;
+  transition:opacity .3s;
+}
+.confirm-modal.active { opacity:1; pointer-events:all; }
+.confirm-modal-content {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  width:90%; max-width:380px;
+  overflow:hidden;
+  transform:translateY(20px);
+  opacity:0;
+  transition:.35s cubic-bezier(.68,-.55,.265,1.55);
+}
+.confirm-modal.active .confirm-modal-content { transform:translateY(0); opacity:1; }
+.confirm-modal-header { padding:24px 22px 12px; text-align:center; }
+.confirm-modal-icon {
+  width:60px; height:60px;
+  background:var(--primary);
+  border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  margin:0 auto 16px;
+}
+.confirm-modal-icon i { font-size:1.8rem; color:#000; }
+.confirm-modal-header h3 { font-size:1.2rem; font-weight:700; }
+.confirm-modal-body { padding:0 22px 16px; text-align:center; color:var(--text-light); font-size:1rem; }
+.confirm-modal-footer { display:flex; gap:12px; padding:12px 22px 22px; }
+.confirm-btn {
+  flex:1; padding:12px; border:none; border-radius:10px;
+  font-family:'Tajawal',sans-serif; font-size:.95rem; font-weight:700;
+  cursor:pointer; transition:var(--transition);
+}
+.confirm-btn.cancel  { background:rgba(34,197,94,.1); color:var(--text); border:1px solid var(--border); }
+.confirm-btn.confirm { background:#ef4444; color:#fff; }
+.confirm-btn:hover   { transform:translateY(-2px); opacity:.9; }
+
+/* ── حاوية الصفحة ── */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 88px 16px 48px;
+}
+
+/* ── رأس المتجر ── */
+.shop-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.brand-wrap {
+  display: flex; align-items:center; gap:10px;
+}
+.brand-logo {
+  width:38px; height:38px;
+  border-radius:10px; object-fit:cover;
+  border:1.5px solid var(--border);
+}
+.brand-name {
+  font-size:1.25rem; font-weight:900;
+  color:var(--text); letter-spacing:-.01em;
+}
+.brand-name .g { color:var(--green); }
+
+/* ── شبكة المنتجات ── */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+@media (min-width:640px)  { .product-grid { grid-template-columns: repeat(2,1fr); gap:20px; } }
+@media (min-width:900px)  { .product-grid { grid-template-columns: repeat(3,1fr); gap:22px; } }
+@media (min-width:1200px) { .product-grid { grid-template-columns: repeat(4,1fr); gap:24px; } }
+
+/* ── بطاقة المنتج ── */
+.product-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  backdrop-filter: var(--backdrop);
+  display: flex; flex-direction:column;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.product-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--green);
+  box-shadow: 0 14px 36px rgba(0,0,0,.5), 0 0 0 1px var(--green);
+}
+
+/* صورة البطاقة — مربعة ثابتة */
+.product-image {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;          /* ← مربع دائماً */
+  overflow: hidden;
+  background: #0d1710;
+  flex-shrink: 0;
+}
+.product-img {
+  position: absolute; inset:0;
+  width:100%; height:100%;
+  object-fit: cover;             /* ← تملأ بدون تشويه */
+  opacity: 0;
+  transition: opacity .3s, transform .4s;
+}
+.product-img.loaded  { opacity:1; }
+.product-card:hover .product-img { transform:scale(1.06); }
+
+/* shimmer */
+.img-placeholder {
+  position:absolute; inset:0;
+  background: linear-gradient(90deg,#111a14 25%,#1a2820 50%,#111a14 75%);
+  background-size:200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+@keyframes shimmer { to { background-position:-200% 0; } }
+
+/* معلومات البطاقة */
+.product-info {
+  padding: 14px;
+  display:flex; flex-direction:column;
+  gap:8px; flex:1;
+}
+.product-title {
+  font-size: .95rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+@media (min-width:640px) { .product-title { font-size:1.05rem; } }
+
+.price {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--green);
+  background: none;
+  -webkit-text-fill-color: var(--green);
+}
+@media (min-width:640px) { .price { font-size:1.2rem; } }
+
+.price-unit { font-size:.75rem; color:var(--text-light); font-weight:500; }
+
+.product-actions { margin-top:auto; }
+
+.add-to-cart-btn {
+  width:100%;
+  padding: 10px;
+  background: rgba(34,197,94,.1);
+  color: var(--green);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-family:'Tajawal',sans-serif;
+  font-size:.88rem; font-weight:700;
+  cursor:pointer;
+  display:flex; align-items:center; justify-content:center; gap:6px;
+  margin-top:8px;
+  transition: var(--transition);
+}
+.add-to-cart-btn:hover {
+  background: var(--green);
+  color: #000;
+  border-color: var(--green);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px var(--green-gl);
+}
+.add-to-cart-btn:active { transform:translateY(0); }
+
+/* scroll reveal */
+.scroll-reveal { opacity:0; transform:translateY(18px); transition:opacity .5s,transform .5s; }
+.scroll-reveal.revealed { opacity:1; transform:translateY(0); }
+
+/* toast */
+#toast-wrap {
+  position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
+  z-index:9998; display:flex; flex-direction:column;
+  gap:8px; align-items:center; pointer-events:none;
+}
+.toast {
+  padding:10px 20px; border-radius:999px;
+  font-family:'Tajawal',sans-serif; font-size:.86rem; font-weight:700;
+  color:#fff; box-shadow:0 4px 20px rgba(0,0,0,.4);
+  animation:toastIn .3s cubic-bezier(.34,1.56,.64,1) both; white-space:nowrap;
+}
+.toast.success { background:#16a34a; }
+.toast.error   { background:#ef4444; }
+.toast.out     { animation:toastOut .3s ease both; }
+@keyframes toastIn  { from{opacity:0;transform:translateY(12px) scale(.9)}to{opacity:1;transform:none} }
+@keyframes toastOut { to{opacity:0;transform:translateY(8px)} }
