@@ -1,3 +1,4 @@
+<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; text-align: center;">
 # shop 
 
 **[المتجر ✅ انقر هنا 🛒](https://shop.kanba.pw/)**
@@ -15,3 +16,4 @@
 [07874684332](tel:07874684332)
 
 ***
+</div>
