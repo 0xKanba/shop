@@ -4,6 +4,12 @@
 
 **[المتجر ✅ انقر هنا 🛒](https://shop.kanba.pw/)**
 
+<div align="center">
+  <a href="https://yourwebsite.com">
+    <img src="images/pro.webp" alt="Logo" style="max-width: 120px; width: 30%; min-width: 80px; height: auto;">
+  </a>
+</div>
+
 ***
 
  **للتواصل معنا لاي استفسار على البريد** 
