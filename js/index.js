@@ -4,12 +4,11 @@
 
 const products = [
   {
-    id:    "p1",
-    name:  "مبردة شحن Embleme",
-    price: 160000,
-    image: "/images/x1a.webp",
-    link:  "/p/x1.html",
-    outOfStock: true // 👈 هذا هو السطر السحري للتحكم بالمنتج
+    id:    "p6",
+    name:  "كاميرا مراقبة ذكية",
+    price: 20000,
+    image: "/images/x6a.webp",
+    link:  "/p/x6.html",
   },
   {
       id:    "p2",
@@ -31,7 +30,15 @@ const products = [
     price: 25000,
     image: "/images/x4a.webp",
     link:  "/p/x4.html"
-  }
+  },
+    {
+    id:    "p1",
+    name:  "مبردة شحن Embleme",
+    price: 160000,
+    image: "/images/x1a.webp",
+    link:  "/p/x1.html",
+    outOfStock: true // 👈 هذا هو السطر السحري للتحكم بالمنتج
+    }
 ];
 
 // ── Toast ──
