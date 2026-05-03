@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Payment — MigPayments</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<main class="payment-container">
+    <div class="payment-card" id="paymentCard">
+
+        <!-- Header -->
+        <header class="card-header">
+            <div class="brand">
+                <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+                </svg>
+                <span class="brand-name">MigPayments</span>
+            </div>
+            <div class="header-right">
+                <div class="theme-badge" id="themeBadge">
+                    <svg class="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="themeIconSvg">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                    </svg>
+                    <span class="theme-label" id="themeLabel">Dark</span>
+                </div>
+                <div class="secure-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                    <span>Secure</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- STEP 1: INPUTS -->
+        <section class="input-section" id="stepInputs">
+            <h2 class="section-title">Payment Details</h2>
+
+            <!-- Amount Input -->
+            <div class="input-group">
+                <label class="input-label" for="amountInput">Amount (USD)</label>
+                <div class="input-wrap">
+                    <span class="input-prefix">$</span>
+                    <input type="number" id="amountInput" class="text-input" placeholder="0.00" min="1" step="0.01" inputmode="decimal">
+                </div>
+                <div class="input-hint" id="amountHint">Enter the amount you wish to pay</div>
+            </div>
+
+            <!-- Email Input -->
+            <div class="input-group">
+                <label class="input-label" for="emailInput">Email Address</label>
+                <div class="input-wrap">
+                    <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
+                    </svg>
+                    <input type="email" id="emailInput" class="text-input has-icon" placeholder="you@example.com" inputmode="email">
+                </div>
+                <div class="input-hint">Project .zip file will be sent to this email after payment</div>
+            </div>
+
+            <!-- Generate Button -->
+            <button class="generate-btn" id="generateBtn" disabled>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                    <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                </svg>
+                Generate Payment
+            </button>
+        </section>
+
+        <!-- STEP 2: PAYMENT (hidden initially) -->
+        <section class="payment-section" id="stepPayment" style="display:none">
+
+            <!-- Order recap bar -->
+            <div class="order-recap">
+                <div class="recap-row">
+                    <span class="recap-label">Amount</span>
+                    <span class="recap-value" id="recapAmount">$0.00</span>
+                </div>
+                <div class="recap-row">
+                    <span class="recap-label">Delivery</span>
+                    <span class="recap-value recap-email" id="recapEmail">—</span>
+                </div>
+            </div>
+
+            <h2 class="section-title">Send Payment</h2>
+
+            <!-- Currency Toggle -->
+            <div class="currency-switch">
+                <button class="currency-btn active" data-currency="USDC" id="btnUSDC">
+                    <svg viewBox="0 0 32 32" width="16" height="16"><circle cx="16" cy="16" r="16" fill="#2775CA"/><path d="M18.4 14.2v-1.4c0-.1 0-.1-.1-.1h-5.1c-.1 0-.1 0-.1.1v1.4c0 .1 0 .1.1.1h5.1c.1 0 .1 0 .1-.1zm0 3v-1.4c0-.1 0-.1-.1-.1h-5.1c-.1 0-.1 0-.1.1v1.4c0 .1 0 .1.1.1h5.1c.1 0 .1 0 .1-.1z" fill="#fff"/><path d="M16 6C10.5 6 6 10.5 6 16s4.5 10 10 10 10-4.5 10-10S21.5 6 16 6zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8z" fill="#fff"/></svg>
+                    USDC
+                </button>
+                <button class="currency-btn" data-currency="ETH" id="btnETH">
+                    <svg viewBox="0 0 32 32" width="16" height="16"><circle cx="16" cy="16" r="16" fill="#627EEA"/><path d="M16.498 4v8.87l7.497 3.35-7.497-12.22z" fill="#fff" fill-opacity=".6"/><path d="M16.498 4L9 16.22l7.498-3.35V4z" fill="#fff"/><path d="M16.498 21.968v6.027L24 17.616l-7.502 4.352z" fill="#fff" fill-opacity=".6"/><path d="M16.498 27.995v-6.028L9 17.616l7.498 10.379z" fill="#fff"/><path d="M16.498 20.573l7.497-4.353-7.497-3.348v7.701z" fill="#fff" fill-opacity=".2"/><path d="M9 16.22l7.498 4.353v-7.701L9 16.22z" fill="#fff" fill-opacity=".6"/></svg>
+                    ETH
+                </button>
+                <div class="price-live" id="priceLive">
+                    <span class="live-dot"></span>
+                    <span class="live-text" id="liveText">Live</span>
+                </div>
+            </div>
+
+            <!-- Error banner placeholder -->
+            <div id="errorBannerSlot"></div>
+
+            <!-- Wallet Address -->
+            <div class="detail-block">
+                <label class="detail-label">Send transaction to this address:</label>
+                <div class="detail-value-wrap">
+                    <div class="detail-value mono" id="displayAddress">Loading...</div>
+                    <button class="copy-btn" onclick="handleCopy('address')" id="copyAddressBtn" title="Copy address">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" class="copy-icon"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" class="check-icon" style="display:none"><polyline points="20 6 9 17 4 12"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Amount -->
+            <div class="detail-block">
+                <label class="detail-label">Send this exact amount:</label>
+                <div class="detail-value-wrap">
+                    <div class="detail-value mono amount-value" id="displayAmount">—</div>
+                    <button class="copy-btn" onclick="handleCopy('amount')" id="copyAmountBtn" title="Copy amount">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" class="copy-icon"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" class="check-icon" style="display:none"><polyline points="20 6 9 17 4 12"/></svg>
+                    </button>
+                </div>
+                <div class="amount-usd-equiv" id="usdEquiv"></div>
+            </div>
+
+            <!-- Network -->
+            <div class="detail-block">
+                <label class="detail-label">Use this exact network:</label>
+                <div class="network-badge">
+                    <span class="network-dot"></span>
+                    <span class="network-name">ARBITRUM ONE</span>
+                </div>
+            </div>
+
+            <!-- Warning -->
+            <div class="network-warning">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" class="warning-icon">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+                <span>Only send <strong id="warningCurrency">USDC</strong> on <strong>Arbitrum One</strong>. Sending on another network or with a different token will result in <strong>permanent loss of funds</strong>.</span>
+            </div>
+
+            <!-- QR Code -->
+            <div class="qr-wrapper">
+                <div class="qr-container">
+                    <img id="qrImage" src="https://i.ibb.co/QFjw4Y9W/Screenshot-20260503-150033.png" alt="Payment QR Code" crossorigin="anonymous">
+                </div>
+                <div class="qr-label">Scan to get wallet address</div>
+            </div>
+
+            <!-- Countdown -->
+            <div class="countdown-block" id="countdownBlock">
+                <div class="countdown-label">Expires In:</div>
+                <div class="countdown-timer">
+                    <span class="cd-unit" id="cdHours">--</span>
+                    <span class="cd-sep">:</span>
+                    <span class="cd-unit" id="cdMinutes">--</span>
+                    <span class="cd-sep">:</span>
+                    <span class="cd-unit" id="cdSeconds">--</span>
+                </div>
+                <div class="countdown-progress">
+                    <div class="countdown-bar" id="countdownBar"></div>
+                </div>
+            </div>
+
+            <!-- I've Sent Payment button -->
+            <button class="sent-btn" id="sentBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                I've Sent the Payment
+            </button>
+
+            <!-- Back button -->
+            <button class="back-btn" id="backBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                    <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+                </svg>
+                Modify Details
+            </button>
+        </section>
+
+        <!-- STEP 3: SUCCESS (hidden) -->
+        <section class="success-section" id="stepSuccess" style="display:none">
+            <div class="success-icon-wrap">
+                <div class="success-circle">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="40" height="40">
+                        <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                </div>
+            </div>
+            <h2 class="success-title">Payment Submitted</h2>
+            <p class="success-text">Your transaction is being verified on-chain. Once confirmed, the project .zip file will be sent to:</p>
+            <div class="success-email" id="successEmail">—</div>
+            <div class="success-details">
+                <div class="success-detail-row">
+                    <span>Amount</span>
+                    <span id="successAmount">—</span>
+                </div>
+                <div class="success-detail-row">
+                    <span>Currency</span>
+                    <span id="successCurrency">—</span>
+                </div>
+                <div class="success-detail-row">
+                    <span>Network</span>
+                    <span>Arbitrum One</span>
+                </div>
+                <div class="success-detail-row">
+                    <span>Delivery</span>
+                    <span class="delivery-badge">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12">
+                            <path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/>
+                        </svg>
+                        Email (.zip)
+                    </span>
+                </div>
+            </div>
+            <div class="success-note">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+                </svg>
+                <span>Delivery usually takes 1–3 minutes after on-chain confirmation. Check your inbox (and spam folder).</span>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="card-footer" id="cardFooter">
+            <button class="cancel-btn" id="cancelBtn">Cancel Payment</button>
+            <div class="footer-note">Powered by <span class="footer-hl">Hyperliquid</span> for live pricing</div>
+        </footer>
+    </div>
+
+    <!-- Cancel Confirmation Overlay -->
+    <div class="cancel-overlay" id="cancelOverlay">
+        <div class="cancel-dialog">
+            <div class="cancel-dialog-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="28" height="28">
+                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+            </div>
+            <h3 class="cancel-dialog-title">Cancel Payment?</h3>
+            <p class="cancel-dialog-text">This action cannot be undone. Your payment window will close and you'll need to start over.</p>
+            <div class="cancel-dialog-actions">
+                <button class="dialog-btn dialog-btn-secondary" id="cancelBackBtn">Go Back</button>
+                <button class="dialog-btn dialog-btn-danger" id="cancelConfirmBtn">Yes, Cancel</button>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
