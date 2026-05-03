@@ -400,17 +400,48 @@ function hideCancel() { $('#cancelOverlay').classList.remove('active'); document
 
 function confirmCancel() {
     hideCancel();
+
+    // Stop all timers
     if (state.countdownInterval) clearInterval(state.countdownInterval);
     if (state.priceInterval) clearInterval(state.priceInterval);
 
-    $('#paymentCard').innerHTML = `
-        <div style="padding:56px 28px;text-align:center">
-            <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="1.5" width="44" height="44" style="margin:0 auto 14px;display:block">
-                <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
-            </svg>
-            <h3 style="font-size:18px;font-weight:800;margin-bottom:6px">Payment Cancelled</h3>
-            <p style="font-size:12px;color:var(--text-secondary);line-height:1.6">This payment request is no longer valid.<br>Contact the merchant if this was an error.</p>
-        </div>`;
+    // Reset state
+    state.userAmount = null;
+    state.userEmail = null;
+    state.selectedCurrency = CONFIG.defaultCurrency;
+    state.expiryTime = null;
+
+    // Reset inputs
+    $('#amountInput').value = '';
+    $('#emailInput').value = '';
+
+    // Reset hints
+    $('#amountHint').className = 'input-hint';
+    $('#amountHint').textContent = 'Enter the amount you wish to pay';
+
+    const emailHint = $('#emailInput').parentElement.nextElementSibling;
+    emailHint.className = 'input-hint';
+    emailHint.textContent = 'Project .zip file will be sent to this email after payment';
+
+    // Disable generate button
+    $('#generateBtn').disabled = true;
+
+    // Reset currency buttons
+    $$('.currency-btn').forEach(b => b.classList.toggle('active', b.dataset.currency === 'USDC'));
+
+    // Reset countdown display
+    $('#cdHours').textContent = '--';
+    $('#cdMinutes').textContent = '--';
+    $('#cdSeconds').textContent = '--';
+    $('#countdownBar').style.width = '100%';
+    $('#countdownBlock').classList.remove('warning', 'danger');
+
+    // Reset copy buttons
+    $('#copyAddressBtn').classList.remove('copied');
+    $('#copyAmountBtn').classList.remove('copied');
+
+    // Go back to step 1
+    showStep('input');
 }
 
 // ============================================
