@@ -29,6 +29,7 @@
 
 
 
+
 <!-- TREE START -->
 
 ## 📂 هيكل المشروع
@@ -80,8 +81,10 @@
 │   ├── x4.html
 │   ├── x5.html
 │   └── x6.html
+├── pay
+│   └── index.html
 └── tree.txt
 
-6 directories, 41 files
+7 directories, 42 files
 ```
 <!-- TREE END -->
