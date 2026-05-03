@@ -522,3 +522,12 @@ button:focus-visible,.copy-btn:focus-visible{outline:2px solid var(--accent);out
 ::-webkit-scrollbar{width:5px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border-default);border-radius:3px}
+}
+/* منع المتصفح من تحويل العنوان لرابط محفظة */
+.detail-value.mono {
+    pointer-events: none;
+    -webkit-touch-callout: none;
+}
+.detail-value-wrap .copy-btn {
+    pointer-events: auto;
+}
