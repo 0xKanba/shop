@@ -1,10 +1,7 @@
 /* ============================================
-   MigPayments — Full Logic
+   MigPayments — Full Logic + localStorage
    ============================================ */
 
-// ============================================
-// CONFIG
-// ============================================
 const CONFIG = {
     walletAddress: '0x121B845Cb550dD5B01B9eAc5BD65f79d84c6Ee99',
     network: 'Arbitrum One',
@@ -13,45 +10,79 @@ const CONFIG = {
     defaultCurrency: 'USDC',
     priceRefreshMs: 45000,
     hyperliquidEndpoint: 'https://api.hyperliquid.xyz/info',
+    storageKey: 'migpay_state',
 };
 
-// ============================================
-// STATE
-// ============================================
 const state = {
     ethPrice: null,
     selectedCurrency: CONFIG.defaultCurrency,
-    userAmount: null,     // USD amount entered by user
+    userAmount: null,
     userEmail: null,
     expiryTime: null,
     countdownInterval: null,
     priceInterval: null,
     isPriceLoading: false,
     priceError: null,
-    currentStep: 'input', // input | payment | success
+    currentStep: 'input',
 };
 
-// ============================================
-// HELPERS
-// ============================================
 const $ = s => document.querySelector(s);
 const $$ = s => document.querySelectorAll(s);
 
 function formatAddress(addr) {
     const c = addr.replace('0x', '');
-    const g = c.match(/.{1,4}/g) || [];
-    return '0x ' + g.join(' ');
+    return '0x ' + (c.match(/.{1,4}/g) || []).join(' ');
 }
-
 function formatUSD(v) { return '$' + v.toFixed(2); }
+function validateEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
 
-function validateEmail(email) {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+/* ============================================
+   localStorage — SAVE / LOAD / CLEAR
+   ============================================ */
+function saveState() {
+    const data = {
+        step: 'payment',
+        amount: state.userAmount,
+        email: state.userEmail,
+        currency: state.selectedCurrency,
+        expiryTime: state.expiryTime,
+        savedAt: Date.now(),
+    };
+    try { localStorage.setItem(CONFIG.storageKey, JSON.stringify(data)); } catch (_) {}
 }
 
-// ============================================
-// THEME — Auto-detect
-// ============================================
+function loadState() {
+    try {
+        const raw = localStorage.getItem(CONFIG.storageKey);
+        if (!raw) return null;
+        const data = JSON.parse(raw);
+
+        // Make sure we have valid data
+        if (!data.amount || !data.email || !data.expiryTime) {
+            clearState();
+            return null;
+        }
+
+        // Check if expired
+        if (Date.now() >= data.expiryTime) {
+            clearState();
+            return null;
+        }
+
+        return data;
+    } catch (_) {
+        clearState();
+        return null;
+    }
+}
+
+function clearState() {
+    try { localStorage.removeItem(CONFIG.storageKey); } catch (_) {}
+}
+
+/* ============================================
+   THEME
+   ============================================ */
 function initTheme() {
     const mq = window.matchMedia('(prefers-color-scheme: dark)');
     const apply = dark => {
@@ -65,9 +96,9 @@ function initTheme() {
     mq.addEventListener('change', e => apply(e.matches));
 }
 
-// ============================================
-// FETCH ETH PRICE — Hyperliquid
-// ============================================
+/* ============================================
+   ETH PRICE — Hyperliquid + CoinGecko fallback
+   ============================================ */
 async function fetchEthPrice() {
     state.isPriceLoading = true;
     state.priceError = null;
@@ -87,15 +118,11 @@ async function fetchEthPrice() {
     } catch (err) {
         console.error('Hyperliquid error:', err);
         state.priceError = err.message;
-        // Fallback: CoinGecko
         try {
             const fb = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd');
             if (fb.ok) {
                 const d = await fb.json();
-                if (d.ethereum?.usd) {
-                    state.ethPrice = d.ethereum.usd;
-                    state.priceError = null;
-                }
+                if (d.ethereum?.usd) { state.ethPrice = d.ethereum.usd; state.priceError = null; }
             }
         } catch (_) {}
     } finally {
@@ -107,22 +134,16 @@ async function fetchEthPrice() {
 
 function updateLiveIndicator() {
     const el = $('#liveText');
-    const parent = el.parentElement;
+    const p = el.parentElement;
     if (state.isPriceLoading) {
-        el.textContent = 'Loading';
-        parent.style.background = 'var(--bg-input)';
-        parent.style.border = '1px solid var(--bg-input-border)';
-        el.style.color = 'var(--text-tertiary)';
+        el.textContent = 'Loading'; p.style.background = 'var(--bg-input)';
+        p.style.border = '1px solid var(--bg-input-border)'; el.style.color = 'var(--text-tertiary)';
     } else if (state.priceError) {
-        el.textContent = 'Error';
-        parent.style.background = 'var(--danger-subtle)';
-        parent.style.border = '1px solid var(--danger-border)';
-        el.style.color = 'var(--danger)';
+        el.textContent = 'Error'; p.style.background = 'var(--danger-subtle)';
+        p.style.border = '1px solid var(--danger-border)'; el.style.color = 'var(--danger)';
     } else {
-        el.textContent = 'Live';
-        parent.style.background = 'var(--success-subtle)';
-        parent.style.border = '1px solid var(--success-border)';
-        el.style.color = 'var(--success)';
+        el.textContent = 'Live'; p.style.background = 'var(--success-subtle)';
+        p.style.border = '1px solid var(--success-border)'; el.style.color = 'var(--success)';
     }
 }
 
@@ -131,9 +152,9 @@ function startPriceRefresh() {
     state.priceInterval = setInterval(fetchEthPrice, CONFIG.priceRefreshMs);
 }
 
-// ============================================
-// CALCULATIONS
-// ============================================
+/* ============================================
+   CALCULATIONS
+   ============================================ */
 function calcSendAmount() {
     if (!state.userAmount || state.userAmount <= 0) return { amount: null, currency: state.selectedCurrency };
     const net = state.userAmount * (1 - CONFIG.feePercent / 100);
@@ -142,9 +163,9 @@ function calcSendAmount() {
     return { amount: null, currency: 'ETH' };
 }
 
-// ============================================
-// STEP MANAGEMENT
-// ============================================
+/* ============================================
+   STEP MANAGEMENT
+   ============================================ */
 function showStep(step) {
     state.currentStep = step;
     $('#stepInputs').style.display = step === 'input' ? 'block' : 'none';
@@ -153,23 +174,20 @@ function showStep(step) {
     $('#cardFooter').style.display = step === 'success' ? 'none' : 'flex';
 }
 
-// ============================================
-// INPUT VALIDATION
-// ============================================
+/* ============================================
+   INPUT VALIDATION
+   ============================================ */
 function validateInputs() {
     const amountEl = $('#amountInput');
     const emailEl = $('#emailInput');
     const hintAmount = $('#amountHint');
-    const hintEmail = null; // We'll use a dynamic approach
     const btn = $('#generateBtn');
 
     const amount = parseFloat(amountEl.value);
     const email = emailEl.value.trim();
 
-    // Reset
     hintAmount.className = 'input-hint';
     hintAmount.textContent = 'Enter the amount you wish to pay';
-
     let valid = true;
 
     if (!amountEl.value || isNaN(amount) || amount <= 0) {
@@ -189,7 +207,6 @@ function validateInputs() {
         hintAmount.textContent = '✓ Valid amount';
     }
 
-    // Email
     const emailHint = emailEl.parentElement.nextElementSibling;
     if (!email) {
         emailHint.className = 'input-hint error';
@@ -208,6 +225,9 @@ function validateInputs() {
     return valid;
 }
 
+/* ============================================
+   GENERATE PAYMENT
+   ============================================ */
 function handleGenerate() {
     if (!validateInputs()) return;
 
@@ -215,30 +235,64 @@ function handleGenerate() {
     state.userEmail = $('#emailInput').value.trim();
     state.selectedCurrency = CONFIG.defaultCurrency;
 
-    // Reset currency buttons
     $$('.currency-btn').forEach(b => b.classList.toggle('active', b.dataset.currency === 'USDC'));
 
-    // Populate recap
     $('#recapAmount').textContent = formatUSD(state.userAmount);
     $('#recapEmail').textContent = state.userEmail;
 
-    // Update payment display
     updatePaymentDisplay();
-
-    // Start countdown
     initCountdown();
-
-    // Switch step
     showStep('payment');
 
-    // Fetch price if not yet
+    // ← حفظ في localStorage
+    saveState();
+
     if (!state.ethPrice) fetchEthPrice();
     startPriceRefresh();
 }
 
-// ============================================
-// PAYMENT DISPLAY UPDATE
-// ============================================
+/* ============================================
+   RESTORE FROM localStorage (after reload)
+   ============================================ */
+function restoreFromStorage() {
+    const saved = loadState();
+    if (!saved) return false;
+
+    // Restore state
+    state.userAmount = saved.amount;
+    state.userEmail = saved.email;
+    state.selectedCurrency = saved.currency || CONFIG.defaultCurrency;
+    state.expiryTime = saved.expiryTime;
+
+    // Fill inputs (in case user goes back)
+    $('#amountInput').value = saved.amount;
+    $('#emailInput').value = saved.email;
+
+    // Set currency buttons
+    $$('.currency-btn').forEach(b => b.classList.toggle('active', b.dataset.currency === state.selectedCurrency));
+
+    // Fill recap
+    $('#recapAmount').textContent = formatUSD(saved.amount);
+    $('#recapEmail').textContent = saved.email;
+
+    // Show payment step
+    showStep('payment');
+
+    // Start countdown from remaining time
+    initCountdown();
+
+    // Update display
+    updatePaymentDisplay();
+
+    // Fetch fresh price
+    fetchEthPrice().then(() => startPriceRefresh());
+
+    return true;
+}
+
+/* ============================================
+   PAYMENT DISPLAY
+   ============================================ */
 function updatePaymentDisplay() {
     $('#displayAddress').textContent = formatAddress(CONFIG.walletAddress);
 
@@ -255,7 +309,6 @@ function updatePaymentDisplay() {
         $('#displayAmount').style.color = '';
     }
 
-    // USD equiv
     const equivEl = $('#usdEquiv');
     if (state.selectedCurrency === 'ETH' && amount !== null && state.ethPrice) {
         equivEl.textContent = '≈ ' + formatUSD(amount * state.ethPrice) + ' USD';
@@ -266,34 +319,44 @@ function updatePaymentDisplay() {
 
     $('#warningCurrency').textContent = currency;
 
-    // Error banner
     const slot = $('#errorBannerSlot');
     slot.innerHTML = '';
     if (state.priceError && state.selectedCurrency === 'ETH') {
         slot.innerHTML = `<div class="error-state">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-            <span>Price fetch failed (${state.priceError}). Retrying automatically...</span>
+            <span>Price fetch failed (${state.priceError}). Retrying...</span>
         </div>`;
     }
 }
 
-// ============================================
-// CURRENCY SWITCH
-// ============================================
+/* ============================================
+   CURRENCY SWITCH
+   ============================================ */
 function switchCurrency(cur) {
     if (cur === state.selectedCurrency) return;
     state.selectedCurrency = cur;
     $$('.currency-btn').forEach(b => b.classList.toggle('active', b.dataset.currency === cur));
+
+    // Update saved state currency
+    try {
+        const raw = localStorage.getItem(CONFIG.storageKey);
+        if (raw) {
+            const d = JSON.parse(raw);
+            d.currency = cur;
+            localStorage.setItem(CONFIG.storageKey, JSON.stringify(d));
+        }
+    } catch (_) {}
+
     if (cur === 'ETH' && !state.ethPrice) fetchEthPrice();
     else updatePaymentDisplay();
 }
 
-// ============================================
-// COUNTDOWN
-// ============================================
+/* ============================================
+   COUNTDOWN
+   ============================================ */
 function initCountdown() {
     if (state.countdownInterval) clearInterval(state.countdownInterval);
-    state.expiryTime = Date.now() + CONFIG.expiryMinutes * 60 * 1000;
+    state.expiryTime = state.expiryTime || (Date.now() + CONFIG.expiryMinutes * 60 * 1000);
     updateCountdown();
     state.countdownInterval = setInterval(updateCountdown, 1000);
 }
@@ -304,6 +367,7 @@ function updateCountdown() {
     const h = Math.floor(ts / 3600);
     const m = Math.floor((ts % 3600) / 60);
     const s = ts % 60;
+
     $('#cdHours').textContent = String(h).padStart(2, '0');
     $('#cdMinutes').textContent = String(m).padStart(2, '0');
     $('#cdSeconds').textContent = String(s).padStart(2, '0');
@@ -319,12 +383,14 @@ function updateCountdown() {
     if (remaining <= 0) {
         clearInterval(state.countdownInterval);
         $('#countdownBar').style.width = '0%';
+        // انتهى الوقت — نظف localStorage
+        clearState();
     }
 }
 
-// ============================================
-// COPY
-// ============================================
+/* ============================================
+   COPY
+   ============================================ */
 async function copyToClipboard(text) {
     try {
         if (navigator.clipboard && window.isSecureContext) {
@@ -364,46 +430,50 @@ function handleCopy(type) {
     });
 }
 
-// ============================================
-// "I'VE SENT" → SUCCESS
-// ============================================
+/* ============================================
+   SENT PAYMENT → SUCCESS
+   ============================================ */
 function handleSentPayment() {
     const { amount, currency } = calcSendAmount();
-
-    // Stop timers
     if (state.countdownInterval) clearInterval(state.countdownInterval);
     if (state.priceInterval) clearInterval(state.priceInterval);
 
-    // Populate success
     $('#successEmail').textContent = state.userEmail;
     $('#successAmount').textContent = formatUSD(state.userAmount);
     $('#successCurrency').textContent = currency + (amount !== null ? ' (' + amount.toFixed(6) + ')' : '');
 
+    // ← مسح localStorage بعد النجاح
+    clearState();
     showStep('success');
 }
 
-// ============================================
-// BACK → INPUTS
-// ============================================
+/* ============================================
+   BACK → INPUTS
+   ============================================ */
 function handleBack() {
     if (state.countdownInterval) clearInterval(state.countdownInterval);
     if (state.priceInterval) clearInterval(state.priceInterval);
+
+    // ← مسح localStorage عند الرجوع
+    clearState();
+
     showStep('input');
     validateInputs();
 }
 
-// ============================================
-// CANCEL
-// ============================================
+/* ============================================
+   CANCEL
+   ============================================ */
 function showCancel() { $('#cancelOverlay').classList.add('active'); document.body.style.overflow = 'hidden'; }
 function hideCancel() { $('#cancelOverlay').classList.remove('active'); document.body.style.overflow = ''; }
 
 function confirmCancel() {
     hideCancel();
-
-    // Stop all timers
     if (state.countdownInterval) clearInterval(state.countdownInterval);
     if (state.priceInterval) clearInterval(state.priceInterval);
+
+    // ← مسح localStorage
+    clearState();
 
     // Reset state
     state.userAmount = null;
@@ -411,65 +481,39 @@ function confirmCancel() {
     state.selectedCurrency = CONFIG.defaultCurrency;
     state.expiryTime = null;
 
-    // Reset inputs
     $('#amountInput').value = '';
     $('#emailInput').value = '';
-
-    // Reset hints
     $('#amountHint').className = 'input-hint';
     $('#amountHint').textContent = 'Enter the amount you wish to pay';
-
     const emailHint = $('#emailInput').parentElement.nextElementSibling;
     emailHint.className = 'input-hint';
     emailHint.textContent = 'Project .zip file will be sent to this email after payment';
-
-    // Disable generate button
     $('#generateBtn').disabled = true;
-
-    // Reset currency buttons
     $$('.currency-btn').forEach(b => b.classList.toggle('active', b.dataset.currency === 'USDC'));
-
-    // Reset countdown display
     $('#cdHours').textContent = '--';
     $('#cdMinutes').textContent = '--';
     $('#cdSeconds').textContent = '--';
     $('#countdownBar').style.width = '100%';
     $('#countdownBlock').classList.remove('warning', 'danger');
-
-    // Reset copy buttons
     $('#copyAddressBtn').classList.remove('copied');
     $('#copyAmountBtn').classList.remove('copied');
 
-    // Go back to step 1
     showStep('input');
 }
 
-// ============================================
-// EVENT BINDINGS
-// ============================================
+/* ============================================
+   EVENTS
+   ============================================ */
 function bindEvents() {
-    // Input validation on type
     $('#amountInput').addEventListener('input', validateInputs);
     $('#emailInput').addEventListener('input', validateInputs);
-
-    // Generate
     $('#generateBtn').addEventListener('click', handleGenerate);
-
-    // Enter key on inputs
     $('#amountInput').addEventListener('keydown', e => { if (e.key === 'Enter') $('#emailInput').focus(); });
     $('#emailInput').addEventListener('keydown', e => { if (e.key === 'Enter') handleGenerate(); });
-
-    // Currency
     $('#btnUSDC').addEventListener('click', () => switchCurrency('USDC'));
     $('#btnETH').addEventListener('click', () => switchCurrency('ETH'));
-
-    // Sent payment
     $('#sentBtn').addEventListener('click', handleSentPayment);
-
-    // Back
     $('#backBtn').addEventListener('click', handleBack);
-
-    // Cancel
     $('#cancelBtn').addEventListener('click', showCancel);
     $('#cancelBackBtn').addEventListener('click', hideCancel);
     $('#cancelConfirmBtn').addEventListener('click', confirmCancel);
@@ -477,15 +521,21 @@ function bindEvents() {
     document.addEventListener('keydown', e => { if (e.key === 'Escape') hideCancel(); });
 }
 
-// ============================================
-// INIT
-// ============================================
+/* ============================================
+   INIT — يحاول استعادة الحالة أولاً
+   ============================================ */
 function init() {
     initTheme();
     bindEvents();
-    showStep('input');
 
-    // Pre-fetch ETH price
+    // ← محاولة استعادة الحالة المحفوظة
+    if (restoreFromStorage()) {
+        // تم استعادة شاشة الدفع — لا شيء آخر
+        return;
+    }
+
+    // لا يوجد حالة محفوظة — ابدأ من الخطوة 1
+    showStep('input');
     fetchEthPrice().then(() => startPriceRefresh());
 }
 
