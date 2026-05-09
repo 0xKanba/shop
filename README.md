@@ -42,6 +42,7 @@
 
 
 
+
 <!-- TREE START -->
 
 ## 📂 هيكل المشروع
@@ -56,22 +57,6 @@
 │   ├── index.css
 │   └── p.css
 ├── enter.html
-├── images
-│   ├── x1a.webp
-│   ├── x1b.webp
-│   ├── x1c.webp
-│   ├── x2a.webp
-│   ├── x2b.jpg
-│   ├── x2c.webp
-│   ├── x3a.webp
-│   ├── x3b.webp
-│   ├── x3c.webp
-│   ├── x4a.webp
-│   ├── x4b.webp
-│   ├── x4c.webp
-│   ├── x6a.webp
-│   ├── x6b.webp
-│   └── x6c.webp
 ├── index.html
 ├── js
 │   ├── auth.js
@@ -90,7 +75,6 @@
 │   ├── x2.html
 │   ├── x3.html
 │   ├── x4.html
-│   ├── x5.html
 │   └── x6.html
 ├── pay
 │   ├── index.html
@@ -98,6 +82,6 @@
 │   └── style.css
 └── tree.txt
 
-7 directories, 43 files
+6 directories, 27 files
 ```
 <!-- TREE END -->
