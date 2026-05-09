@@ -41,6 +41,7 @@
 
 
 
+
 <!-- TREE START -->
 
 ## 📂 هيكل المشروع
@@ -56,7 +57,6 @@
 │   └── p.css
 ├── enter.html
 ├── images
-│   ├── pro.webp
 │   ├── x1a.webp
 │   ├── x1b.webp
 │   ├── x1c.webp
@@ -98,6 +98,6 @@
 │   └── style.css
 └── tree.txt
 
-7 directories, 44 files
+7 directories, 43 files
 ```
 <!-- TREE END -->
