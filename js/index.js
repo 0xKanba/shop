@@ -7,35 +7,35 @@ const products = [
     id:    "p6",
     name:  "كاميرا مراقبة ذكية",
     price: 20000,
-    image: "/images/x6a.webp",
+    image: "https://i.postimg.cc/wBbNZ118/x6a.webp",
     link:  "/p/x6.html",
   },
   {
       id:    "p2",
     name:  "لمبة بعوض لون بنفسجي",
     price: 15000,
-    image: "/images/x2a.webp",
+    image: "https://i.postimg.cc/XvvFsf7F/x2a.webp",
     link:  "/p/x2.html"
   },
   {
       id:    "p3",
     name:  "قاصة",
     price: 50000,
-    image: "/images/x3a.webp",
+    image: "https://i.postimg.cc/g00RgVkT/x3a.webp",
     link:  "/p/x3.html"
   },
   {
       id:    "p4",
     name:  "سماعات بلوتوث احترافية",
     price: 25000,
-    image: "/images/x4a.webp",
+    image: "https://i.postimg.cc/KYsTw1R0/x4a.webp",
     link:  "/p/x4.html"
   },
     {
     id:    "p1",
     name:  "مبردة شحن Embleme",
     price: 160000,
-    image: "/images/x1a.webp",
+    image: "https://i.postimg.cc/hGGx2LPh/x1a.webp",
     link:  "/p/x1.html",
     outOfStock: true // 👈 هذا هو السطر السحري للتحكم بالمنتج
     }
