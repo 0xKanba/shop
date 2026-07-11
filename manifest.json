@@ -1,0 +1,21 @@
+{
+  "name": "المحل العراقي",
+  "short_name": "المحل العراقي",
+  "description": "تسوق أفضل المنتجات بجودة عالية محلياً في العراق.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0f0d",
+  "theme_color": "#111111",
+  "icons": [
+    {
+      "src": "https://i.postimg.cc/d3fS0sHg/pro.webp",
+      "sizes": "192x192",
+      "type": "image/webp"
+    },
+    {
+      "src": "https://i.postimg.cc/d3fS0sHg/pro.webp",
+      "sizes": "512x512",
+      "type": "image/webp"
+    }
+  ]
+}

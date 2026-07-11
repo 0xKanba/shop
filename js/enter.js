@@ -2,7 +2,7 @@
 // enter.js — تسجيل الدخول وإنشاء الحساب | username + password
 // ================================================================
 
-const API = 'https://login.0xkanba.workers.dev';
+const API = 'https://login.kanba.pw';
 
 const panel  = document.getElementById('panel');
 const forms  = [...panel.querySelectorAll('.form')];
@@ -70,7 +70,7 @@ async function doLogin(username, password, btn) {
     localStorage.setItem('userId',     data.userId);
     localStorage.setItem('username',   username);
 
-    location.replace('/');
+    await handlePendingCart(data.token);
   } catch (e) {
     showError(e.message);
     btn.disabled = false; btn.textContent = 'تسجيل الدخول';
@@ -94,7 +94,7 @@ async function doRegister(username, password, btn) {
     localStorage.setItem('userId',     data.userId);
     localStorage.setItem('username',   username);
 
-    location.replace('/');
+    await handlePendingCart(data.token);
   } catch (e) {
     showError(e.message);
     btn.disabled = false; btn.textContent = 'إنشاء حساب';
@@ -125,3 +125,32 @@ panel.addEventListener('submit', async e => {
     await doRegister(username, password, btn);
   }
 });
+
+
+async function handlePendingCart(token) {
+  const pending = localStorage.getItem('pendingCartAdd');
+  if (pending) {
+    try {
+      let pendingItem = JSON.parse(pending);
+      let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      const idx = cart.findIndex(i => i.id === pendingItem.id);
+      if (idx >= 0) cart[idx].quantity += pendingItem.quantity;
+      else cart.push(pendingItem);
+      
+      const res = await fetch(`${API}/cart`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ cart })
+      });
+      if (res.ok) {
+        localStorage.setItem('cart', JSON.stringify(cart));
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    localStorage.removeItem('pendingCartAdd');
+  }
+  const redirectUrl = localStorage.getItem('redirectAfterLogin') || '/';
+  localStorage.removeItem('redirectAfterLogin');
+  location.replace(redirectUrl);
+}

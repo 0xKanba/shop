@@ -1,102 +1,111 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
+
+  <meta name="description" content="المحل العراقي - أفضل وجهة للتسوق الإلكتروني في العراق، نوفر لك منتجات عالية الجودة بأسعار تنافسية مع خدمة توصيل سريعة وموثوقة.">
+  <meta name="keywords" content="تسوق, العراق, المحل العراقي, متجر الكتروني, منتجات, بغداد, توصيل, تسوق اونلاين">
+  <meta name="author" content="المحل العراقي">
+  <meta property="og:title" content="المحل العراقي">
+  <meta property="og:description" content="تسوق أفضل المنتجات بجودة عالية محلياً في العراق.">
+  <meta property="og:image" content="https://i.postimg.cc/d3fS0sHg/pro.webp">
+  <meta property="og:url" content="https://shop.kanba.pw/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="المحل العراقي">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="المحل العراقي">
+  <meta name="twitter:description" content="تسوق أفضل المنتجات بجودة عالية محلياً في العراق.">
+  <meta name="twitter:image" content="https://i.postimg.cc/d3fS0sHg/pro.webp">
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>اطلب الآن - سلة التسوق</title>
-    <link rel="shortcut icon" href="/images/pro.png" type="image/png">
+    <title>إتمام الطلب — المحل العراقي</title>
+    <link rel="shortcut icon" href="https://i.postimg.cc/d3fS0sHg/pro.webp" type="image/webp">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="/css/checkout.css">
 </head>
 <body>
+    <div class="loader" id="loader"><div class="lr"></div></div>
+    <div class="background-gradient"></div>
+
     <div class="container">
-        <!-- Form Section (يظهر أولاً في الموبايل) -->
-        <div class="form-section">
-            <!-- حالة تسجيل الدخول -->
-            <div id="authStatus" class="auth-status">
-                <div class="auth-message">جاري التحقق من حالة تسجيل الدخول...</div>
-            </div>
+        
+        <div class="header">
+            <h1><i class="fas fa-bag-shopping"></i> إتمام الطلب</h1>
+            <a href="javascript:history.back()" class="back-btn"><i class="fas fa-arrow-right"></i></a>
+        </div>
+
+        <div id="authStatus" style="text-align:center; padding: 40px; color: var(--text-muted);">
+            جاري التحقق من حالة تسجيل الدخول...
+        </div>
+
+        <div class="checkout-grid" id="checkoutContent" style="display: none;">
             
-            <div id="orderFormContainer" style="display: none;">
-                <h2 class="form-title">اكمل طلبك</h2>
+            <div class="form-section">
+                <h2 class="form-title"><i class="fas fa-user-circle"></i> بيانات المستلم</h2>
                 <form id="orderForm">
-                    <div class="input-group">
-                        <label for="customerName"><span class="required">*</span> الإسم</label>
-                        <input type="text" id="customerName" name="customerName" required>
+                    <div class="form-group">
+                        <label class="form-label" for="customerName">الاسم الكامل</label>
+                        <input type="text" id="customerName" name="customerName" class="form-input" required>
                     </div>
-                    
-                    <div class="input-group">
-                        <label for="phoneNumber"><span class="required">*</span> رقم الهاتف</label>
-                        <input type="tel" id="phoneNumber" name="phoneNumber" maxlength="11" pattern="[0-9]{11}" placeholder="07xxxxxxxxx" required>
+                    <div class="form-group">
+                        <label class="form-label" for="phoneNumber">رقم الهاتف</label>
+                        <input type="tel" id="phoneNumber" name="phoneNumber" class="form-input" placeholder="07xxxxxxxxx" pattern="[0-9]{11}" required>
                     </div>
-                    
-                    <div class="input-group">
-                        <label for="address"><span class="required">*</span> العنوان</label>
-                        <textarea id="address" name="address" rows="2" required></textarea>
+                    <div class="form-group">
+                        <label class="form-label" for="address">العنوان التفصيلي</label>
+                        <textarea id="address" name="address" class="form-input" required></textarea>
                     </div>
-                    
-                    <div class="input-group">
-                        <label for="notes">ملاحظاتك (اختياري)</label>
-                        <textarea id="notes" name="notes" rows="2"></textarea>
+                    <div class="form-group">
+                        <label class="form-label" for="notes">ملاحظات إضافية (اختياري)</label>
+                        <textarea id="notes" name="notes" class="form-input"></textarea>
                     </div>
-                    
-                    <div class="order-summary">
-                        <div class="summary-row">
-                            <span class="summary-label">المجموع:</span>
-                            <span class="summary-value" id="orderTotal">0 د.ع</span>
-                        </div>
-                        <div class="summary-row">
-                            <span class="summary-label">الكمية الإجمالية:</span>
-                            <span class="summary-value" id="orderQuantity">0</span>
-                        </div>
-                    </div>
-                    
-                    <button type="submit" class="submit-btn" id="submitBtn">إرسال الطلب</button>
+                    <button type="submit" class="submit-btn" id="submitBtn">تأكيد الطلب وإرسال</button>
                 </form>
             </div>
-        </div>
-        
-        <!-- Product Section -->
-        <div class="product-section">
-            <div class="product-header">
-                <a href="/index.html" class="back-to-products">← العودة للتسوق</a>
-                <h1 class="product-title">سلة التسوق</h1>
-                <div class="cart-summary">
-                    <div class="total-items" id="totalItems">0 منتج</div>
-                    <div class="total-price" id="cartTotal">0 د.ع</div>
+
+            <div class="summary-section">
+                <div class="summary-title">
+                    <span>محتويات السلة</span>
+                    <span id="totalItems">0</span>
+                </div>
+                
+                <div class="cart-items" id="productsList">
+                    <!-- Dynamic -->
+                </div>
+
+                <div class="total-row">
+                    <span class="total-label">المجموع الكلي</span>
+                    <span class="total-val" id="orderTotal">0 د.ع</span>
                 </div>
             </div>
-            
-            <!-- قائمة المنتجات -->
-            <div class="products-list" id="productsList">
-                <!-- سيتم إنشاء القائمة القابلة للطي ديناميكياً -->
+
+        </div>
+
+    </div>
+
+    <!-- Modals (Simple override for now) -->
+    <div id="confirmationModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:9999; align-items:center; justify-content:center;">
+        <div style="background:var(--surface-0); padding:32px; border-radius:var(--radius-lg); width:90%; max-width:400px; text-align:center; border:1px solid var(--border);">
+            <i class="fas fa-check-circle" style="font-size:3rem; color:var(--primary); margin-bottom:16px;"></i>
+            <h2 style="margin-bottom:16px;">تأكيد الطلب</h2>
+            <div id="confirmationDetails" style="color:var(--text-muted); margin-bottom:24px; text-align:right; background:var(--surface-1); padding:16px; border-radius:var(--radius-sm); font-size:0.9rem;"></div>
+            <div style="display:flex; gap:12px;">
+                <button id="cancelOrder" style="flex:1; padding:12px; background:var(--surface-1); color:var(--text-main); border:1px solid var(--border); border-radius:var(--radius-md); cursor:pointer;">إلغاء</button>
+                <button id="confirmOrder" style="flex:1; padding:12px; background:var(--primary); color:#000; border:none; border-radius:var(--radius-md); cursor:pointer; font-weight:700;">تأكيد</button>
             </div>
         </div>
     </div>
-    
-    <!-- Modals -->
-    <div class="confirmation-modal" id="confirmationModal">
-        <div class="modal-content">
-            <div class="confirmation-icon">✅</div>
-            <div class="confirmation-title">تأكيد الطلب</div>
-            <div class="confirmation-message">هل أنت متأكد من المعلومات التالية؟</div>
-            <div class="confirmation-details" id="confirmationDetails"></div>
-            <div class="confirmation-buttons">
-                <button class="confirm-btn" id="confirmOrder">تأكيد الطلب</button>
-                <button class="cancel-btn" id="cancelOrder">إلغاء</button>
-            </div>
+
+    <div id="successModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:9999; align-items:center; justify-content:center;">
+        <div style="background:var(--surface-0); padding:32px; border-radius:var(--radius-lg); width:90%; max-width:400px; text-align:center; border:1px solid var(--border);">
+            <i class="fas fa-gift" style="font-size:3rem; color:var(--primary); margin-bottom:16px;"></i>
+            <h2 style="margin-bottom:16px;">تم الإرسال بنجاح!</h2>
+            <p style="color:var(--text-muted); margin-bottom:24px;">شكراً لك، سيتم التواصل معك قريباً لتأكيد الطلب وتحديد موعد التوصيل.</p>
+            <button id="closeSuccessBtn" style="width:100%; padding:14px; background:var(--primary); color:#000; border:none; border-radius:var(--radius-md); cursor:pointer; font-weight:700;">حسناً، العودة للرئيسية</button>
         </div>
     </div>
-    
-    <div class="success-modal" id="successModal">
-        <div class="modal-content">
-            <div class="success-icon">✓</div>
-            <div class="success-title">تم إرسال طلبك بنجاح!</div>
-            <div class="success-message">سيتم التواصل معك قريباً لتأكيد الطلب وتحديد موعد التوصيل</div>
-            <div class="success-details" id="successDetails"></div>
-            <button class="close-btn" id="closeSuccessBtn">حسناً</button>
-        </div>
-    </div>
-    
+
     <script src="/js/checkout.js"></script>
+    <script src="/js/theme.js"></script>
 </body>
 </html>

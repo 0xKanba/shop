@@ -1,0 +1,20 @@
+{
+  "id": "p1",
+  "title": "مبردة شحن Embleme",
+  "price": 160000,
+  "images": [
+    "https://i.postimg.cc/hGGx2LPh/x1a.webp",
+    "https://i.postimg.cc/k445P6h0/x1b.webp",
+    "https://i.postimg.cc/m545P6h1/x1c.webp",
+    "https://i.postimg.cc/p645P6h2/x1d.webp",
+    "https://i.postimg.cc/q745P6h3/x1e.webp"
+  ],
+  "description": "مبردة هواء قابلة للشحن من إمبليم، تصميم محمول وعملي لتبريد مثالي في أي مكان.",
+  "features": {
+    "الطاقة": "تعمل بالشحن (بطارية مدمجة)",
+    "السرعات": "متعددة",
+    "التنقل": "مزودة بعجلات وحجم مدمج",
+    "الإضافات": "شاشة تحكم رقمية"
+  },
+  "outOfStock": true
+}

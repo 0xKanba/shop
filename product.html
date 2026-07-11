@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+
+  <meta name="description" content="المحل العراقي - أفضل وجهة للتسوق الإلكتروني في العراق، نوفر لك منتجات عالية الجودة بأسعار تنافسية مع خدمة توصيل سريعة وموثوقة.">
+  <meta name="keywords" content="تسوق, العراق, المحل العراقي, متجر الكتروني, منتجات, بغداد, توصيل, تسوق اونلاين">
+  <meta name="author" content="المحل العراقي">
+  <meta property="og:title" content="المحل العراقي">
+  <meta property="og:description" content="تسوق أفضل المنتجات بجودة عالية محلياً في العراق.">
+  <meta property="og:image" content="https://i.postimg.cc/d3fS0sHg/pro.webp">
+  <meta property="og:url" content="https://shop.kanba.pw/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="المحل العراقي">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="المحل العراقي">
+  <meta name="twitter:description" content="تسوق أفضل المنتجات بجودة عالية محلياً في العراق.">
+  <meta name="twitter:image" content="https://i.postimg.cc/d3fS0sHg/pro.webp">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تفاصيل المنتج — المحل العراقي</title>
+    <link rel="icon" href="https://i.postimg.cc/d3fS0sHg/pro.webp" type="image/webp">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/product.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+    <div class="loader" id="loader"><div class="lr"></div></div>
+    <div class="background-gradient"></div>
+    <a href="javascript:history.back()" class="global-back-btn"><i class="fas fa-arrow-right"></i></a>
+
+    <div class="page-wrap" id="productContainer" style="display: none;">
+        <div class="product-layout">
+            
+            <div class="gallery-section">
+                <div class="main-image-wrap" id="mainImageWrap">
+                    <img id="mainImage" src="" alt="صورة المنتج">
+                </div>
+                <div class="thumbs-row" id="thumbsRow"></div>
+            </div>
+            
+            <div class="info-section">
+                <div>
+                    <div class="brand-tag">المحل العراقي المميزة</div>
+                    <h1 class="prod-name" id="prodName">جاري التحميل...</h1>
+                </div>
+                
+                <div class="prod-price">
+                    <span id="prodPrice">0</span> <small>د.ع</small>
+                </div>
+                
+                <div class="desc-box" id="prodDesc">
+                </div>
+                
+                <div class="specs-grid" id="specsGrid">
+                </div>
+                
+                <div class="actions-bar" id="actionsBar">
+                    <div class="qty-ctrl">
+                        <button id="btnMinus"><i class="fas fa-minus"></i></button>
+                        <span id="qtyVal">1</span>
+                        <button id="btnPlus"><i class="fas fa-plus"></i></button>
+                    </div>
+                    <button class="add-btn" id="btnAddCart">
+                        <i class="fas fa-cart-arrow-down"></i> أضف للسلة
+                    </button>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- Modal for fullscreen image -->
+    <!-- Modal for fullscreen image -->
+    <div id="gallery-modal">
+        <button class="modal-close" id="modalClose"><i class="fas fa-times"></i></button>
+        <button class="modal-nav prev-img" id="modalPrev"><i class="fas fa-chevron-right"></i></button>
+        <button class="modal-nav next-img" id="modalNext"><i class="fas fa-chevron-left"></i></button>
+        <img id="modalImg" src="" style="cursor: pointer;">
+    </div>
+
+
+    <script src="/js/auth.js"></script>
+    <script src="/js/navbar.js"></script>
+    <script src="/js/product.js?v=4"></script>
+    <script src="/js/theme.js"></script>
+</body>
+</html>

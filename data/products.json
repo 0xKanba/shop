@@ -1,0 +1,7 @@
+[
+  { "id": "p6", "title": "كاميرا مراقبة ذكية", "price": 20000, "image": "https://i.postimg.cc/wBbNZ118/x6a.webp", "outOfStock": false },
+  { "id": "p2", "title": "لمبة بعوض لون بنفسجي", "price": 15000, "image": "https://i.postimg.cc/XvvFsf7F/x2a.webp", "outOfStock": false },
+  { "id": "p3", "title": "قاصة حجم وسط", "price": 50000, "image": "https://i.postimg.cc/g00RgVkT/x3a.webp", "outOfStock": false },
+  { "id": "p4", "title": "سماعات بلوتوث ذكية Q50/Q51", "price": 25000, "image": "https://i.postimg.cc/KYsTw1R0/x4a.webp", "outOfStock": false },
+  { "id": "p1", "title": "مبردة شحن Embleme", "price": 160000, "image": "https://i.postimg.cc/hGGx2LPh/x1a.webp", "outOfStock": true }
+]

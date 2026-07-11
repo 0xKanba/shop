@@ -1,152 +1,59 @@
 /* ==============================================
-   enter.css — صفحة الدخول | MyOrders
+   المحل العراقي — Modern Login UI
    ============================================== */
+@import url('theme.css');
 
-@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&display=swap');
-
-:root {
-  --green:   #22c55e;
-  --green-d: #16a34a;
-  --green-gl:rgba(34,197,94,.18);
-  --bg:      #0a0f0d;
-  --surface: #111a14;
-  --border:  rgba(34,197,94,.15);
-  --border2: rgba(255,255,255,.08);
-  --text:    #e6f4ec;
-  --muted:   #6b8c77;
-  --error:   #ef4444;
-  --radius:  14px;
-  --font:    'Tajawal', system-ui, sans-serif;
-}
-
-*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-
-body {
-  font-family: var(--font);
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  position: relative;
-}
-
-/* ── نجوم ── */
-#stars {
-  position: fixed; inset: 0;
-  pointer-events: none; z-index: 0;
-}
-.star {
-  position: absolute;
-  border-radius: 50%;
-  background: rgba(34,197,94,.5);
-  animation: twinkle var(--dur, 4s) ease-in-out infinite;
-}
-@keyframes twinkle {
-  0%,100% { opacity:.2; transform:scale(1); }
-  50%     { opacity:.9; transform:scale(1.3); }
-}
-
-/* ── البطاقة ── */
 #panel {
   position: relative; z-index: 10;
-  width: clamp(300px, 90vw, 400px);
-  background: var(--surface);
+  width: 90%; max-width: 380px;
+  background: var(--surface-0);
+  backdrop-filter: blur(16px);
   border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: clamp(28px,6vh,44px) clamp(22px,5vw,36px);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: clamp(16px,3vh,22px);
-  box-shadow: 0 0 0 1px var(--border), 0 24px 64px rgba(0,0,0,.6);
-  animation: cardIn .5s cubic-bezier(.34,1.56,.64,1) both;
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  display: flex; flex-direction: column; align-items: center; gap: 20px;
+  box-shadow: var(--shadow-lg);
+  animation: fadeUp 0.5s ease backwards;
 }
-@keyframes cardIn {
-  from { opacity:0; transform:translateY(24px) scale(.96); }
-  to   { opacity:1; transform:none; }
-}
+@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-/* شعار */
 #logo {
-  width: clamp(60px,14vw,84px);
-  height: clamp(60px,14vw,84px);
-  border-radius: 16px;
-  object-fit: cover;
-  border: 2px solid var(--border);
-  box-shadow: 0 0 24px var(--green-gl);
+  width: 60px; height: 60px; border-radius: 50%; object-fit: cover;
+  border: 2px solid var(--primary); padding: 4px;
 }
+h1 { font-size: 1.6rem; font-weight: 900; letter-spacing: -0.02em; }
+h1 .g { color: var(--primary); }
 
-/* عنوان */
-h1 {
-  font-size: clamp(1.6rem,5vw,2.1rem);
-  font-weight: 900;
-  letter-spacing: -.02em;
-}
-h1 .g { color: var(--green); }
-
-/* ── النماذج ── */
-.form { display:none; width:100%; flex-direction:column; gap:12px; }
-.form.active { display:flex; }
+.form { display: none; width: 100%; flex-direction: column; gap: 12px; }
+.form.active { display: flex; }
 
 input {
-  width: 100%;
-  padding: 13px 16px;
-  background: rgba(255,255,255,.04);
-  border: 1.5px solid var(--border2);
-  border-radius: var(--radius);
-  color: var(--text);
-  font-family: var(--font);
-  font-size: 1rem;
-  transition: border-color .2s, box-shadow .2s;
-  outline: none;
+  width: 100%; padding: 12px 14px; background: var(--surface-1);
+  border: 1px solid var(--border); border-radius: var(--radius-md);
+  color: var(--text-main); font-family: inherit; font-size: 0.95rem; transition: 0.3s;
 }
-input::placeholder { color: var(--muted); }
-input:focus {
-  border-color: var(--green);
-  box-shadow: 0 0 0 3px var(--green-gl);
-}
+input:focus { outline: none; border-color: var(--primary); background: var(--surface-2); }
 
 button[type=submit] {
-  width: 100%;
-  padding: 13px;
-  background: var(--green);
-  color: #000;
-  border: none;
-  border-radius: var(--radius);
-  font-family: var(--font);
-  font-size: 1rem; font-weight: 800;
-  cursor: pointer;
-  transition: all .2s;
-  box-shadow: 0 4px 16px var(--green-gl);
+  width: 100%; padding: 12px; background: var(--primary); color: #000;
+  border: none; border-radius: var(--radius-md); font-family: inherit;
+  font-size: 1rem; font-weight: 800; cursor: pointer; transition: 0.3s;
 }
-button[type=submit]:hover   { background: var(--green-d); transform: translateY(-1px); }
-button[type=submit]:active  { transform: translateY(0); }
-button[type=submit]:disabled{ opacity:.6; cursor:default; transform:none; }
+button[type=submit]:hover { background: var(--primary-hover); transform: translateY(-2px); }
+button[type=submit]:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
-/* رابط التبديل */
 .flip {
-  text-align: center;
-  color: var(--green);
-  font-size: .88rem; font-weight: 600;
-  cursor: pointer;
-  padding: 4px 0;
-  transition: color .2s;
+  text-align: center; color: var(--text-muted); font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: 0.3s;
 }
-.flip:hover { color: #fff; }
+.flip:hover { color: var(--text-main); }
+.flip span { color: var(--primary); }
 
-/* خطأ */
 #error {
-  width: 100%;
-  padding: 11px 14px;
-  background: rgba(239,68,68,.1);
-  border: 1px solid rgba(239,68,68,.3);
-  border-radius: var(--radius);
-  color: var(--error);
-  font-size: .88rem; font-weight: 600;
-  text-align: center;
-  line-height: 1.5;
+  width: 100%; padding: 10px; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3);
+  border-radius: var(--radius-md); color: #ef4444; font-size: 0.9rem; font-weight: 600; text-align: center;
 }
 .hidden { display: none !important; }
+
+  position: absolute; top: 16px; left: 16px;
+  color: var(--text-muted); text-decoration: none; font-weight: 700; transition: 0.3s; font-size: 0.9rem;
+}
