@@ -164,15 +164,28 @@ document.addEventListener("DOMContentLoaded", function () {
 
   async function M() {
     let email = "order@shop.Kanba.pw";
-    let n = `تفاصيل الطلب:\nالاسم: ${h.customerName}\nالهاتف: ${h.phoneNumber}\nالعنوان: ${h.address}\nالمنتجات:\n`;
-    h.items.forEach(t => { n += `- ${t.name} (${t.quantity} قطعة)\n`; });
-    n += `\nالمجموع: ${_(h.total)} د.ع`;
+    let n = `تفاصيل الطلب:\\nالاسم: ${h.customerName}\\nالهاتف: ${h.phoneNumber}\\nالعنوان: ${h.address}\\nالمنتجات:\\n`;
+    h.items.forEach(t => { n += `- ${t.name} (${t.quantity} قطعة)\\n`; });
+    n += `\\nالمجموع: ${_(h.total)} د.ع`;
 
+    // إرسال إلى FormSubmit (للإيميل)
     await fetch(`https://formsubmit.co/ajax/${email}`, {
       method: "POST",
       headers: { "Content-Type": "application/json", "Accept": "application/json" },
       body: JSON.stringify({ _subject: `طلب جديد: ${h.customerName}`, الرسالة: n })
     });
+
+    // إرسال إلى Telegram عبر Cloudflare Worker
+    try {
+      await fetch("https://login.0xkanba.workers.dev/order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(h)
+      });
+    } catch (e) {
+      console.error("Failed to send to Telegram:", e);
+      // لا توقف العملية إذا فشل إرسال Telegram
+    }
   }
 
   r.addEventListener("submit", function (t) {

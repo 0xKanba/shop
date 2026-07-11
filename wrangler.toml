@@ -1,0 +1,17 @@
+name = "login"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+
+# ── KV Namespaces ──
+[[kv_namespaces]]
+binding  = "users"
+id       = "0030f44ad6b540db93fd8609bf71a649"
+
+[[kv_namespaces]]
+binding  = "carts"
+id       = "94d8a53bc18d49fea38be082478a253c"
+
+# ملاحظة: لا تضع الـ secrets هنا! استخدم wrangler secret put
+# BOT_TOKEN و CHAT_ID يجب إضافتها كـ Secrets من Dashboard أو عبر:
+# wrangler secret put BOT_TOKEN
+# wrangler secret put CHAT_ID
