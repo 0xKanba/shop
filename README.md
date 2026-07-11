@@ -1,5 +1,6 @@
 
 
+
 <!-- TREE START -->
 
 # 📂 repo tree
@@ -12,7 +13,16 @@
 │   ├── checkout.css
 │   ├── enter.css
 │   ├── index.css
-│   └── p.css
+│   ├── p.css
+│   ├── product.css
+│   └── theme.css
+├── data
+│   ├── p1.json
+│   ├── p2.json
+│   ├── p3.json
+│   ├── p4.json
+│   ├── p6.json
+│   └── products.json
 ├── enter.html
 ├── index.html
 ├── js
@@ -21,23 +31,30 @@
 │   ├── enter.js
 │   ├── index.js
 │   ├── navbar.js
-│   └── p.js
+│   ├── p.js
+│   ├── product.js
+│   └── theme.js
+├── manifest.json
 ├── md
 │   ├── files.json
 │   └── us.md
 ├── md.html
-├── p
-│   ├── dx1.html
-│   ├── x2.html
-│   ├── x3.html
-│   ├── x4.html
-│   └── x6.html
+├── metadata.json
+├── package.json
+├── patch_auth_flow.js
+├── patch_product.js
+├── patch_product2.js
+├── patch_product_anim.js
 ├── pay
 │   ├── index.html
 │   ├── script.js
 │   └── style.css
-└── tree.txt
+├── product.html
+├── server.js
+├── shop.zip
+├── tree.txt
+└── update_seo.js
 
-6 directories, 26 files
+6 directories, 42 files
 ```
 <!-- TREE END -->
