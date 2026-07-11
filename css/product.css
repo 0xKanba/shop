@@ -88,20 +88,30 @@
 .prod-price small { font-size: 1rem; color: var(--text-muted); font-weight: 600; }
 
 .desc-box {
-  font-size: 1rem; line-height: 1.6; color: var(--text-muted);
-  background: var(--surface-0); padding: 16px;
+  font-size: 1.05rem; line-height: 1.8; color: var(--text-main);
+  background: var(--surface-0); padding: 18px;
+  font-weight: 700;
   border-radius: var(--radius-md); border: 1px solid var(--border);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
 }
 
 .specs-grid {
   display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
 }
 .spec-item {
-  background: var(--surface-1); padding: 12px;
+  background: var(--surface-1); padding: 14px;
   border-radius: var(--radius-md); border: 1px solid var(--border);
 }
-.spec-key { font-size: 0.8rem; color: var(--primary); font-weight: 700; margin-bottom: 4px; }
-.spec-val { font-size: 0.95rem; font-weight: 600; color: var(--text-main); }
+.spec-key { font-size: 0.85rem; color: var(--primary); font-weight: 800; margin-bottom: 6px; }
+.spec-val { font-size: 1.05rem; font-weight: 800; color: var(--text-main); }
+
+@keyframes imagePop {
+  from { opacity: 0.55; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+.image-pop-anim {
+  animation: imagePop 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
 
 /* Actions */
 .actions-bar {
@@ -121,7 +131,7 @@
 
 .add-btn {
   flex: 1; padding: 12px; border-radius: var(--radius-full);
-  background: var(--primary); color: #000; border: none;
+  background: var(--primary); color: #ffffff; border: none;
   font-family: inherit; font-size: 1rem; font-weight: 800;
   cursor: pointer; transition: var(--transition);
   display: flex; align-items: center; justify-content: center; gap: 8px;
@@ -147,23 +157,8 @@
 }
 
 .modal-nav {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(255,255,255,0.1);
-  border: none;
-  color: #fff;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  font-size: 1.5rem;
-  cursor: pointer;
-  z-index: 10001;
-  transition: 0.3s;
+  display: none !important;
 }
-.modal-nav:hover { background: rgba(255,255,255,0.3); }
-.modal-nav.prev-img { right: 16px; }
-.modal-nav.next-img { left: 16px; }
 
 @keyframes dance {
   0% { transform: translateX(0); }

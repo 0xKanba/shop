@@ -1,3 +1,7 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 :root {
   --primary: #10b981;
   --primary-hover: #059669;
@@ -90,44 +94,68 @@ body {
 /* Navbar */
 .nav-center {
   position: fixed;
-  top: 12px;
+  top: 16px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  gap: 8px;
+  align-items: center;
+  gap: 16px;
   background: var(--surface-1);
-  backdrop-filter: blur(12px);
+  padding: 8px 24px;
   border-radius: var(--radius-full);
-  padding: 6px 12px;
-  box-shadow: var(--shadow-lg);
   border: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(12px);
+  height: 52px; /* Identical height to .brand-wrap */
   z-index: 1000;
+  transition: var(--transition);
+}
+.nav-center:hover {
+  transform: translateX(-50%) translateY(-2px);
+  border-color: var(--border-focus);
 }
 .nav-button {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 6px 12px;
   background: transparent;
   color: var(--text-main);
   border: none;
-  border-radius: var(--radius-full);
-  font-family: inherit;
-  font-weight: 700;
-  font-size: 0.9rem;
   cursor: pointer;
   transition: var(--transition);
   position: relative;
+  padding: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  text-decoration: none;
 }
-.nav-button:hover { background: var(--surface-2); }
-.nav-button i { font-size: 1.5rem; }
+.nav-button:hover {
+  background: var(--surface-2);
+}
+.nav-button i {
+  font-size: 1.6rem;
+  color: var(--text-main);
+  transition: var(--transition);
+}
+.nav-button:hover i {
+  color: var(--primary);
+}
 .cart-count {
-  position: absolute; top: -4px; right: -4px;
-  background: var(--primary); color: #000;
-  font-size: 0.85rem; font-weight: 800;
-  min-width: 22px; height: 22px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: #ef4444;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 900;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--surface-1);
 }
 
 /* Confirm Modal */

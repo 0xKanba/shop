@@ -43,22 +43,21 @@ function renderProducts(products) {
     const btnStyle = isOut ? "background: transparent; color: #ef4444; border: 1px solid rgba(239,68,68,0.3);" : "";
 
     const card = document.createElement("div");
-    card.className = "product-card";
+    card.className = "card";
     card.style.animationDelay = `${idx * 0.05}s`;
     
     card.innerHTML = `
-      <div class="product-image" style="${imgStyle}">
-        <img class="product-img" src="${p.image}" alt="${p.title}" loading="lazy">
+      <div class="card-img" style="${imgStyle}">
+        <img class="img" src="${p.image}" alt="${p.title}" loading="lazy">
       </div>
-      <div class="product-info">
-        <div class="product-title">${p.title}</div>
-        <div class="price">${p.price.toLocaleString("en-US")} <span class="price-unit">د.ع</span></div>
-        <div class="product-actions">
-          <button class="add-to-cart-btn" ${disabledAttr} style="${btnStyle}"
-            data-id="${p.id}" data-name="${p.title}" data-price="${p.price}">
-            <i class="fas fa-cart-plus"></i> ${btnText}
-          </button>
-        </div>
+      <div class="card-title">${p.title}</div>
+      <hr class="card-divider">
+      <div class="card-footer">
+        <div class="card-price">${p.price.toLocaleString("en-US")} <span>د.ع</span></div>
+        <button class="card-btn add-to-cart-btn" ${disabledAttr} style="${btnStyle}"
+          data-id="${p.id}" data-name="${p.title}" data-price="${p.price}">
+          <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path d="m397.78 316h-205.13a15 15 0 0 1 -14.65-11.67l-34.54-150.48a15 15 0 0 1 14.62-18.36h274.27a15 15 0 0 1 14.65 18.36l-34.6 150.48a15 15 0 0 1 -14.62 11.67zm-193.19-30h181.25l27.67-120.48h-236.6z"></path><path d="m222 450a57.48 57.48 0 1 1 57.48-57.48 57.54 57.54 0 0 1 -57.48 57.48zm0-84.95a27.48 27.48 0 1 0 27.48 27.47 27.5 27.5 0 0 0 -27.48-27.47z"></path><path d="m368.42 450a57.48 57.48 0 1 1 57.48-57.48 57.54 57.54 0 0 1 -57.48 57.48zm0-84.95a27.48 27.48 0 1 0 27.48 27.47 27.5 27.5 0 0 0 -27.48-27.47z"></path><path d="m158.08 165.49a15 15 0 0 1 -14.23-10.26l-25.71-77.23h-47.44a15 15 0 1 1 0-30h58.3a15 15 0 0 1 14.23 10.26l29.13 87.49a15 15 0 0 1 -14.23 19.74z"></path></svg>
+        </button>
       </div>
     `;
 
@@ -109,14 +108,38 @@ async function addToCart(p, btn) {
     
     btn.innerHTML = '<i class="fas fa-check"></i>';
     btn.style.cssText = "background:var(--primary);color:#000;border-color:var(--primary)";
-    setTimeout(() => { btn.innerHTML = orig; btn.style.cssText = ""; btn.disabled = false; }, 2000);
+    btn.classList.add("dancing");
+    if (window.confetti) {
+      const rect = btn.getBoundingClientRect();
+      const x = (rect.left + rect.width / 2) / window.innerWidth;
+      const y = (rect.top + rect.height / 2) / window.innerHeight;
+      confetti({
+        particleCount: 50,
+        spread: 60,
+        origin: { x, y },
+        colors: ['#2d8cf0', '#f59e0b', '#10b981']
+      });
+    }
+    setTimeout(() => { btn.innerHTML = orig; btn.style.cssText = ""; btn.classList.remove("dancing"); btn.disabled = false; }, 2000);
   } catch (e) {
     localStorage.setItem("cart", JSON.stringify(cart));
     if (window.updateCartCount) window.updateCartCount();
     showToast(`تمت إضافة "${p.title}" (محلياً)`);
     
     btn.innerHTML = '<i class="fas fa-check"></i>';
-    setTimeout(() => { btn.innerHTML = orig; btn.disabled = false; }, 2000);
+    btn.classList.add("dancing");
+    if (window.confetti) {
+      const rect = btn.getBoundingClientRect();
+      const x = (rect.left + rect.width / 2) / window.innerWidth;
+      const y = (rect.top + rect.height / 2) / window.innerHeight;
+      confetti({
+        particleCount: 50,
+        spread: 60,
+        origin: { x, y },
+        colors: ['#2d8cf0', '#f59e0b', '#10b981']
+      });
+    }
+    setTimeout(() => { btn.innerHTML = orig; btn.classList.remove("dancing"); btn.disabled = false; }, 2000);
   }
 }
 

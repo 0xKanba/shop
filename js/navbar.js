@@ -38,7 +38,8 @@ function updateLoginButton() {
   const btn = document.querySelector(".login-btn");
   if(!btn) return;
   const isLog = window.auth && window.auth.isLoggedIn;
-  btn.innerHTML = isLog ? '<i class="fas fa-user-circle"></i>' : '<i class="far fa-user-circle"></i>';
+  const iconHtml = isLog ? '<i class="fas fa-user-circle"></i>' : '<i class="far fa-user-circle"></i>';
+  btn.innerHTML = iconHtml;
   btn.title = isLog ? 'تسجيل الخروج' : 'تسجيل الدخول';
   
   // Replace to clear old listeners

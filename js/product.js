@@ -52,9 +52,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         d.className = `thumb-card ${idx === 0 ? 'active' : ''}`;
         d.innerHTML = `<img src="${img}">`;
         d.onclick = () => {
-          mainImg.src = img;
-          document.querySelectorAll('.thumb-card').forEach(c => c.classList.remove('active'));
-          d.classList.add('active');
+          changeImage(idx);
         };
         tr.appendChild(d);
       });
@@ -74,59 +72,225 @@ document.addEventListener("DOMContentLoaded", async () => {
   const modal = document.getElementById("gallery-modal");
   const modalImg = document.getElementById("modalImg");
   let currentImageIndex = 0;
+  let lastModalOpenTime = 0;
 
-  function updateModalImage() {
-    if(currentProduct && currentProduct.images) {
-      modalImg.src = currentProduct.images[currentImageIndex];
+  function changeImage(newIndex) {
+    if (!currentProduct || !currentProduct.images || currentProduct.images.length === 0) return;
+    
+    currentImageIndex = (newIndex + currentProduct.images.length) % currentProduct.images.length;
+    const targetImgUrl = currentProduct.images[currentImageIndex];
+    
+    const mainImg = document.getElementById("mainImage");
+    if (mainImg) {
+      mainImg.src = targetImgUrl;
+      mainImg.classList.remove("image-pop-anim");
+      void mainImg.offsetWidth; // trigger reflow
+      mainImg.classList.add("image-pop-anim");
+    }
+    
+    if (modalImg) {
+      modalImg.src = targetImgUrl;
+      modalImg.classList.remove("image-pop-anim");
+      void modalImg.offsetWidth; // trigger reflow
+      modalImg.classList.add("image-pop-anim");
+    }
+    
+    // Update active thumbnail
+    document.querySelectorAll('.thumb-card').forEach((c, idx) => {
+      if (idx === currentImageIndex) c.classList.add('active');
+      else c.classList.remove('active');
+    });
+  }
+
+  function openFullscreen() {
+    if (currentProduct && currentProduct.images) {
+      const currentSrc = document.getElementById("mainImage").src;
+      currentImageIndex = currentProduct.images.findIndex(img => currentSrc.includes(img));
+      if (currentImageIndex === -1) currentImageIndex = 0;
+      changeImage(currentImageIndex);
+      modal.style.display = "flex";
+      lastModalOpenTime = Date.now();
+      setTimeout(() => modal.classList.add("active"), 10);
     }
   }
 
-  document.getElementById("mainImageWrap").onclick = () => {
-    if(currentProduct && currentProduct.images) {
-      const currentSrc = document.getElementById("mainImage").src;
-      currentImageIndex = currentProduct.images.findIndex(img => currentSrc.includes(img));
-      if(currentImageIndex === -1) currentImageIndex = 0;
-      updateModalImage();
-      modal.style.display = "flex";
-      setTimeout(() => modal.classList.add("active"), 10);
-    }
-  };
-
   const closeModal = () => {
+    // Only allow closing if at least 400ms passed since opening, to prevent ghost clicks
+    if (Date.now() - lastModalOpenTime < 400) {
+      return;
+    }
     modal.classList.remove("active");
-    setTimeout(() => modal.style.display = "none", 300);
+    setTimeout(() => {
+      modal.style.display = "none";
+      // Ensure state is synced to the main image
+      changeImage(currentImageIndex);
+    }, 300);
   };
 
   document.getElementById("modalClose").onclick = closeModal;
-    modalImg.onclick = () => {
-    // Also update the main image to the one currently viewed in modal
-    if(currentProduct && currentProduct.images) {
-      const mainImg = document.getElementById("mainImage");
-      mainImg.src = currentProduct.images[currentImageIndex];
-      // Update active thumbnail
-      document.querySelectorAll('.thumb-card').forEach((c, idx) => {
-        if(idx === currentImageIndex) c.classList.add('active');
-        else c.classList.remove('active');
-      });
+  
+  // Clicking the modal image itself can also close or stay
+  modalImg.onclick = (e) => {
+    e.stopPropagation();
+  };
+  
+  // Close modal when clicking outside the image
+  modal.onclick = (e) => {
+    if (e.target === modal) {
+      closeModal();
     }
-    closeModal();
   };
 
-  document.getElementById("modalPrev")?.addEventListener("click", (e) => {
-    e.stopPropagation();
-    if(currentProduct && currentProduct.images) {
-      currentImageIndex = (currentImageIndex - 1 + currentProduct.images.length) % currentProduct.images.length;
-      updateModalImage();
-    }
-  });
+  // Google Photos style smooth touch/mouse drag & swipe implementation
+  function enableSwipe(elem, onSwipeLeft, onSwipeRight, onSwipeUpOrDown, onTap) {
+    let startX = 0;
+    let startY = 0;
+    let currentX = 0;
+    let currentY = 0;
+    let isDragging = false;
+    let hasMoved = false;
+    
+    const img = elem.querySelector("img") || elem;
 
-  document.getElementById("modalNext")?.addEventListener("click", (e) => {
-    e.stopPropagation();
-    if(currentProduct && currentProduct.images) {
-      currentImageIndex = (currentImageIndex + 1) % currentProduct.images.length;
-      updateModalImage();
+    function getEventXY(e) {
+      if (e.touches && e.touches.length > 0) {
+        return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      }
+      return { x: e.clientX, y: e.clientY };
     }
-  });
+
+    function onStart(e) {
+      if (e.target.closest('button')) return;
+      
+      const coords = getEventXY(e);
+      startX = coords.x;
+      startY = coords.y;
+      currentX = coords.x;
+      currentY = coords.y;
+      isDragging = true;
+      hasMoved = false;
+      
+      if (img) {
+        img.style.transition = 'none';
+      }
+    }
+
+    function onMove(e) {
+      if (!isDragging) return;
+      const coords = getEventXY(e);
+      currentX = coords.x;
+      currentY = coords.y;
+
+      const diffX = currentX - startX;
+      const diffY = currentY - startY;
+
+      if (Math.abs(diffX) > 8 || Math.abs(diffY) > 8) {
+        hasMoved = true;
+        if (e.cancelable) {
+          e.preventDefault();
+        }
+      } else {
+        return;
+      }
+
+      if (img) {
+        if (!onSwipeUpOrDown && Math.abs(diffY) > Math.abs(diffX) + 15) {
+          // If no vertical action is enabled and dragging vertically, cancel horizontal transition and allow default page scrolling
+          img.style.transform = '';
+          isDragging = false;
+          return;
+        }
+        
+        // Translate image dynamically
+        if (onSwipeUpOrDown) {
+          img.style.transform = `translate(${diffX}px, ${diffY}px) scale(0.98)`;
+        } else {
+          img.style.transform = `translateX(${diffX}px) scale(0.98)`;
+        }
+      }
+    }
+
+    function onEnd(e) {
+      if (!isDragging) return;
+      isDragging = false;
+
+      const diffX = currentX - startX;
+      const diffY = currentY - startY;
+      const thresholdX = 40;
+      const thresholdY = 50;
+
+      if (img) {
+        img.style.transition = 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
+        img.style.transform = '';
+      }
+
+      // If they didn't drag/move, trigger a tap
+      if (!hasMoved || (Math.abs(diffX) < 10 && Math.abs(diffY) < 10)) {
+        if (onTap) {
+          onTap(e);
+        }
+        return;
+      }
+
+      if (Math.abs(diffX) > Math.abs(diffY)) {
+        if (Math.abs(diffX) > thresholdX) {
+          if (diffX < 0) {
+            if (onSwipeLeft) onSwipeLeft();
+          } else {
+            if (onSwipeRight) onSwipeRight();
+          }
+        }
+      } else {
+        if (Math.abs(diffY) > thresholdY) {
+          if (onSwipeUpOrDown) onSwipeUpOrDown();
+        }
+      }
+    }
+
+    elem.addEventListener("touchstart", onStart, { passive: true });
+    elem.addEventListener("touchmove", onMove, { passive: false });
+    elem.addEventListener("touchend", onEnd);
+
+    elem.addEventListener("mousedown", onStart);
+    
+    const onGlobalMove = (e) => {
+      if (isDragging) onMove(e);
+    };
+    const onGlobalEnd = (e) => {
+      if (isDragging) onEnd(e);
+    };
+
+    window.addEventListener("mousemove", onGlobalMove);
+    window.addEventListener("mouseup", onGlobalEnd);
+  }
+
+  // Enable swiping on the main product card/image
+  const mainImageWrap = document.getElementById("mainImageWrap");
+  if (mainImageWrap) {
+    enableSwipe(
+      mainImageWrap,
+      () => changeImage(currentImageIndex + 1),
+      () => changeImage(currentImageIndex - 1),
+      null,
+      () => openFullscreen()
+    );
+  }
+
+  // Enable swiping on the fullscreen modal
+  if (modal) {
+    enableSwipe(
+      modal,
+      () => changeImage(currentImageIndex + 1),
+      () => changeImage(currentImageIndex - 1),
+      () => closeModal(),
+      (e) => {
+        // Only close if we clicked outside the modalImg (e.g. background container modal itself)
+        if (e && (e.target === modal || e.target.id === "gallery-modal" || e.target.classList.contains("modal-close") || e.target.closest("#modalClose"))) {
+          closeModal();
+        }
+      }
+    );
+  }
 
   // Quantity controls
   const qtyVal = document.getElementById("qtyVal");

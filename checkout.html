@@ -29,53 +29,125 @@
 
     <div class="container">
         
+        <!-- Interactive Progressive Top Bar -->
+        <div class="top-progress-bar-container">
+            <div class="top-progress-bar" id="topProgressBar"></div>
+        </div>
+        
         <div class="header">
-            <h1><i class="fas fa-bag-shopping"></i> إتمام الطلب</h1>
-            <a href="javascript:history.back()" class="back-btn"><i class="fas fa-arrow-right"></i></a>
+            <div class="header-title-wrapper">
+                <a href="javascript:history.back()" class="back-btn" id="backBtnCheckout"><i class="fas fa-arrow-right"></i></a>
+                <h1><i class="fas fa-bag-shopping"></i> إتمام الطلب</h1>
+            </div>
         </div>
 
         <div id="authStatus" style="text-align:center; padding: 40px; color: var(--text-muted);">
             جاري التحقق من حالة تسجيل الدخول...
         </div>
 
-        <div class="checkout-grid" id="checkoutContent" style="display: none;">
-            
-            <div class="form-section">
-                <h2 class="form-title"><i class="fas fa-user-circle"></i> بيانات المستلم</h2>
-                <form id="orderForm">
-                    <div class="form-group">
-                        <label class="form-label" for="customerName">الاسم الكامل</label>
-                        <input type="text" id="customerName" name="customerName" class="form-input" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="phoneNumber">رقم الهاتف</label>
-                        <input type="tel" id="phoneNumber" name="phoneNumber" class="form-input" placeholder="07xxxxxxxxx" pattern="[0-9]{11}" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="address">العنوان التفصيلي</label>
-                        <textarea id="address" name="address" class="form-input" required></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="notes">ملاحظات إضافية (اختياري)</label>
-                        <textarea id="notes" name="notes" class="form-input"></textarea>
-                    </div>
-                    <button type="submit" class="submit-btn" id="submitBtn">تأكيد الطلب وإرسال</button>
-                </form>
-            </div>
+        <div class="checkout-wizard" id="checkoutContent" style="display: none;">
 
-            <div class="summary-section">
-                <div class="summary-title">
-                    <span>محتويات السلة</span>
-                    <span id="totalItems">0</span>
-                </div>
-                
-                <div class="cart-items" id="productsList">
-                    <!-- Dynamic -->
+            <!-- Wizard Steps Container -->
+            <form id="orderForm" class="wizard-form">
+                <!-- Level 1 -->
+                <div class="wizard-step active" id="wizardStep1">
+                    <div class="step-card">
+                        <h2 class="step-card-title"><i class="fas fa-address-card text-primary"></i> البيانات الشخصية (المرحلة ١ من ٣)</h2>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="customerName">الاسم الكامل</label>
+                            <input type="text" id="customerName" name="customerName" class="form-input" placeholder="اسمك الثلاثي" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="phoneNumber">رقم الهاتف العراقي</label>
+                            <input type="tel" id="phoneNumber" name="phoneNumber" class="form-input" placeholder="07xxxxxxxxx" pattern="07[3-9][0-9]{8}" maxlength="11" minlength="11" title="يرجى إدخال رقم هاتف عراقي صحيح يتكون من 11 رقماً ويبدأ بـ 07" required>
+                        </div>
+
+                        <div class="wizard-actions">
+                            <button type="button" class="wizard-btn next-btn" id="toStep2">التالي <i class="fas fa-arrow-left"></i></button>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="total-row">
-                    <span class="total-label">المجموع الكلي</span>
-                    <span class="total-val" id="orderTotal">0 د.ع</span>
+                <!-- Level 2 -->
+                <div class="wizard-step" id="wizardStep2">
+                    <div class="step-card">
+                        <h2 class="step-card-title"><i class="fas fa-map-pin text-primary"></i> موقع التوصيل (المرحلة ٢ من ٣)</h2>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="address">العنوان التفصيلي (المحافظة، المنطقة، نقطة دالة)</label>
+                            <textarea id="address" name="address" class="form-input" placeholder="مثال: بغداد، الكرادة، قرب ساحة الحرية" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="notes">ملاحظات إضافية (اختياري)</label>
+                            <textarea id="notes" name="notes" class="form-input" placeholder="مثال: يرجى الاتصال قبل الوصول"></textarea>
+                        </div>
+
+                        <div class="wizard-actions">
+                            <button type="button" class="wizard-btn prev-btn" id="backToStep1"><i class="fas fa-arrow-right"></i> السابق</button>
+                            <button type="button" class="wizard-btn next-btn" id="toStep3">التالي <i class="fas fa-arrow-left"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Level 3 -->
+                <div class="wizard-step" id="wizardStep3">
+                    <div class="step-card">
+                        <h2 class="step-card-title"><i class="fas fa-circle-check text-primary"></i> مراجعة الطلب وتأكيده (المرحلة ٣ من ٣)</h2>
+                        
+                        <div class="review-details-grid">
+                            <div class="review-item">
+                                <div class="review-label"><i class="fas fa-user"></i> الاسم</div>
+                                <div class="review-value" id="reviewName">-</div>
+                            </div>
+                            <div class="review-item">
+                                <div class="review-label"><i class="fas fa-phone"></i> رقم الهاتف</div>
+                                <div class="review-value" id="reviewPhone">-</div>
+                            </div>
+                            <div class="review-item full-width">
+                                <div class="review-label"><i class="fas fa-map-marked-alt"></i> العنوان</div>
+                                <div class="review-value" id="reviewAddress">-</div>
+                            </div>
+                            <div class="review-item full-width">
+                                <div class="review-label"><i class="fas fa-note-sticky"></i> الملاحظات</div>
+                                <div class="review-value" id="reviewNotes">-</div>
+                            </div>
+                        </div>
+
+                        <div class="wizard-actions">
+                            <button type="button" class="wizard-btn prev-btn" id="backToStep2"><i class="fas fa-arrow-right"></i> السابق</button>
+                            <button type="submit" class="wizard-btn submit-btn" id="submitBtn">تأكيد وإرسال الطلب <i class="fas fa-check"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Luxurious Collapsible Cart Summary at bottom -->
+            <div class="lux-summary-accordion collapsed" id="summaryAccordion">
+                <div class="accordion-trigger" id="accordionTrigger">
+                    <div class="trigger-right">
+                        <i class="fas fa-shopping-bag icon-bag"></i>
+                        <div class="trigger-info">
+                            <span class="trigger-title">تفاصيل السلة والمنتجات</span>
+                            <span class="trigger-count"><span id="totalItems">0</span> منتج</span>
+                        </div>
+                    </div>
+                    <div class="trigger-left">
+                        <div class="trigger-total">
+                            <span class="total-lbl">المجموع:</span>
+                            <span class="total-val" id="orderTotalCompact">0 د.ع</span>
+                        </div>
+                        <i class="fas fa-chevron-up accordion-chevron"></i>
+                    </div>
+                </div>
+                <div class="accordion-content">
+                    <div class="cart-items" id="productsList">
+                        <!-- Dynamic -->
+                    </div>
+                    <div class="total-row-main">
+                        <span class="total-label">المجموع النهائي:</span>
+                        <span class="total-value-main" id="orderTotal">0 د.ع</span>
+                    </div>
                 </div>
             </div>
 
@@ -104,6 +176,8 @@
             <button id="closeSuccessBtn" style="width:100%; padding:14px; background:var(--primary); color:#000; border:none; border-radius:var(--radius-md); cursor:pointer; font-weight:700;">حسناً، العودة للرئيسية</button>
         </div>
     </div>
+
+    <canvas id="confettiCanvas" style="position:fixed; inset:0; pointer-events:none; z-index:10000; display:none;"></canvas>
 
     <script src="/js/checkout.js"></script>
     <script src="/js/theme.js"></script>
