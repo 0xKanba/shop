@@ -77,7 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
       <div class="header-right">
         ${!isMainPage ? `<a href="javascript:history.back()" class="header-back-btn" title="رجوع"><i class="fas fa-arrow-right"></i></a>` : ''}
         <a href="/" class="header-brand">
-          <img src="https://i.postimg.cc/d3fS0sHg/pro.webp" alt="المحل العراقي" class="header-logo">
+          <img src="https://cdn.jsdelivr.net/gh/0xKanba/assets@master/shop/pro.webp" alt="المحل العراقي" class="header-logo">
           <span class="header-title"><span class="g">المحل</span> العراقي</span>
         </a>
       </div>
