@@ -17,7 +17,8 @@ const ASSETS_TO_CACHE = [
   '/js/enter.js',
   '/js/navbar.js',
   '/js/auth.js',
-  '/data/products.json'
+  '/data/products.json',
+  'https://cdn.jsdelivr.net/gh/0xKanba/assets@master/shop/pro.webp'
 ];
 
 self.addEventListener('install', (event) => {
