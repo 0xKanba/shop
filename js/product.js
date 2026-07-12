@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   let qty = 1;
 
   try {
-    const res = await fetch(`/data/${productId}.json?v=${new Date().getTime()}`);
+    const res = await fetch(`/json/${productId}.json?v=${new Date().getTime()}`);
     if (!res.ok) throw new Error("Product not found");
     currentProduct = await res.json();
     renderProduct(currentProduct);

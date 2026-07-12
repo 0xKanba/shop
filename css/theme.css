@@ -226,3 +226,57 @@ body {
   background: var(--surface-2);
   transform: scale(1.1);
 }
+
+/* ──────────────────────────────────────────────
+   GPU Acceleration & Native App transitions
+   ────────────────────────────────────────────── */
+@keyframes appFadeIn {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 10px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+body {
+  animation: appFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: opacity, transform;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Force GPU acceleration (Composite Layering) on key visual & interactive elements */
+.card, 
+.card-img, 
+.img,
+#mainImage, 
+#mainImageWrap, 
+#modalImg, 
+.thumb-card, 
+.nav-center, 
+.brand-wrap, 
+.theme-toggle, 
+.global-back-btn, 
+.confirm-modal-content, 
+#gallery-modal {
+  transform: translate3d(0, 0, 0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  perspective: 1000px;
+  will-change: transform, opacity;
+}
+
+/* Optimize touch interactions for instantaneous response */
+button, 
+a, 
+.card, 
+.thumb-card, 
+#mainImageWrap {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+

@@ -21,7 +21,7 @@ function showToast(msg, type = "success") {
 // ── App ──
 async function init() {
   try {
-    const res = await fetch('/data/products.json');
+    const res = await fetch('/json/products.json');
     if (!res.ok) throw new Error("Failed to load products");
     const products = await res.json();
     renderProducts(products);
