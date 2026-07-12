@@ -144,9 +144,26 @@
                     <div class="cart-items" id="productsList">
                         <!-- Dynamic -->
                     </div>
-                    <div class="total-row-main">
-                        <span class="total-label">المجموع النهائي:</span>
-                        <span class="total-value-main" id="orderTotal">0 د.ع</span>
+                    
+                    <!-- تفصيل السعر الكلي مع التوصيل والملاحظة باللون الأحمر -->
+                    <div class="price-breakdown-wrapper" style="border-top: 1px solid var(--border); padding-top: 12px; margin-top: 12px; display: flex; flex-direction: column; gap: 8px;">
+                        <div class="price-breakdown-row" style="display: flex; justify-content: space-between; font-size: 0.9rem; color: var(--text-muted); font-weight: 600;">
+                            <span>مجموع المنتجات:</span>
+                            <span id="subtotalPrice">0 د.ع</span>
+                        </div>
+                        <div class="price-breakdown-row" style="display: flex; justify-content: space-between; font-size: 0.9rem; color: #ef4444; font-weight: 700;">
+                            <span>سعر التوصيل:</span>
+                            <span>5,000 د.ع</span>
+                        </div>
+                        <div class="delivery-warning-notice" style="color: #ef4444; background: rgba(239, 68, 68, 0.08); border-right: 3px solid #ef4444; padding: 8px 12px; border-radius: var(--radius-sm); font-size: 0.8rem; font-weight: 700; line-height: 1.4; text-align: right; margin-top: 4px;">
+                            <i class="fas fa-circle-info" style="margin-left: 4px;"></i> 
+                            ملاحظة: يتم إضافة 5,000 د.ع أجور توصيل ثابتة لكافة محافظات العراق للطلب النهائي.
+                        </div>
+                    </div>
+
+                    <div class="total-row-main" style="margin-top: 12px;">
+                        <span class="total-label" style="font-weight: 800;">المجموع النهائي الكلي:</span>
+                        <span class="total-value-main" id="orderTotal" style="font-size: 1.25rem;">0 د.ع</span>
                     </div>
                 </div>
             </div>

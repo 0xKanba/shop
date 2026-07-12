@@ -35,27 +35,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Delivery Badge
     const prodDelivery = document.getElementById("prodDelivery");
     if (prodDelivery) {
-      let deliveryText = "0 د.ع توصيل مجاني";
-      if (p.delivery) {
-        deliveryText = p.delivery;
-      } else if (p.shipping) {
-        deliveryText = p.shipping;
-      } else if (p.deliveryPrice) {
-        deliveryText = p.deliveryPrice;
-      } else if (p.shippingPrice) {
-        deliveryText = p.shippingPrice;
-      }
-      prodDelivery.innerHTML = `<i class="fas fa-truck"></i> ${deliveryText}`;
-      
-      const isFree = deliveryText.includes("0") || deliveryText.includes("مجاني") || deliveryText.includes("مجاناً") || deliveryText.includes("مجانا");
-      if (isFree) {
-        prodDelivery.classList.add("free");
-        prodDelivery.classList.remove("paid");
-      } else {
-        prodDelivery.classList.add("paid");
-        prodDelivery.classList.remove("free");
-      }
-      
+      prodDelivery.innerHTML = `<i class="fas fa-truck"></i> سعر التوصيل: 5,000 د.ع (لكافة المحافظات)`;
+      prodDelivery.className = "delivery-badge paid";
       prodDelivery.style.display = "inline-flex";
     }
     

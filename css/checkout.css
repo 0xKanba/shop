@@ -228,7 +228,7 @@ textarea.form-input { resize: none; min-height: 52px; }
 .lux-summary-accordion.collapsed .accordion-chevron { transform: rotate(180deg); }
 
 .accordion-content {
-  padding: 10px 12px; border-top: 1px solid var(--border); max-height: 180px; overflow-y: auto; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 10px 12px; border-top: 1px solid var(--border); max-height: 400px; overflow-y: auto; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .lux-summary-accordion.collapsed .accordion-content {
   max-height: 0; padding: 0 12px; border-top-color: transparent; overflow: hidden;

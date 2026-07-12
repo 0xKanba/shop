@@ -189,13 +189,21 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function updateTotals() {
-    const total = cart.reduce((s, i) => s + i.price * i.quantity, 0);
+    const subtotal = cart.reduce((s, i) => s + i.price * i.quantity, 0);
     const count = cart.reduce((s, i) => s + i.quantity, 0);
-    cartTotal.textContent = fmt(total) + " د.ع";
+    const deliveryFee = subtotal > 0 ? 5000 : 0;
+    const grandTotal = subtotal + deliveryFee;
+    
+    const subtotalPriceEl = document.getElementById("subtotalPrice");
+    if (subtotalPriceEl) {
+      subtotalPriceEl.textContent = fmt(subtotal) + " د.ع";
+    }
+    
+    cartTotal.textContent = fmt(grandTotal) + " د.ع";
     
     const orderTotalCompact = document.getElementById("orderTotalCompact");
     if (orderTotalCompact) {
-      orderTotalCompact.textContent = fmt(total) + " د.ع";
+      orderTotalCompact.textContent = fmt(grandTotal) + " د.ع";
     }
     
     totalItems.textContent = count;
@@ -398,23 +406,30 @@ document.addEventListener("DOMContentLoaded", function () {
     e.preventDefault();
     if (cart.length === 0) return;
 
+    const subtotal = cart.reduce((s, i) => s + i.price * i.quantity, 0);
+    const deliveryFee = 5000;
+    const grandTotal = subtotal + deliveryFee;
+
     currentOrder = {
       customerName: customerName.value,
       phoneNumber: phoneNumber.value,
       address: address.value,
       notes: notes.value,
       items: [...cart],
-      total: cart.reduce((s, i) => s + i.price * i.quantity, 0),
+      total: grandTotal,
       quantity: cart.reduce((s, i) => s + i.quantity, 0),
       date: new Date().toISOString()
     };
 
     let detailsHtml = "";
     currentOrder.items.forEach(i => {
-      detailsHtml += `<div style="display:flex;justify-content:space-between;margin-bottom:8px;"><span>${i.name}</span><span>${i.quantity} × ${fmt(i.price)}</span></div>`;
+      detailsHtml += `<div style="display:flex;justify-content:space-between;margin-bottom:8px;"><span>${i.name}</span><span>${i.quantity} × ${fmt(i.price)} د.ع</span></div>`;
     });
     detailsHtml += `<hr style="border-color:var(--border); margin:12px 0;">`;
-    detailsHtml += `<div style="display:flex;justify-content:space-between;font-weight:bold;color:var(--primary);"><span>المجموع الكلي:</span><span>${fmt(currentOrder.total)} د.ع</span></div>`;
+    detailsHtml += `<div style="display:flex;justify-content:space-between;margin-bottom:8px;color:var(--text-muted);"><span>مجموع المنتجات:</span><span>${fmt(subtotal)} د.ع</span></div>`;
+    detailsHtml += `<div style="display:flex;justify-content:space-between;margin-bottom:8px;color:#ef4444;font-weight:bold;"><span>سعر التوصيل:</span><span>5,000 د.ع</span></div>`;
+    detailsHtml += `<hr style="border-color:var(--border); margin:12px 0;">`;
+    detailsHtml += `<div style="display:flex;justify-content:space-between;font-weight:bold;color:var(--primary);font-size:1.1rem;"><span>المجموع النهائي الكلي:</span><span>${fmt(grandTotal)} د.ع</span></div>`;
     
     confirmationDetails.innerHTML = detailsHtml;
     confirmationModal.style.display = "flex";
