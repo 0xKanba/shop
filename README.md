@@ -3,6 +3,7 @@
 
 
 
+
 <!-- TREE START -->
 
 # 📂 repo tree
@@ -19,10 +20,6 @@
 │   └── theme.css
 ├── data
 │   ├── p1.json
-│   ├── p2.json
-│   ├── p3.json
-│   ├── p4.json
-│   ├── p6.json
 │   └── products.json
 ├── enter.html
 ├── index.html
@@ -46,6 +43,6 @@
 ├── sw.js
 └── tree.txt
 
-5 directories, 32 files
+5 directories, 28 files
 ```
 <!-- TREE END -->
