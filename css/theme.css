@@ -16,6 +16,7 @@
   --border: rgba(0, 0, 0, 0.08);
   --border-focus: rgba(16, 185, 129, 0.4);
   --shadow-lg: 0 4px 12px -2px rgba(0, 0, 0, 0.1);
+  --nav-bg: rgba(255, 255, 255, 0.85);
   
   --radius-sm: 6px;
   --radius-md: 10px;
@@ -33,6 +34,7 @@
   --text-muted: #94a3b8;
   --border: rgba(255, 255, 255, 0.08);
   --shadow-lg: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+  --nav-bg: rgba(15, 20, 22, 0.85);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -45,6 +47,7 @@
     --text-muted: #94a3b8;
     --border: rgba(255, 255, 255, 0.08);
     --shadow-lg: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    --nav-bg: rgba(15, 20, 22, 0.85);
   }
 }
 
@@ -279,4 +282,178 @@ a,
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
 }
+
+/* ──────────────────────────────────────────────
+   Persistent Fixed Modern App Header
+   ────────────────────────────────────────────── */
+:root {
+  --header-height: 56px;
+}
+
+body {
+  padding-top: var(--header-height);
+}
+
+.app-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--header-height);
+  z-index: 1001;
+  background: var(--nav-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.header-container {
+  width: 100%;
+  max-width: 1000px; /* Aligned with standard page layouts */
+  margin: 0 auto;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-back-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface-1);
+  color: var(--text-main);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.header-back-btn:hover {
+  background: var(--surface-2);
+  border-color: var(--border-focus);
+  transform: scale(1.05);
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.header-brand:hover {
+  transform: translateY(-1px);
+}
+
+.header-logo {
+  width: 28px; /* Compact and neat as requested: "صغر ايقونة المحل العراقي" */
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--border);
+}
+
+.header-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--text-main);
+  letter-spacing: -0.3px;
+}
+
+.header-title .g {
+  color: var(--primary);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  color: var(--text-main);
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+  font-size: 0.9rem;
+  padding: 0;
+}
+
+.header-btn:hover {
+  background: var(--surface-2);
+  border-color: var(--border-focus);
+  color: var(--primary);
+  transform: scale(1.05);
+}
+
+/* Ensure the cart-count badge matches the design inside header */
+.header-btn .cart-count {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  background: #ef4444;
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 900;
+  min-width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--surface-0);
+}
+
+/* Hide old floating buttons globally across all pages to avoid overlapping and duplicate buttons */
+.nav-center,
+body > .theme-toggle,
+.global-back-btn,
+.back-btn,
+.shop-header {
+  display: none !important;
+}
+
+/* Styling override for theme-toggle inside our modern fixed header */
+.app-header .theme-toggle {
+  position: static !important;
+  display: inline-flex !important;
+  box-shadow: none !important;
+  width: 34px !important;
+  height: 34px !important;
+  font-size: 0.9rem !important;
+  z-index: auto !important;
+}
+
+/* Perfect alignment across all pages under the fixed header */
+.container {
+  padding-top: 16px !important;
+  margin-top: 0 !important;
+}
+
+.page-wrap {
+  margin-top: 20px !important;
+}
+
 

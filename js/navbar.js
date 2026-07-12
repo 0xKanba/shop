@@ -38,7 +38,7 @@ function updateLoginButton() {
   const btn = document.querySelector(".login-btn");
   if(!btn) return;
   const isLog = window.auth && window.auth.isLoggedIn;
-  const iconHtml = isLog ? '<i class="fas fa-user-circle"></i>' : '<i class="far fa-user-circle"></i>';
+  const iconHtml = isLog ? '<i class="fas fa-sign-out-alt"></i>' : '<i class="far fa-user-circle"></i>';
   btn.innerHTML = iconHtml;
   btn.title = isLog ? 'تسجيل الخروج' : 'تسجيل الدخول';
   
@@ -63,21 +63,41 @@ function updateCartCount() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  if(document.querySelector(".nav-center")) {
+  if(document.querySelector(".app-header")) {
     updateLoginButton();
     return;
   }
   
-  const nav = document.createElement("div");
-  nav.className = "nav-center";
-  nav.innerHTML = `
-    <button class="nav-button cart-btn" title="السلة" onclick="window.location.href='/checkout.html'">
-      <i class="fas fa-shopping-cart"></i>
-      <span class="cart-count" style="display:none;">0</span>
-    </button>
-    <button class="nav-button login-btn" title="الحساب"></button>
+  const isMainPage = window.location.pathname === "/" || window.location.pathname.endsWith("/index.html") || window.location.pathname === "";
+  
+  const header = document.createElement("header");
+  header.className = "app-header";
+  header.innerHTML = `
+    <div class="header-container">
+      <div class="header-right">
+        ${!isMainPage ? `<a href="javascript:history.back()" class="header-back-btn" title="رجوع"><i class="fas fa-arrow-right"></i></a>` : ''}
+        <a href="/" class="header-brand">
+          <img src="https://i.postimg.cc/d3fS0sHg/pro.webp" alt="المحل العراقي" class="header-logo">
+          <span class="header-title"><span class="g">المحل</span> العراقي</span>
+        </a>
+      </div>
+      <div class="header-left">
+        <button class="header-btn cart-btn" title="السلة" onclick="window.location.href='/checkout.html'">
+          <i class="fas fa-shopping-cart"></i>
+          <span class="cart-count" style="display:none;">0</span>
+        </button>
+        
+        <button class="header-btn theme-toggle" title="تغيير المظهر">
+          <!-- hydrated dynamically by theme.js -->
+        </button>
+        
+        ${isMainPage ? `<button class="header-btn login-btn" title="الحساب"></button>` : ''}
+      </div>
+    </div>
   `;
-  document.body.appendChild(nav);
+  
+  // Inject at the very top of the body
+  document.body.insertBefore(header, document.body.firstChild);
   
   createLogoutConfirmationModal();
   updateLoginButton();

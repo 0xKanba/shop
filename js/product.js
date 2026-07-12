@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   let qty = 1;
 
   try {
-    const res = await fetch(`/json/${productId}.json?v=${new Date().getTime()}`);
+    const res = await fetch(`/data/${productId}.json?v=${new Date().getTime()}`);
     if (!res.ok) throw new Error("Product not found");
     currentProduct = await res.json();
     renderProduct(currentProduct);
@@ -31,6 +31,33 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("prodName").textContent = p.title;
     document.getElementById("prodPrice").textContent = new Intl.NumberFormat("en-US").format(p.price);
     document.getElementById("prodDesc").textContent = p.description || "";
+    
+    // Delivery Badge
+    const prodDelivery = document.getElementById("prodDelivery");
+    if (prodDelivery) {
+      let deliveryText = "0 د.ع توصيل مجاني";
+      if (p.delivery) {
+        deliveryText = p.delivery;
+      } else if (p.shipping) {
+        deliveryText = p.shipping;
+      } else if (p.deliveryPrice) {
+        deliveryText = p.deliveryPrice;
+      } else if (p.shippingPrice) {
+        deliveryText = p.shippingPrice;
+      }
+      prodDelivery.innerHTML = `<i class="fas fa-truck"></i> ${deliveryText}`;
+      
+      const isFree = deliveryText.includes("0") || deliveryText.includes("مجاني") || deliveryText.includes("مجاناً") || deliveryText.includes("مجانا");
+      if (isFree) {
+        prodDelivery.classList.add("free");
+        prodDelivery.classList.remove("paid");
+      } else {
+        prodDelivery.classList.add("paid");
+        prodDelivery.classList.remove("free");
+      }
+      
+      prodDelivery.style.display = "inline-flex";
+    }
     
     // Specs
     const sg = document.getElementById("specsGrid");
@@ -59,9 +86,19 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // Out of stock
-    const actionsBar = document.getElementById("actionsBar");
     if (p.outOfStock) {
-      actionsBar.innerHTML = `<div style="width:100%; text-align:center; padding:12px; color:#ef4444; font-weight:800;">نفدت الكمية</div>`;
+      const btnAddCart = document.getElementById("btnAddCart");
+      if (btnAddCart) {
+        btnAddCart.innerHTML = `<i class="fas fa-times-circle"></i> نفدت الكمية`;
+        btnAddCart.classList.add("out-of-stock-btn");
+        btnAddCart.disabled = true;
+        btnAddCart.style.pointerEvents = "none";
+      }
+      const qtyCtrl = document.querySelector(".qty-ctrl");
+      if (qtyCtrl) {
+        qtyCtrl.style.opacity = "0.5";
+        qtyCtrl.style.pointerEvents = "none";
+      }
     }
 
     document.getElementById("productContainer").style.display = "block";

@@ -17,7 +17,7 @@ const ASSETS_TO_CACHE = [
   '/js/enter.js',
   '/js/navbar.js',
   '/js/auth.js',
-  '/json/products.json'
+  '/data/products.json'
 ];
 
 self.addEventListener('install', (event) => {

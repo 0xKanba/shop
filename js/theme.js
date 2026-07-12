@@ -12,10 +12,16 @@ function initTheme() {
 initTheme();
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Add theme toggle button
-  const btn = document.createElement('button');
-  btn.className = 'theme-toggle';
-  btn.title = 'تغيير المظهر';
+  // Add or find theme toggle button
+  let btn = document.querySelector('.theme-toggle');
+  let appended = false;
+  
+  if (!btn) {
+    btn = document.createElement('button');
+    btn.className = 'theme-toggle';
+    btn.title = 'تغيير المظهر';
+    appended = true;
+  }
   
   const updateIcon = () => {
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
@@ -35,7 +41,9 @@ document.addEventListener('DOMContentLoaded', () => {
     updateIcon();
   });
 
-  document.body.appendChild(btn);
+  if (appended) {
+    document.body.appendChild(btn);
+  }
 });
 
 // Register Service Worker for local image caching and fast loading

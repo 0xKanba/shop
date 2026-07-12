@@ -138,6 +138,19 @@
 }
 .add-btn:hover { background: var(--primary-hover); transform: translateY(-2px); }
 
+.out-of-stock-btn {
+  background: rgba(239, 68, 68, 0.1) !important;
+  color: #ef4444 !important;
+  border: 1px solid rgba(239, 68, 68, 0.2) !important;
+  cursor: not-allowed !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+.out-of-stock-btn:hover {
+  background: rgba(239, 68, 68, 0.15) !important;
+  transform: none !important;
+}
+
 /* Fullscreen Gallery Modal */
 #gallery-modal {
   position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 10000;
@@ -182,3 +195,27 @@
   background: #10b981 !important;
   color: #fff !important;
 }
+
+.delivery-badge {
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid transparent;
+}
+
+.delivery-badge.free {
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.2);
+}
+
+.delivery-badge.paid {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.2);
+}
+
