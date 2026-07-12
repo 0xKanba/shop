@@ -1,6 +1,7 @@
 
 
 
+
 <!-- TREE START -->
 
 # 📂 repo tree
@@ -41,10 +42,9 @@
 ├── package.json
 ├── product.html
 ├── server.js
-├── shop.zip
 ├── sw.js
 └── tree.txt
 
-5 directories, 33 files
+5 directories, 32 files
 ```
 <!-- TREE END -->
