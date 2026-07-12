@@ -47,7 +47,7 @@ input {
 input:focus { outline: none; border-color: var(--primary); background: var(--surface-2); }
 
 button[type=submit] {
-  width: 100%; padding: 12px; background: var(--primary); color: #000;
+  width: 100%; padding: 12px; background: var(--primary); color: #ffffff;
   border: none; border-radius: var(--radius-md); font-family: inherit;
   font-size: 1rem; font-weight: 800; cursor: pointer; transition: 0.3s;
 }

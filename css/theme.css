@@ -3,8 +3,8 @@
 }
 
 :root {
-  --primary: #10b981;
-  --primary-hover: #059669;
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
   
   /* Light theme by default (user requested dynamic) */
   --bg-base: #f1f5f9;
@@ -14,7 +14,10 @@
   --text-main: #0f172a;
   --text-muted: #64748b;
   --border: rgba(0, 0, 0, 0.08);
-  --border-focus: rgba(16, 185, 129, 0.4);
+  --border-focus: rgba(37, 99, 235, 0.4);
+  --bg-glow: rgba(37, 99, 235, 0.08);
+  --out-of-stock-bg: #fff1f2;
+  --out-of-stock-border: #fca5a5;
   --shadow-lg: 0 4px 12px -2px rgba(0, 0, 0, 0.1);
   --nav-bg: rgba(255, 255, 255, 0.85);
   
@@ -26,6 +29,12 @@
 }
 
 [data-theme="dark"] {
+  --primary: #3b82f6;
+  --primary-hover: #60a5fa;
+  --border-focus: rgba(59, 130, 246, 0.4);
+  --bg-glow: rgba(59, 130, 246, 0.08);
+  --out-of-stock-bg: #1e1114;
+  --out-of-stock-border: #9f1239;
   --bg-base: #06090a;
   --surface-0: #0f1416;
   --surface-1: #161c1f;
@@ -39,6 +48,12 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
+    --primary: #3b82f6;
+    --primary-hover: #60a5fa;
+    --border-focus: rgba(59, 130, 246, 0.4);
+    --bg-glow: rgba(59, 130, 246, 0.08);
+    --out-of-stock-bg: #1e1114;
+    --out-of-stock-border: #9f1239;
     --bg-base: #06090a;
     --surface-0: #0f1416;
     --surface-1: #161c1f;
@@ -53,6 +68,8 @@
 
 html {
   font-size: 13px; /* Smaller base size */
+  overflow-x: hidden;
+  width: 100%;
 }
 
 /* Theme Toggle Button */
@@ -86,12 +103,14 @@ body {
   background-color: var(--bg-base);
   color: var(--text-main);
   margin: 0; padding: 0;
+  overflow-x: hidden;
+  width: 100%;
   transition: background-color 0.3s, color 0.3s;
 }
 
 .background-gradient {
   position: fixed; inset: 0; z-index: -1;
-  background: radial-gradient(circle at 50% 0%, rgba(16,185,129,0.08) 0%, transparent 50%), var(--bg-base);
+  background: radial-gradient(circle at 50% 0%, var(--bg-glow) 0%, transparent 50%), var(--bg-base);
 }
 
 /* Navbar */
@@ -234,22 +253,34 @@ body {
    GPU Acceleration & Native App transitions
    ────────────────────────────────────────────── */
 @keyframes appFadeIn {
-  from {
+  0% {
     opacity: 0;
-    transform: translate3d(0, 10px, 0);
   }
-  to {
+  100% {
     opacity: 1;
-    transform: translate3d(0, 0, 0);
   }
 }
 
 body {
-  animation: appFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  will-change: opacity, transform;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Playful "Click Me, I'm Dancing!" Button Animation */
+@keyframes btnDancing {
+  0%, 100% { transform: scale(1) rotate(0); }
+  5% { transform: scale(1.05) rotate(-3deg); }
+  10% { transform: scale(1.05) rotate(3deg); }
+  15% { transform: scale(1.05) rotate(-3deg); }
+  20% { transform: scale(1.05) rotate(3deg); }
+  25% { transform: scale(1.1) translateY(-6px); }
+  30% { transform: scale(1) translateY(0) rotate(0); }
+}
+
+.add-btn:not(.out-of-stock-btn):not(:hover),
+.card-btn:not([disabled]):not(:hover) {
+  animation: btnDancing 3s infinite ease-in-out;
 }
 
 /* Force GPU acceleration (Composite Layering) on key visual & interactive elements */

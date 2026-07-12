@@ -121,7 +121,7 @@
 
 .card-divider {
   width: 100%;
-  border: 1px solid rgba(16, 185, 129, 0.2);
+  border: 1px solid var(--border);
   border-radius: 50px;
   margin: 2px 0;
   transition: border-color 0.3s;
@@ -160,7 +160,7 @@
   align-items: center;
   justify-content: center;
   color: #ffffff !important;
-  box-shadow: 0 4px 10px rgba(16, 185, 129, 0.35);
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.35);
 }
 .card-btn svg {
   width: 26px;
@@ -174,7 +174,7 @@
   background: var(--primary-hover);
   border-color: var(--primary-hover);
   color: #ffffff !important;
-  box-shadow: 0 8px 12px -2px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 8px 12px -2px rgba(37, 99, 235, 0.3);
   transform: translateY(-2px);
 }
 .card-btn:hover:not([disabled]) svg { fill: #ffffff !important; }
@@ -210,4 +210,49 @@
   .container { padding: 70px 12px 30px; }
   .product-title { font-size: 0.95rem; }
   .price { font-size: 1.05rem; }
+}
+
+/* Out of Stock Card Overlay and Coloring */
+.card-out-of-stock {
+  --main-color: var(--out-of-stock-border) !important;
+  --main-focus: var(--out-of-stock-border) !important;
+  background: var(--out-of-stock-bg) !important;
+  border-color: var(--out-of-stock-border) !important;
+  box-shadow: 4px 4px var(--out-of-stock-border) !important;
+}
+.card-out-of-stock:hover {
+  box-shadow: 6px 6px var(--out-of-stock-border) !important;
+  border-color: var(--out-of-stock-border) !important;
+}
+
+.card-img {
+  position: relative !important;
+}
+
+.out-of-stock-badge {
+  position: absolute;
+  inset: 0;
+  background: rgba(244, 63, 94, 0.08); /* Transparent soft rose tint */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+.out-of-stock-text {
+  background: #f43f5e;
+  color: #ffffff !important;
+  font-weight: 900;
+  font-size: 0.85rem;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 4px 8px rgba(244, 63, 94, 0.3);
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
 }

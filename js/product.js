@@ -306,8 +306,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (mainImageWrap) {
     enableSwipe(
       mainImageWrap,
-      () => changeImage(currentImageIndex + 1),
       () => changeImage(currentImageIndex - 1),
+      () => changeImage(currentImageIndex + 1),
       null,
       () => openFullscreen()
     );
@@ -317,8 +317,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (modal) {
     enableSwipe(
       modal,
-      () => changeImage(currentImageIndex + 1),
       () => changeImage(currentImageIndex - 1),
+      () => changeImage(currentImageIndex + 1),
       () => closeModal(),
       (e) => {
         // Only close if we clicked outside the modalImg (e.g. background container modal itself)
@@ -328,6 +328,21 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     );
   }
+
+  // Modal navigation click events
+  document.getElementById("modalPrev")?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    changeImage(currentImageIndex - 1);
+  });
+  document.getElementById("modalNext")?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    changeImage(currentImageIndex + 1);
+  });
+
+  // Mobile scroll hint click event
+  document.getElementById("mobileScrollHint")?.addEventListener("click", () => {
+    document.getElementById("prodDesc")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
 
   // Quantity controls
   const qtyVal = document.getElementById("qtyVal");

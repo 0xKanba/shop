@@ -43,12 +43,13 @@ function renderProducts(products) {
     const btnStyle = isOut ? "background: transparent; color: #ef4444; border: 1px solid rgba(239,68,68,0.3);" : "";
 
     const card = document.createElement("div");
-    card.className = "card";
+    card.className = isOut ? "card card-out-of-stock" : "card";
     card.style.animationDelay = `${idx * 0.05}s`;
     
     card.innerHTML = `
       <div class="card-img" style="${imgStyle}">
         <img class="img" src="${p.image}" alt="${p.title}" loading="lazy">
+        ${isOut ? `<div class="out-of-stock-badge"><span class="out-of-stock-text">نفدت الكمية</span></div>` : ''}
       </div>
       <div class="card-title">${p.title}</div>
       <hr class="card-divider">
@@ -62,7 +63,6 @@ function renderProducts(products) {
     `;
 
     card.addEventListener("click", e => {
-      if (isOut) return;
       if (e.target.closest(".add-to-cart-btn")) return;
       window.location.href = '/product.html?id=' + p.id;
     });
