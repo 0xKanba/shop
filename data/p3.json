@@ -1,0 +1,32 @@
+{
+  "id": "p3",
+  "title": "قاصة رقمية",
+  "price": 25000,
+  "images": [
+    "https://cdn.jsdelivr.net/gh/0xKanba/assets@master/shop/p3/PRODUCT_20260713_112022_880_0.webp",
+    "https://cdn.jsdelivr.net/gh/0xKanba/assets@master/shop/p3/PRODUCT_20260713_112024_038_1.webp",
+    "https://cdn.jsdelivr.net/gh/0xKanba/assets@master/shop/p3/PRODUCT_20260713_112041_336_6.webp",
+    "https://cdn.jsdelivr.net/gh/0xKanba/assets@master/shop/p3/PRODUCT_20260713_112043_963_7.webp",
+    "https://cdn.jsdelivr.net/gh/0xKanba/assets@master/shop/p3/PRODUCT_20260713_112047_601_8.webp",
+    "https://cdn.jsdelivr.net/gh/0xKanba/assets@master/shop/p3/PRODUCT_20260713_112051_083_9.webp",
+    "https://cdn.jsdelivr.net/gh/0xKanba/assets@master/shop/p3/PRODUCT_20260713_112104_095_13.webp",
+    "https://cdn.jsdelivr.net/gh/0xKanba/assets@master/shop/p3/PRODUCT_20260713_112109_393_14.webp",
+    "https://cdn.jsdelivr.net/gh/0xKanba/assets@master/shop/p3/PRODUCT_20260713_112112_153_15.webp",
+    "https://cdn.jsdelivr.net/gh/0xKanba/assets@master/shop/p3/PRODUCT_20260713_112113_796_16.webp",
+    "https://cdn.jsdelivr.net/gh/0xKanba/assets@master/shop/p3/PRODUCT_20260713_112118_616_18.webp"
+  ],
+  "description": "قاصة رقمية باللون الأسود توفر حماية آمنة للنقود والمجوهرات والمقتنيات الثمينة، مع قفل إلكتروني بكود سري قابل للتغيير وإمكانية الفتح بمفتاح الطوارئ عند الحاجة.",
+  "features": {
+    "اللون": "أسود",
+    "القفل": "رقمي بكود سري أو مفتاح طوارئ",
+    "الكود": "قابل للتغيير (3-8 أرقام)",
+    "الأمان": "تنبيه عند إدخال رمز خاطئ وقفل مؤقت",
+    "المؤشرات": "إضاءة LED (أخضر / أحمر / أصفر)",
+    "الخامة": "معدن قوي ومتين",
+    "الطاقة": "4 بطاريات AA",
+    "التثبيت": "براغي تثبيت للجدار أو الأرضية",
+    "الأبعاد": "23 × 17 × 17 سم",
+    "المحتويات": "القاصة، مفتاحان للطوارئ، 4 بطاريات AA، براغي تثبيت، دليل استخدام"
+  },
+  "outOfStock": false
+}
