@@ -1,3 +1,4 @@
 [
-  { "id": "p1", "title": "كاميرا مراقبة ذكية", "price": 15000, "image": "https://cdn.jsdelivr.net/gh/0xKanba/assets@master/shop/p1/942912.webp", "outOfStock": false }
+  { "id": "p1", "title": "كاميرا مراقبة ذكية", "price": 15000, "image": "https://cdn.jsdelivr.net/gh/0xKanba/assets@master/shop/p1/942912.webp", "outOfStock": false },
+  { "id": "p2", "title": "كيبورد بلوتوث صغير قابل للطي", "price": 15000, "image": "https://cdn.jsdelivr.net/gh/0xKanba/assets@master/shop/p2/1921884.webp", "outOfStock": false }  
 ]
