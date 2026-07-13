@@ -1,0 +1,32 @@
+{
+  "id": "p2",
+  "title": "كيبورد بلوتوث صغير قابل للطي",
+  "price": 15000,
+  "images": [
+    "https://cdn.jsdelivr.net/gh/0xKanba/assets@master/shop/p2/1921884.webp",
+    "https://cdn.jsdelivr.net/gh/0xKanba/assets@master/shop/p2/1921921.webp",
+    "https://cdn.jsdelivr.net/gh/0xKanba/assets@master/shop/p2/1921922.webp",
+    "https://cdn.jsdelivr.net/gh/0xKanba/assets@master/shop/p2/1921923.webp",
+    "https://cdn.jsdelivr.net/gh/0xKanba/assets@master/shop/p2/1921924.webp",
+    "https://cdn.jsdelivr.net/gh/0xKanba/assets@master/shop/p2/1921925.webp",
+    "https://cdn.jsdelivr.net/gh/0xKanba/assets@master/shop/p2/1921926.webp",
+    "https://cdn.jsdelivr.net/gh/0xKanba/assets@master/shop/p2/1921927.webp",
+    "https://cdn.jsdelivr.net/gh/0xKanba/assets@master/shop/p2/1921928.webp",
+    "https://cdn.jsdelivr.net/gh/0xKanba/assets@master/shop/p2/1921953.webp",
+    "https://cdn.jsdelivr.net/gh/0xKanba/assets@master/shop/p2/2222908.webp"
+  ],
+  "description": "كيبورد بلوتوث صغير قابل للطي يجمع بين التصميم العملي وسهولة الحمل، مع دعم اللغة العربية والإنجليزية واتصال سريع بالأجهزة المختلفة، ليكون الخيار المثالي للعمل والدراسة والسفر.",
+  "features": {
+    "الاتصال": "Bluetooth 3.0 سريع ومستقر",
+    "التوافق": "iOS، Android، Windows",
+    "اللغات": "عربي / إنجليزي",
+    "التصميم": "قابل للطي، نحيف وخفيف الوزن",
+    "المفاتيح": "Scissor Switch ناعمة وصامتة",
+    "البطارية": "قابلة للشحن عبر Type-C",
+    "توفير الطاقة": "Auto Sleep للإيقاف التلقائي",
+    "الاقتران": "زر Connect سريع",
+    "الاستخدام": "للهواتف، التابلت، اللابتوبات، والتلفزيون الذكي",
+    "الأبعاد": "حوالي 10 × 18 × 2 سم (مطوي)"
+  },
+  "outOfStock": false
+}
