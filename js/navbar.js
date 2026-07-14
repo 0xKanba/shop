@@ -49,7 +49,7 @@ function updateLoginButton() {
   newBtn.onclick = (e) => {
     e.preventDefault();
     if(window.auth && window.auth.isLoggedIn) showLogoutConfirmationModal();
-    else window.location.href = "/enter.html";
+    else window.location.href = "/enter";
   };
 }
 
@@ -364,7 +364,7 @@ function showGuestInfoModal() {
             </span>
           </div>
           
-          <a href="/enter.html" style="
+          <a href="/enter" style="
             background: var(--primary);
             color: #fff;
             text-decoration: none;
@@ -588,7 +588,7 @@ function initAppHeader() {
     return;
   }
   
-  const isMainPage = window.location.pathname === "/" || window.location.pathname.endsWith("/index.html") || window.location.pathname === "";
+  const isMainPage = window.location.pathname === "/" || window.location.pathname.endsWith("/index.html") || window.location.pathname.endsWith("/index") || window.location.pathname === "";
   
   const header = document.createElement("header");
   header.className = "app-header";
@@ -602,7 +602,7 @@ function initAppHeader() {
         </a>
       </div>
       <div class="header-left">
-        <button class="header-btn cart-btn" title="السلة" onclick="window.location.href='/checkout.html'">
+        <button class="header-btn cart-btn" title="السلة" onclick="window.location.href='/checkout'">
           <i class="fas fa-shopping-cart"></i>
           <span class="cart-count" style="display:none;">0</span>
         </button>

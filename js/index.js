@@ -64,7 +64,7 @@ function renderProducts(products) {
 
     card.addEventListener("click", e => {
       if (e.target.closest(".add-to-cart-btn")) return;
-      window.location.href = '/product.html?id=' + p.id;
+      window.location.href = '/product?id=' + p.id;
     });
 
     const btn = card.querySelector(".add-to-cart-btn");

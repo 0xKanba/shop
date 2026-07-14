@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kanba-cache-v12';
+const CACHE_NAME = 'kanba-cache-v13';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
@@ -83,12 +83,28 @@ self.addEventListener('fetch', (event) => {
 
   // Stale-While-Revalidate for local assets (HTML, CSS, JS, etc.) to ensure instant 0ms load times and background caching
   if (ASSETS_TO_CACHE.includes(url.pathname) || url.origin === self.location.origin) {
+    let cacheKey = event.request;
+    if (url.origin === self.location.origin) {
+      if (url.pathname === '/checkout' || url.pathname === '/checkout/') {
+        cacheKey = '/checkout.html';
+      } else if (url.pathname === '/enter' || url.pathname === '/enter/') {
+        cacheKey = '/enter.html';
+      } else if (url.pathname === '/product' || url.pathname === '/product/') {
+        cacheKey = '/product.html';
+      } else if (url.pathname === '/' || url.pathname === '/index' || url.pathname === '/index/') {
+        cacheKey = '/index.html';
+      }
+    }
+
     event.respondWith(
       caches.open(CACHE_NAME).then((cache) => {
-        return cache.match(event.request).then((cachedResponse) => {
+        return cache.match(cacheKey).then((cachedResponse) => {
           const fetchPromise = fetch(event.request).then((networkResponse) => {
             if (networkResponse && networkResponse.status === 200) {
               cache.put(event.request, networkResponse.clone());
+              if (cacheKey !== event.request) {
+                cache.put(cacheKey, networkResponse.clone());
+              }
             }
             return networkResponse;
           }).catch(() => {
