@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kanba-cache-v11';
+const CACHE_NAME = 'kanba-cache-v12';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
@@ -81,20 +81,22 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Network-first fallback to Cache for other assets (ensures fresh code changes bypass cache when online)
+  // Stale-While-Revalidate for local assets (HTML, CSS, JS, etc.) to ensure instant 0ms load times and background caching
   if (ASSETS_TO_CACHE.includes(url.pathname) || url.origin === self.location.origin) {
     event.respondWith(
       caches.open(CACHE_NAME).then((cache) => {
-        return fetch(event.request)
-          .then((networkResponse) => {
+        return cache.match(event.request).then((cachedResponse) => {
+          const fetchPromise = fetch(event.request).then((networkResponse) => {
             if (networkResponse && networkResponse.status === 200) {
               cache.put(event.request, networkResponse.clone());
             }
             return networkResponse;
-          })
-          .catch(() => {
-            return cache.match(event.request);
+          }).catch(() => {
+            // Offline fallback
           });
+          
+          return cachedResponse || fetchPromise;
+        });
       })
     );
     return;

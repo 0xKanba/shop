@@ -2,7 +2,7 @@
   
 # shop 
 
-**[المتجر ✅ انقر هنا 🛒](https://shop.kanba.pw/)**
+**[المتجر ✅ انقر هنا 🛒](/)**
 
 <div align="center">
   <a href="index.html">

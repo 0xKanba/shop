@@ -339,13 +339,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (btnAddCart) {
     btnAddCart.addEventListener("click", async () => {
       const token = localStorage.getItem("userToken");
-      if (!token) {
-        const pendingCartItem = { id: currentProduct.id, name: currentProduct.title, price: currentProduct.price, quantity: qty };
-        localStorage.setItem("pendingCartAdd", JSON.stringify(pendingCartItem));
-        localStorage.setItem("redirectAfterLogin", window.location.href);
-        window.location.href = '/enter.html';
-        return;
-      }
 
       btnAddCart.disabled = true;
       const orig = btnAddCart.innerHTML;
@@ -356,16 +349,18 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (idx >= 0) cart[idx].quantity += qty;
       else cart.push({ id: currentProduct.id, name: currentProduct.title, price: currentProduct.price, quantity: qty });
 
-      try {
-        const res = await fetch("https://login.kanba.pw/cart", {
-          method: "PUT",
-          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${localStorage.getItem("userToken")}` },
-          body: JSON.stringify({ cart })
-        });
-        if (!res.ok) throw new Error();
-        localStorage.setItem("cart", JSON.stringify(cart));
-      } catch (e) {
-        localStorage.setItem("cart", JSON.stringify(cart));
+      localStorage.setItem("cart", JSON.stringify(cart));
+
+      if (token) {
+        try {
+          await fetch("https://login.kanba.pw/cart", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+            body: JSON.stringify({ cart })
+          });
+        } catch (e) {
+          console.warn("Could not sync cart to cloud:", e);
+        }
       }
 
       if (window.updateCartCount) window.updateCartCount();

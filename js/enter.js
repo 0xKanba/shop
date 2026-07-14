@@ -69,6 +69,7 @@ async function doLogin(username, password, btn) {
     localStorage.setItem('userToken',  data.token);
     localStorage.setItem('userId',     data.userId);
     localStorage.setItem('username',   username);
+    localStorage.setItem('justLoggedIn', 'true');
 
     await handlePendingCart(data.token);
   } catch (e) {
@@ -93,6 +94,7 @@ async function doRegister(username, password, btn) {
     localStorage.setItem('userToken',  data.token);
     localStorage.setItem('userId',     data.userId);
     localStorage.setItem('username',   username);
+    localStorage.setItem('justLoggedIn', 'true');
 
     await handlePendingCart(data.token);
   } catch (e) {

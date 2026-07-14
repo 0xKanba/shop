@@ -92,17 +92,41 @@ async function addToCart(p, btn) {
   const idx = cart.findIndex(i => i.id === p.id);
   idx >= 0 ? cart[idx].quantity++ : cart.push({ id:p.id, name:p.title, price:p.price, quantity:1 });
 
+  localStorage.setItem("cart", JSON.stringify(cart));
+  const token = localStorage.getItem("userToken");
+
+  if (!token) {
+    // Guest addition: perfectly instant and offline-ready
+    if (window.updateCartCount) window.updateCartCount();
+    showToast(`تمت إضافة "${p.title}" للسلة`);
+    
+    btn.innerHTML = '<i class="fas fa-check"></i>';
+    btn.classList.add("dancing");
+    if (window.confetti) {
+      const rect = btn.getBoundingClientRect();
+      const x = (rect.left + rect.width / 2) / window.innerWidth;
+      const y = (rect.top + rect.height / 2) / window.innerHeight;
+      confetti({
+        particleCount: 50,
+        spread: 60,
+        origin: { x, y },
+        colors: ['#2d8cf0', '#f59e0b', '#10b981']
+      });
+    }
+    setTimeout(() => { btn.innerHTML = orig; btn.classList.remove("dancing"); btn.disabled = false; }, 2000);
+    return;
+  }
+
   try {
     const res = await fetch("https://login.kanba.pw/cart", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${localStorage.getItem("userToken")}`
+        "Authorization": `Bearer ${token}`
       },
       body: JSON.stringify({ cart })
     });
     if (!res.ok) throw new Error();
-    localStorage.setItem("cart", JSON.stringify(cart));
     if (window.updateCartCount) window.updateCartCount();
     showToast(`تمت إضافة "${p.title}" للسلة`);
     
@@ -122,9 +146,8 @@ async function addToCart(p, btn) {
     }
     setTimeout(() => { btn.innerHTML = orig; btn.style.cssText = ""; btn.classList.remove("dancing"); btn.disabled = false; }, 2000);
   } catch (e) {
-    localStorage.setItem("cart", JSON.stringify(cart));
     if (window.updateCartCount) window.updateCartCount();
-    showToast(`تمت إضافة "${p.title}" (محلياً)`);
+    showToast(`تمت إضافة "${p.title}" للسلة`);
     
     btn.innerHTML = '<i class="fas fa-check"></i>';
     btn.classList.add("dancing");

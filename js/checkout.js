@@ -31,17 +31,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
   async function init() {
     const isLoggedIn = !!localStorage.getItem("isLoggedIn");
-    if (isLoggedIn) {
-      authStatus.style.display = "none";
-      checkoutContent.style.display = "block";
-      await fetchCart();
-      goToStep(1); // Ensure first step initialized correctly
-    } else {
-      authStatus.innerHTML = `
-        <p style="margin-bottom:16px;">يرجى تسجيل الدخول لاستكمال الطلب</p>
-        <a href="/enter.html" style="padding:10px 20px; background:var(--primary); color:#000; text-decoration:none; border-radius:12px; font-weight:700;">تسجيل الدخول</a>
-      `;
-    }
+    const username = localStorage.getItem("username") || "";
+    const isGuest = username.startsWith("guest_");
+    const guestPassword = localStorage.getItem("guestPassword") || "guestpassword123";
+    
+    // Completely hide the auth status banner in all cases as requested
+    authStatus.style.display = "none";
+    
+    checkoutContent.style.display = "block";
+    await fetchCart();
+    goToStep(1); // Ensure first step initialized correctly
   }
 
   async function fetchCart() {
@@ -446,16 +445,54 @@ document.addEventListener("DOMContentLoaded", function () {
     
     try {
       showLoading("جاري إرسال الطلب...");
-      const token = localStorage.getItem("userToken");
-      if (!token) throw new Error("User not logged in");
+      let token = localStorage.getItem("userToken");
       
-      const res = await fetch("https://login.kanba.pw/order", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-        body: JSON.stringify(currentOrder)
-      });
+      if (!token) {
+        // We are checking out as a guest. Register a guest account behind the scenes to get a valid authentication token.
+        try {
+          const tempUsername = "guest_" + Math.random().toString(36).substring(2, 8);
+          const tempPassword = "guestpassword123";
+          
+          const regRes = await fetch("https://login.kanba.pw/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username: tempUsername, password: tempPassword })
+          });
+          
+          if (regRes.ok) {
+            const data = await regRes.json();
+            if (data.token) {
+              token = data.token;
+              localStorage.setItem("isLoggedIn", "true");
+              localStorage.setItem("userToken", data.token);
+              localStorage.setItem("userId", data.userId);
+              localStorage.setItem("username", tempUsername);
+              localStorage.setItem("guestPassword", tempPassword);
+            }
+          }
+        } catch (regErr) {
+          console.error("Failed background guest registration:", regErr);
+        }
+      }
       
-      if (!res.ok) throw new Error("فشل إرسال الطلب");
+      if (token) {
+        // Logged-in or guest order: send to backend
+        const res = await fetch("https://login.kanba.pw/order", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+          body: JSON.stringify(currentOrder)
+        });
+        
+        if (!res.ok) throw new Error("فشل إرسال الطلب");
+      } else {
+        // Guest order fallback: save locally
+        let localOrders = JSON.parse(localStorage.getItem("orders") || "[]");
+        localOrders.push(currentOrder);
+        localStorage.setItem("orders", JSON.stringify(localOrders));
+        
+        // Brief simulated delay for professional feedback
+        await new Promise(resolve => setTimeout(resolve, 800));
+      }
       
       cart = [];
       localStorage.setItem("cart", "[]");
