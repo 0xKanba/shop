@@ -1,4 +1,5 @@
-const CACHE_NAME = 'kanba-cache-202608071129-f7a9226';
+const CACHE_APP = 'kanba-cache-v4';
+const CACHE_NAME = CACHE_APP;
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
@@ -18,16 +19,13 @@ const ASSETS_TO_CACHE = [
   '/js/enter.js',
   '/js/navbar.js',
   '/js/auth.js',
-  '/data/products.json',
-  'https://cdn.jsdelivr.net/gh/0xKanba/assets@master/shop/pro.webp'
+  '/data/products.json'
 ];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS_TO_CACHE).catch(err => {
-        console.warn('Initial caching skipped some files:', err);
-      });
+      return cache.addAll(ASSETS_TO_CACHE).catch(() => {});
     })
   );
   self.skipWaiting();
@@ -35,12 +33,10 @@ self.addEventListener('install', (event) => {
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
+    caches.keys().then((keys) => {
       return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            return caches.delete(cacheName);
-          }
+        keys.map((key) => {
+          if (key !== CACHE_NAME) return caches.delete(key);
         })
       );
     })
@@ -49,62 +45,49 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  const url = new URL(event.request.url);
-
-  // Ignore non-GET requests
   if (event.request.method !== 'GET') return;
 
-  // Handle images with Cache First + Background Revalidate
-  if (
-    event.request.destination === 'image' || 
-    url.pathname.match(/\.(png|jpg|jpeg|gif|svg|webp|ico)$/i) ||
-    url.pathname.includes('/images/')
-  ) {
-    event.respondWith(
-      caches.open(CACHE_NAME).then((cache) => {
-        return cache.match(event.request).then((cachedResponse) => {
-          const fetchPromise = fetch(event.request).then((networkResponse) => {
-            if (networkResponse && networkResponse.status === 200 && !networkResponse.redirected) {
-              cache.put(event.request, networkResponse.clone()).catch(() => {});
-            }
-            return networkResponse;
-          }).catch(() => {});
+  const url = new URL(event.request.url);
 
-          return cachedResponse || fetchPromise;
-        });
-      })
-    );
-    return;
-  }
-
-  // Handle navigation & page requests (HTML)
-  if (event.request.mode === 'navigate' || url.origin === self.location.origin) {
+  // For navigation (HTML page requests)
+  if (event.request.mode === 'navigate') {
     event.respondWith(
       fetch(event.request)
-        .then((networkResponse) => {
-          if (networkResponse && networkResponse.status === 200 && !networkResponse.redirected) {
-            const responseToCache = networkResponse.clone();
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(event.request, responseToCache).catch(() => {});
-            }).catch(() => {});
+        .then((response) => {
+          if (response && response.status === 200) {
+            const copy = response.clone();
+            caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
           }
-          return networkResponse;
+          return response;
         })
         .catch(() => {
-          // If offline or network error, serve from cache
-          let cacheKey = event.request;
-          const cleanPath = url.pathname.replace(/\/+$|\.html$/g, '') || '/';
-          if (cleanPath === '/checkout') cacheKey = '/checkout.html';
-          else if (cleanPath === '/enter') cacheKey = '/enter.html';
-          else if (cleanPath === '/product') cacheKey = '/product.html';
-          else if (cleanPath === '/md') cacheKey = '/md.html';
-          else if (cleanPath === '/' || cleanPath === '/index') cacheKey = '/index.html';
-
-          return caches.match(cacheKey).then(res => res || caches.match('/index.html'));
+          return caches.match(event.request).then(cached => {
+            if (cached) return cached;
+            const cleanPath = url.pathname.replace(/\/+$|\.html$/g, '') || '/';
+            if (cleanPath === '/checkout') return caches.match('/checkout.html');
+            if (cleanPath === '/enter') return caches.match('/enter.html');
+            if (cleanPath === '/product') return caches.match('/product.html');
+            if (cleanPath === '/md') return caches.match('/md.html');
+            return caches.match('/index.html');
+          });
         })
     );
     return;
   }
+
+  // For static assets (JS, CSS, images, JSON)
+  event.respondWith(
+    caches.match(event.request).then((cachedResponse) => {
+      if (cachedResponse) {
+        // Return cached asset immediately, revalidate in background
+        fetch(event.request).then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            caches.open(CACHE_NAME).then(cache => cache.put(event.request, networkResponse));
+          }
+        }).catch(() => {});
+        return cachedResponse;
+      }
+      return fetch(event.request);
+    })
+  );
 });
-
-

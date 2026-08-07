@@ -157,31 +157,36 @@ function updateGuestButton() {
           transform: translateY(0);
         }
         .guest-full-modal-header {
-          padding: 24px;
+          padding: 28px 20px 22px;
           text-align: center;
           color: #ffffff;
           position: relative;
         }
         .guest-full-modal-close {
           position: absolute;
-          top: 16px;
-          right: 16px;
-          background: rgba(255, 255, 255, 0.15);
-          border: none;
-          color: white;
-          width: 28px;
-          height: 28px;
+          top: 14px;
+          left: 14px;
+          z-index: 100;
+          background: rgba(255, 255, 255, 0.2);
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          color: #ffffff;
+          width: 36px;
+          height: 36px;
           border-radius: 50%;
           display: flex;
           align-items: center;
           justify-content: center;
           cursor: pointer;
-          transition: all 0.2s;
-          font-size: 0.9rem;
+          transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+          font-size: 1rem;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
         .guest-full-modal-close:hover {
-          background: rgba(255, 255, 255, 0.3);
-          transform: rotate(90deg);
+          background: rgba(255, 255, 255, 0.35);
+          transform: scale(1.1) rotate(90deg);
+        }
+        .guest-full-modal-close:active {
+          transform: scale(0.92);
         }
         .guest-full-modal-body {
           padding: 24px;
@@ -459,6 +464,11 @@ function showGuestInfoModal() {
   
   const closeModalFunc = () => {
     modal.classList.remove("active");
+    setTimeout(() => {
+      if (modal && modal.parentNode) {
+        modal.parentNode.removeChild(modal);
+      }
+    }, 300);
   };
   
   const toastFallback = (msg) => {
@@ -495,8 +505,14 @@ function showGuestInfoModal() {
     }, 2500);
   };
   
-  const closeBtn = document.getElementById("closeGuestModalBtn");
-  if (closeBtn) closeBtn.onclick = closeModalFunc;
+  const closeBtn = modal.querySelector("#closeGuestModalBtn");
+  if (closeBtn) {
+    closeBtn.onclick = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      closeModalFunc();
+    };
+  }
   modal.onclick = (e) => {
     if (e.target === modal || e.target.closest("#closeGuestModalBtn")) {
       closeModalFunc();
