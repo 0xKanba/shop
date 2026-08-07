@@ -29,16 +29,13 @@
 │   ├── files.json
 │   └── us.md
 ├── .gitattributes
-├── bun.lock
+├── _redirects
 ├── checkout.html
 ├── enter.html
 ├── index.html
 ├── manifest.json
 ├── md.html
-├── metadata.json
-├── package.json
 ├── product.html
-├── server.js
 └── sw.js
 ```
 <!-- TREE END -->
