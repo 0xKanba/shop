@@ -66,20 +66,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
     }
 
-    // Out of stock
+    // Out of stock check - do not allow opening out of stock product page
     if (p.outOfStock) {
-      const btnAddCart = document.getElementById("btnAddCart");
-      if (btnAddCart) {
-        btnAddCart.innerHTML = `<i class="fas fa-times-circle"></i> نفدت الكمية`;
-        btnAddCart.classList.add("out-of-stock-btn");
-        btnAddCart.disabled = true;
-        btnAddCart.style.pointerEvents = "none";
-      }
-      const qtyCtrl = document.querySelector(".qty-ctrl");
-      if (qtyCtrl) {
-        qtyCtrl.style.opacity = "0.5";
-        qtyCtrl.style.pointerEvents = "none";
-      }
+      window.location.replace('/');
+      return;
     }
 
     document.getElementById("productContainer").style.display = "block";

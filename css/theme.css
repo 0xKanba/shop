@@ -487,4 +487,20 @@ body > .theme-toggle,
   margin-top: 20px !important;
 }
 
+/* Red shake animation for out-of-stock items */
+@keyframes shakeRed {
+  0% { transform: translateX(0) scale(1); }
+  15% { transform: translateX(-10px) scale(0.98); border-color: #ef4444 !important; box-shadow: 0 0 18px rgba(239, 68, 68, 0.6) !important; }
+  30% { transform: translateX(10px) scale(0.98); border-color: #ef4444 !important; box-shadow: 0 0 18px rgba(239, 68, 68, 0.6) !important; }
+  45% { transform: translateX(-8px); border-color: #ef4444 !important; box-shadow: 0 0 18px rgba(239, 68, 68, 0.6) !important; }
+  60% { transform: translateX(8px); border-color: #ef4444 !important; box-shadow: 0 0 18px rgba(239, 68, 68, 0.6) !important; }
+  75% { transform: translateX(-4px); border-color: #ef4444 !important; }
+  100% { transform: translateX(0) scale(1); }
+}
+
+.shake-out-of-stock {
+  animation: shakeRed 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) !important;
+  border-color: #ef4444 !important;
+}
+
 

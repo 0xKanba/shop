@@ -1,10 +1,11 @@
-const CACHE_NAME = 'kanba-cache-v13';
+const CACHE_NAME = 'kanba-cache-v16';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
   '/product.html',
   '/checkout.html',
   '/enter.html',
+  '/md.html',
   '/css/theme.css',
   '/css/index.css',
   '/css/product.css',
@@ -85,13 +86,16 @@ self.addEventListener('fetch', (event) => {
   if (ASSETS_TO_CACHE.includes(url.pathname) || url.origin === self.location.origin) {
     let cacheKey = event.request;
     if (url.origin === self.location.origin) {
-      if (url.pathname === '/checkout' || url.pathname === '/checkout/') {
+      const cleanPath = url.pathname.replace(/\/+$|\.html$/g, '') || '/';
+      if (cleanPath === '/checkout') {
         cacheKey = '/checkout.html';
-      } else if (url.pathname === '/enter' || url.pathname === '/enter/') {
+      } else if (cleanPath === '/enter') {
         cacheKey = '/enter.html';
-      } else if (url.pathname === '/product' || url.pathname === '/product/') {
+      } else if (cleanPath === '/product') {
         cacheKey = '/product.html';
-      } else if (url.pathname === '/' || url.pathname === '/index' || url.pathname === '/index/') {
+      } else if (cleanPath === '/md') {
+        cacheKey = '/md.html';
+      } else if (cleanPath === '/' || cleanPath === '/index') {
         cacheKey = '/index.html';
       }
     }
@@ -120,3 +124,4 @@ self.addEventListener('fetch', (event) => {
 
   event.respondWith(fetch(event.request));
 });
+

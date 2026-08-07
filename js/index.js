@@ -62,7 +62,23 @@ function renderProducts(products) {
       </div>
     `;
 
+    const triggerShake = () => {
+      card.classList.remove("shake-out-of-stock");
+      void card.offsetWidth; // trigger reflow
+      card.classList.add("shake-out-of-stock");
+      showToast(`عذراً، هذا المنتج (${p.title}) نفذت كميته من المخزون!`, "error");
+      setTimeout(() => {
+        card.classList.remove("shake-out-of-stock");
+      }, 600);
+    };
+
     card.addEventListener("click", e => {
+      if (isOut) {
+        e.preventDefault();
+        e.stopPropagation();
+        triggerShake();
+        return;
+      }
       if (e.target.closest(".add-to-cart-btn")) return;
       window.location.href = '/product?id=' + p.id;
     });
@@ -71,7 +87,10 @@ function renderProducts(products) {
     if (btn) {
       btn.addEventListener("click", e => {
         e.stopPropagation();
-        if (isOut) return;
+        if (isOut) {
+          triggerShake();
+          return;
+        }
         addToCart(p, btn);
       });
     }

@@ -1,6 +1,0 @@
-{
-  "name": "المحل العراقي",
-  "description": "أفضل وجهة للتسوق الإلكتروني في العراق، نوفر لك منتجات عالية الجودة بأسعار تنافسية مع خدمة توصيل سريعة.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}
