@@ -28,7 +28,6 @@
 ├── md
 │   ├── files.json
 │   └── us.md
-├── .env.example
 ├── .gitattributes
 ├── _redirects
 ├── checkout.html
