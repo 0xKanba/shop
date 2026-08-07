@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kanba-cache-v16';
+const CACHE_NAME = 'kanba-cache-202608071111-ab91d32';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
