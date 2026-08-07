@@ -1,4 +1,4 @@
-const CACHE_APP = 'kanba-cache-v4';
+const CACHE_APP = 'hltrade-app-202608071146-bcb96ef';
 const CACHE_NAME = CACHE_APP;
 const ASSETS_TO_CACHE = [
   '/',
