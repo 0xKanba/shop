@@ -41,6 +41,7 @@ document.addEventListener("DOMContentLoaded", function () {
     checkoutContent.style.display = "block";
     await fetchCart();
     goToStep(1); // Ensure first step initialized correctly
+    document.body.classList.add("loaded");
   }
 
   async function fetchCart() {

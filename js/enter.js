@@ -156,3 +156,8 @@ async function handlePendingCart(token) {
   localStorage.removeItem('redirectAfterLogin');
   location.replace(redirectUrl);
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  document.body.classList.add("loaded");
+});
+
