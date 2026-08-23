@@ -1,7 +1,7 @@
 // Service Worker for Fast Local Caching & Automatic Updates
-const CACHE_APP = 'hltrade-app-202608231738-992476c';
-const CACHE_IMGS = 'hltrade-img-202608231738-992476c';
-const CACHE_FONTS = 'hltrade-fnt-202608231738-992476c';
+const CACHE_APP = 'hltrade-app-v1';
+const CACHE_IMGS = 'hltrade-img-v1';
+const CACHE_FONTS = 'hltrade-fnt-v1';
 
 const CURRENT_CACHES = [CACHE_APP, CACHE_IMGS, CACHE_FONTS];
 

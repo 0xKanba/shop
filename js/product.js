@@ -106,12 +106,19 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     }
 
-    // Images
+    // Images Preloading & Gallery
     const mainImg = document.getElementById("mainImage");
     const tr = document.getElementById("thumbsRow");
     if (tr) tr.innerHTML = "";
 
     if (p.images && p.images.length > 0) {
+      // 1. Instant RAM & Browser Preloading of all gallery images
+      p.images.forEach((imgUrl) => {
+        const preloader = new Image();
+        preloader.decoding = "async";
+        preloader.src = imgUrl;
+      });
+
       if (mainImg) {
         mainImg.src = p.images[0];
         mainImg.onload = () => {
@@ -127,10 +134,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       p.images.forEach((img, idx) => {
         const d = document.createElement("div");
         d.className = `thumb-card ${idx === 0 ? 'active' : ''}`;
-        d.innerHTML = `<img src="${img}" alt="صورة مصغرة" loading="lazy" decoding="async">`;
-        d.onclick = () => {
+        d.innerHTML = `<img src="${img}" alt="صورة مصغرة" loading="eager" decoding="async">`;
+        d.addEventListener("click", (e) => {
+          e.stopPropagation();
           changeImage(idx);
-        };
+        });
         if (tr) tr.appendChild(d);
       });
     }
@@ -160,12 +168,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (mainImg) {
       mainImg.src = targetImgUrl;
       mainImg.classList.remove("image-pop-anim");
+      // Snappy microtask animation without layout recalculations
       requestAnimationFrame(() => {
         mainImg.classList.add("image-pop-anim");
       });
     }
     
-    if (modalImg) {
+    if (modalImg && modal && modal.classList.contains("active")) {
       modalImg.src = targetImgUrl;
       modalImg.classList.remove("image-pop-anim");
       requestAnimationFrame(() => {
@@ -174,181 +183,132 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
     
     // Update active thumbnail
-    document.querySelectorAll('.thumb-card').forEach((c, idx) => {
-      if (idx === currentImageIndex) c.classList.add('active');
-      else c.classList.remove('active');
+    const thumbs = document.querySelectorAll('.thumb-card');
+    thumbs.forEach((c, idx) => {
+      if (idx === currentImageIndex) {
+        c.classList.add('active');
+        // Scroll thumbnail into view smoothly if overflowed
+        c.scrollIntoView({ behavior: 'smooth', inline: 'nearest', block: 'nearest' });
+      } else {
+        c.classList.remove('active');
+      }
     });
   }
 
   function openFullscreen() {
     if (currentProduct && currentProduct.images) {
-      const currentSrc = document.getElementById("mainImage").src;
+      const currentSrc = document.getElementById("mainImage")?.src || "";
       currentImageIndex = currentProduct.images.findIndex(img => currentSrc.includes(img));
       if (currentImageIndex === -1) currentImageIndex = 0;
-      changeImage(currentImageIndex);
+      if (modalImg) modalImg.src = currentProduct.images[currentImageIndex];
       modal.style.display = "flex";
       lastModalOpenTime = Date.now();
-      setTimeout(() => modal.classList.add("active"), 10);
+      requestAnimationFrame(() => {
+        modal.classList.add("active");
+      });
     }
   }
 
   const closeModal = () => {
-    // Only allow closing if at least 400ms passed since opening, to prevent ghost clicks
-    if (Date.now() - lastModalOpenTime < 400) {
-      return;
-    }
+    if (Date.now() - lastModalOpenTime < 250) return;
     modal.classList.remove("active");
     setTimeout(() => {
       modal.style.display = "none";
-      // Ensure state is synced to the main image
-      changeImage(currentImageIndex);
-    }, 300);
+    }, 200);
   };
 
-  document.getElementById("modalClose").onclick = closeModal;
+  document.getElementById("modalClose")?.addEventListener("click", closeModal);
   
-  // Clicking the modal image itself can also close or stay
-  modalImg.onclick = (e) => {
+  modalImg?.addEventListener("click", (e) => {
     e.stopPropagation();
-  };
+  });
   
-  // Close modal when clicking outside the image
-  modal.onclick = (e) => {
+  modal?.addEventListener("click", (e) => {
     if (e.target === modal) {
       closeModal();
     }
-  };
+  });
 
-  // Google Photos style smooth touch/mouse drag & swipe implementation
+  // High-Performance Touch & Swipe Gesture Controller (Zero Lag)
   function enableSwipe(elem, onSwipeLeft, onSwipeRight, onSwipeUpOrDown, onTap) {
     let startX = 0;
     let startY = 0;
     let currentX = 0;
     let currentY = 0;
-    let isDragging = false;
-    let hasMoved = false;
-    
-    const img = elem.querySelector("img") || elem;
+    let isTouching = false;
+    let isSwiping = false;
 
-    function getEventXY(e) {
-      if (e.touches && e.touches.length > 0) {
-        return { x: e.touches[0].clientX, y: e.touches[0].clientY };
-      }
-      return { x: e.clientX, y: e.clientY };
-    }
-
-    function onStart(e) {
+    function onTouchStart(e) {
       if (e.target.closest('button')) return;
-      
-      const coords = getEventXY(e);
-      startX = coords.x;
-      startY = coords.y;
-      currentX = coords.x;
-      currentY = coords.y;
-      isDragging = true;
-      hasMoved = false;
-      
-      if (img) {
-        img.style.transition = 'none';
-      }
+      const touch = e.touches ? e.touches[0] : e;
+      startX = touch.clientX;
+      startY = touch.clientY;
+      currentX = touch.clientX;
+      currentY = touch.clientY;
+      isTouching = true;
+      isSwiping = false;
     }
 
-    function onMove(e) {
-      if (!isDragging) return;
-      const coords = getEventXY(e);
-      currentX = coords.x;
-      currentY = coords.y;
+    function onTouchMove(e) {
+      if (!isTouching) return;
+      const touch = e.touches ? e.touches[0] : e;
+      currentX = touch.clientX;
+      currentY = touch.clientY;
 
       const diffX = currentX - startX;
       const diffY = currentY - startY;
 
-      if (Math.abs(diffX) > 8 || Math.abs(diffY) > 8) {
-        hasMoved = true;
-        if (e.cancelable) {
+      if (Math.abs(diffX) > 10 || Math.abs(diffY) > 10) {
+        isSwiping = true;
+        // If horizontal swipe is dominant, prevent vertical pull
+        if (Math.abs(diffX) > Math.abs(diffY) && e.cancelable) {
           e.preventDefault();
         }
-      } else {
-        return;
-      }
-
-      if (img) {
-        if (!onSwipeUpOrDown && Math.abs(diffY) > Math.abs(diffX) + 15) {
-          // If no vertical action is enabled and dragging vertically, cancel horizontal transition and allow default page scrolling
-          img.style.transform = '';
-          isDragging = false;
-          return;
-        }
-        
-        // Translate image dynamically
-        if (onSwipeUpOrDown) {
-          img.style.transform = `translate(${diffX}px, ${diffY}px) scale(0.98)`;
-        } else {
-          img.style.transform = `translateX(${diffX}px) scale(0.98)`;
-        }
       }
     }
 
-    function onEnd(e) {
-      if (!isDragging) return;
-      isDragging = false;
+    function onTouchEnd() {
+      if (!isTouching) return;
+      isTouching = false;
 
       const diffX = currentX - startX;
       const diffY = currentY - startY;
-      const thresholdX = 40;
-      const thresholdY = 50;
+      const threshold = 35;
 
-      if (img) {
-        img.style.transition = 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
-        img.style.transform = '';
-      }
-
-      // If they didn't drag/move, trigger a tap
-      if (!hasMoved || (Math.abs(diffX) < 10 && Math.abs(diffY) < 10)) {
-        if (onTap) {
-          onTap(e);
-        }
+      if (!isSwiping || (Math.abs(diffX) < 10 && Math.abs(diffY) < 10)) {
+        if (onTap) onTap();
         return;
       }
 
       if (Math.abs(diffX) > Math.abs(diffY)) {
-        if (Math.abs(diffX) > thresholdX) {
+        if (Math.abs(diffX) > threshold) {
           if (diffX < 0) {
+            // Swiped Left -> Next Image
             if (onSwipeLeft) onSwipeLeft();
           } else {
+            // Swiped Right -> Previous Image
             if (onSwipeRight) onSwipeRight();
           }
         }
       } else {
-        if (Math.abs(diffY) > thresholdY) {
-          if (onSwipeUpOrDown) onSwipeUpOrDown();
+        if (Math.abs(diffY) > threshold && onSwipeUpOrDown) {
+          onSwipeUpOrDown();
         }
       }
     }
 
-    elem.addEventListener("touchstart", onStart, { passive: true });
-    elem.addEventListener("touchmove", onMove, { passive: false });
-    elem.addEventListener("touchend", onEnd);
-
-    elem.addEventListener("mousedown", onStart);
-    
-    const onGlobalMove = (e) => {
-      if (isDragging) onMove(e);
-    };
-    const onGlobalEnd = (e) => {
-      if (isDragging) onEnd(e);
-    };
-
-    window.addEventListener("mousemove", onGlobalMove);
-    window.addEventListener("mouseup", onGlobalEnd);
+    elem.addEventListener("touchstart", onTouchStart, { passive: true });
+    elem.addEventListener("touchmove", onTouchMove, { passive: false });
+    elem.addEventListener("touchend", onTouchEnd, { passive: true });
   }
 
-  // Enable swiping on the main product card/image
+  // Enable swiping on the main product image (Left -> Next, Right -> Prev)
   const mainImageWrap = document.getElementById("mainImageWrap");
   if (mainImageWrap) {
     enableSwipe(
       mainImageWrap,
-      () => changeImage(currentImageIndex - 1),
-      () => changeImage(currentImageIndex + 1),
+      () => changeImage(currentImageIndex + 1), // Swipe left -> Next image
+      () => changeImage(currentImageIndex - 1), // Swipe right -> Previous image
       null,
       () => openFullscreen()
     );
@@ -358,15 +318,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (modal) {
     enableSwipe(
       modal,
-      () => changeImage(currentImageIndex - 1),
-      () => changeImage(currentImageIndex + 1),
+      () => changeImage(currentImageIndex + 1), // Swipe left -> Next image
+      () => changeImage(currentImageIndex - 1), // Swipe right -> Previous image
       () => closeModal(),
-      (e) => {
-        // Only close if we clicked outside the modalImg (e.g. background container modal itself)
-        if (e && (e.target === modal || e.target.id === "gallery-modal" || e.target.classList.contains("modal-close") || e.target.closest("#modalClose"))) {
-          closeModal();
-        }
-      }
+      () => closeModal()
     );
   }
 

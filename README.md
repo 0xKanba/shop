@@ -29,6 +29,7 @@
 │   ├── files.json
 │   └── us.md
 ├── .gitattributes
+├── _redirects
 ├── checkout.html
 ├── enter.html
 ├── index.html
