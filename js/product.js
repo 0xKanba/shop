@@ -102,6 +102,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       void modalImg.offsetWidth; // trigger reflow
       modalImg.classList.add("image-pop-anim");
     }
+
+    const stickyProdImg = document.getElementById("stickyProdImg");
+    if (stickyProdImg) {
+      stickyProdImg.src = targetImgUrl;
+    }
     
     // Update active thumbnail
     document.querySelectorAll('.thumb-card').forEach((c, idx) => {
@@ -315,61 +320,70 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("prodDesc")?.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 
-  // Quantity controls
-  const qtyVal = document.getElementById("qtyVal");
-  document.getElementById("btnMinus")?.addEventListener("click", () => {
-    if (qty > 1) { qty--; qtyVal.textContent = qty; }
-  });
-  document.getElementById("btnPlus")?.addEventListener("click", () => {
-    qty++; qtyVal.textContent = qty;
-  });
+  // Quantity controls & synchronization
+  const stickyQtyVal = document.getElementById("stickyQtyVal");
 
-  // Add to cart
-  const btnAddCart = document.getElementById("btnAddCart");
-  if (btnAddCart) {
-    btnAddCart.addEventListener("click", () => {
-      const orig = btnAddCart.innerHTML;
+  function setQuantity(newQty) {
+    if (newQty < 1) newQty = 1;
+    qty = newQty;
+    if (stickyQtyVal) stickyQtyVal.textContent = qty;
+  }
 
-      let cart = JSON.parse(localStorage.getItem("cart") || "[]");
-      const idx = cart.findIndex(i => i.id === currentProduct.id);
-      if (idx >= 0) cart[idx].quantity += qty;
-      else cart.push({ id: currentProduct.id, name: currentProduct.title, price: currentProduct.price, quantity: qty });
+  document.getElementById("stickyBtnMinus")?.addEventListener("click", () => setQuantity(qty - 1));
+  document.getElementById("stickyBtnPlus")?.addEventListener("click", () => setQuantity(qty + 1));
 
-      localStorage.setItem("cart", JSON.stringify(cart));
+  // Add to cart handler
+  function handleAddToCart() {
+    if (!currentProduct) return;
 
-      if (window.updateCartCount) window.updateCartCount();
-      showToast(`تمت إضافة ${qty} × ${currentProduct.title}`);
-      
-      btnAddCart.innerHTML = '<i class="fas fa-check"></i> تمت الإضافة';
-      btnAddCart.classList.add('success-anim');
-      
-      if (window.confetti) {
-        try {
-          confetti({
-            particleCount: 80,
-            spread: 70,
-            origin: { y: 0.6 },
-            colors: ['#10b981', '#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b']
-          });
-        } catch (e) {}
+    let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+    const idx = cart.findIndex(i => i.id === currentProduct.id);
+    if (idx >= 0) cart[idx].quantity += qty;
+    else cart.push({ id: currentProduct.id, name: currentProduct.title, price: currentProduct.price, quantity: qty });
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+
+    if (window.updateCartCount) window.updateCartCount();
+    showToast(`تمت إضافة ${qty} × ${currentProduct.title}`);
+    
+    const stickyBtnAddCart = document.getElementById("stickyBtnAddCart");
+    if (stickyBtnAddCart) {
+      stickyBtnAddCart.innerHTML = '<i class="fas fa-check"></i> <span>تمت الإضافة</span>';
+      stickyBtnAddCart.classList.add('success-anim');
+    }
+    
+    if (window.confetti) {
+      try {
+        confetti({
+          particleCount: 75,
+          spread: 65,
+          origin: { y: 0.8 },
+          colors: ['#10b981', '#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b']
+        });
+      } catch (e) {}
+    }
+    
+    setTimeout(() => { 
+      if (stickyBtnAddCart) {
+        stickyBtnAddCart.innerHTML = '<i class="fas fa-cart-arrow-down sticky-cart-icon"></i> <span>أضف للسلة</span>';
+        stickyBtnAddCart.classList.remove('success-anim');
       }
-      
-      setTimeout(() => { 
-        btnAddCart.innerHTML = orig; 
-        btnAddCart.classList.remove('success-anim');
-        qty = 1; 
-        qtyVal.textContent = 1; 
-      }, 1500);
+      setQuantity(1);
+    }, 1400);
 
-      // Non-blocking background sync
-      const token = localStorage.getItem("userToken");
-      if (token) {
-        fetch("https://login.kanba.pw/cart", {
-          method: "PUT",
-          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-          body: JSON.stringify({ cart })
-        }).catch(() => {});
-      }
-    });
+    // Non-blocking background sync
+    const token = localStorage.getItem("userToken");
+    if (token) {
+      fetch("https://login.kanba.pw/cart", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+        body: JSON.stringify({ cart })
+      }).catch(() => {});
+    }
+  }
+
+  const stickyBtnAddCart = document.getElementById("stickyBtnAddCart");
+  if (stickyBtnAddCart) {
+    stickyBtnAddCart.addEventListener("click", handleAddToCart);
   }
 });

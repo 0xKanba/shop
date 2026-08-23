@@ -5,7 +5,7 @@
 
 .page-wrap { 
   max-width: 1000px; 
-  margin: 20px auto 60px; 
+  margin: 20px auto 90px; 
   padding: 0 16px; 
   animation: fadeUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) backwards; 
   width: 100%;
@@ -424,3 +424,224 @@
 .image-pop-anim {
   animation: imagePop 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
+/* ================================================================
+   Modern Floating Sticky Action Bar for Single Product
+   ================================================================ */
+.sticky-footer-bar {
+  position: fixed;
+  bottom: 16px;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 16px;
+  pointer-events: none; /* outer container pass-through */
+}
+
+.sticky-footer-inner {
+  max-width: 520px;
+  width: 100%;
+  pointer-events: auto;
+  background: var(--neu-surface);
+  background-image: var(--neu-surface-grad);
+  border: 1.5px solid var(--neu-glass-border);
+  border-radius: 26px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22), 0 4px 12px var(--neu-sd-dark), -2px -2px 10px var(--neu-sd-light);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  animation: slideUpFloating 0.4s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+@keyframes slideUpFloating {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Quantity Control */
+.sticky-qty-ctrl {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--neu-surface);
+  padding: 5px 10px;
+  border-radius: 18px;
+  border: 1px solid var(--neu-glass-border);
+  box-shadow: var(--neu-shadow-inset);
+}
+
+.sticky-qty-ctrl button {
+  width: 32px;
+  height: 32px;
+  border-radius: 12px;
+  background: var(--neu-surface);
+  background-image: var(--neu-surface-grad);
+  border: 1px solid var(--neu-glass-border);
+  color: var(--neu-title);
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 2px 2px 5px var(--neu-sd-dark), -2px -2px 5px var(--neu-sd-light);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s;
+  touch-action: manipulation;
+}
+
+.sticky-qty-ctrl button:hover {
+  color: #10b981;
+  transform: translateY(-1px) scale(1.05);
+}
+
+.sticky-qty-ctrl button:active {
+  box-shadow: var(--neu-shadow-inset);
+  transform: translateY(0) scale(0.95);
+}
+
+.sticky-qty-ctrl span {
+  font-size: 1.05rem;
+  font-weight: 900;
+  min-width: 26px;
+  text-align: center;
+  color: var(--neu-title);
+}
+
+/* Lively & Smoothly Dancing Add-to-Cart Button */
+.sticky-add-btn {
+  flex: 1;
+  padding: 12px 24px;
+  border-radius: 20px;
+  font-family: inherit;
+  font-size: 1.02rem;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 1.5px solid rgba(16, 185, 129, 0.45);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4), 3px 3px 8px var(--neu-sd-dark);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s, filter 0.25s;
+  touch-action: manipulation;
+  white-space: nowrap;
+  animation: gentleDancePulse 3.2s ease-in-out infinite;
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+.sticky-cart-icon {
+  font-size: 1.15rem;
+  display: inline-block;
+  transform-origin: center bottom;
+  animation: gentleIconWiggle 3.2s cubic-bezier(0.36, 0.07, 0.19, 0.97) infinite;
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+/* Calm, Elegant & Lively Dancing Keyframes */
+@keyframes gentleDancePulse {
+  0%, 100% {
+    transform: translateZ(0) translateY(0) scale(1);
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4), 3px 3px 8px var(--neu-sd-dark);
+  }
+  25% {
+    transform: translateZ(0) translateY(-2px) scale(1.025);
+    box-shadow: 0 6px 18px rgba(16, 185, 129, 0.55), 4px 4px 12px var(--neu-sd-dark);
+  }
+  50% {
+    transform: translateZ(0) translateY(0) scale(1);
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4), 3px 3px 8px var(--neu-sd-dark);
+  }
+  75% {
+    transform: translateZ(0) translateY(-1px) scale(1.015);
+    box-shadow: 0 5px 16px rgba(16, 185, 129, 0.48), 3px 3px 10px var(--neu-sd-dark);
+  }
+}
+
+@keyframes gentleIconWiggle {
+  0%, 100% {
+    transform: translateZ(0) rotate(0deg) scale(1);
+  }
+  15% {
+    transform: translateZ(0) rotate(-12deg) scale(1.15);
+  }
+  30% {
+    transform: translateZ(0) rotate(10deg) scale(1.15);
+  }
+  45% {
+    transform: translateZ(0) rotate(-6deg) scale(1.08);
+  }
+  60% {
+    transform: translateZ(0) rotate(0deg) scale(1);
+  }
+}
+
+.sticky-add-btn:hover {
+  transform: translateZ(0) translateY(-3px) scale(1.04);
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.65), 5px 5px 14px var(--neu-sd-dark);
+  filter: brightness(1.05);
+}
+
+.sticky-add-btn:active {
+  transform: translateZ(0) translateY(0) scale(0.97);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+.sticky-add-btn.success-anim {
+  animation: successPop 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+}
+
+@keyframes successPop {
+  0% { transform: translateZ(0) scale(0.95); }
+  50% { transform: translateZ(0) scale(1.06); }
+  100% { transform: translateZ(0) scale(1); }
+}
+
+@media (max-width: 520px) {
+  .sticky-footer-bar {
+    bottom: 12px;
+    padding: 0 12px;
+  }
+  .sticky-footer-inner {
+    border-radius: 22px;
+    padding: 7px 10px;
+    gap: 8px;
+  }
+  .sticky-qty-ctrl {
+    padding: 4px 8px;
+    gap: 6px;
+  }
+  .sticky-qty-ctrl button {
+    width: 28px;
+    height: 28px;
+    font-size: 0.8rem;
+  }
+  .sticky-qty-ctrl span {
+    font-size: 0.95rem;
+    min-width: 22px;
+  }
+  .sticky-add-btn {
+    padding: 10px 18px;
+    font-size: 0.92rem;
+  }
+  .sticky-cart-icon {
+    font-size: 1.05rem;
+  }
+}
+
