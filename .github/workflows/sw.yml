@@ -2,13 +2,10 @@ name: Update sw.js cache version
 
 on:
   push:
-    paths:
-      - "**.html"
-      - "css/**"
-      - "js/**"
-      - "data/**"
-      - "manifest.json"
-      - "!sw.js"
+    paths-ignore:
+      - "sw.js"
+      - "README.md"
+      - ".github/workflows/update-readme.yml"
   workflow_dispatch:
 
 permissions:

@@ -16,21 +16,73 @@ document.addEventListener("DOMContentLoaded", async () => {
   let currentProduct = null;
   let qty = 1;
 
+  // 1. Instant Preview Hydration from sessionStorage / cache if available (0ms paint)
   try {
-    const res = await fetch(`/data/${productId}.json?v=${new Date().getTime()}`);
+    const rawPreview = sessionStorage.getItem('preview_prod_' + productId);
+    if (rawPreview) {
+      const preview = JSON.parse(rawPreview);
+      renderInitialPreview(preview);
+    }
+  } catch (e) {}
+
+  function renderInitialPreview(p) {
+    const prodName = document.getElementById("prodName");
+    const prodPrice = document.getElementById("prodPrice");
+    const mainImg = document.getElementById("mainImage");
+    const mainImageWrap = document.getElementById("mainImageWrap");
+
+    if (prodName && p.title) {
+      prodName.textContent = p.title;
+      prodName.classList.remove("skeleton-text");
+    }
+    if (prodPrice && p.price) {
+      prodPrice.textContent = new Intl.NumberFormat("en-US").format(p.price);
+      prodPrice.classList.remove("skeleton-text");
+    }
+    if (mainImg && p.image) {
+      mainImg.src = p.image;
+      mainImg.onload = () => {
+        mainImg.classList.add("loaded");
+        if (mainImageWrap) mainImageWrap.classList.remove("skeleton-loader");
+      };
+      if (mainImg.complete) {
+        mainImg.classList.add("loaded");
+        if (mainImageWrap) mainImageWrap.classList.remove("skeleton-loader");
+      }
+    }
+  }
+
+  // 2. Fetch Full Product Details (Stale-While-Revalidate with no cache buster)
+  try {
+    const res = await fetch(`/data/${productId}.json`);
     if (!res.ok) throw new Error("Product not found");
     currentProduct = await res.json();
     renderProduct(currentProduct);
   } catch (e) {
-    document.querySelector('.page-wrap').innerHTML = `<h2 style="text-align:center; padding: 40px;">المنتج غير موجود</h2>`;
-    document.querySelector('.page-wrap').style.display = "block";
-    document.body.classList.add('loaded');
+    if (!currentProduct) {
+      document.querySelector('.page-wrap').innerHTML = `<h2 style="text-align:center; padding: 40px; color: var(--neu-title);">المنتج غير موجود</h2>`;
+      document.body.classList.add('loaded');
+    }
   }
 
   function renderProduct(p) {
-    document.getElementById("prodName").textContent = p.title;
-    document.getElementById("prodPrice").textContent = new Intl.NumberFormat("en-US").format(p.price);
-    document.getElementById("prodDesc").textContent = p.description || "";
+    const prodName = document.getElementById("prodName");
+    const prodPrice = document.getElementById("prodPrice");
+    const prodDesc = document.getElementById("prodDesc");
+    const mainImageWrap = document.getElementById("mainImageWrap");
+
+    if (prodName) {
+      prodName.textContent = p.title;
+      prodName.classList.remove("skeleton-text");
+    }
+    if (prodPrice) {
+      prodPrice.textContent = new Intl.NumberFormat("en-US").format(p.price);
+      prodPrice.classList.remove("skeleton-text");
+    }
+    if (prodDesc) {
+      prodDesc.textContent = p.description || "";
+      prodDesc.classList.remove("skeleton-block");
+    }
     
     // Delivery Badge
     const prodDelivery = document.getElementById("prodDelivery");
@@ -42,37 +94,53 @@ document.addEventListener("DOMContentLoaded", async () => {
     
     // Specs
     const sg = document.getElementById("specsGrid");
-    sg.innerHTML = "";
-    if (p.features) {
-      for (let [k, v] of Object.entries(p.features)) {
-        sg.innerHTML += `<div class="spec-item"><div class="spec-key">${k}</div><div class="spec-val">${v}</div></div>`;
+    if (sg) {
+      sg.innerHTML = "";
+      if (p.features) {
+        for (let [k, v] of Object.entries(p.features)) {
+          const item = document.createElement("div");
+          item.className = "spec-item";
+          item.innerHTML = `<div class="spec-key">${k}</div><div class="spec-val">${v}</div>`;
+          sg.appendChild(item);
+        }
       }
     }
 
     // Images
     const mainImg = document.getElementById("mainImage");
     const tr = document.getElementById("thumbsRow");
-    tr.innerHTML = "";
+    if (tr) tr.innerHTML = "";
+
     if (p.images && p.images.length > 0) {
-      mainImg.src = p.images[0];
+      if (mainImg) {
+        mainImg.src = p.images[0];
+        mainImg.onload = () => {
+          mainImg.classList.add("loaded");
+          if (mainImageWrap) mainImageWrap.classList.remove("skeleton-loader");
+        };
+        if (mainImg.complete) {
+          mainImg.classList.add("loaded");
+          if (mainImageWrap) mainImageWrap.classList.remove("skeleton-loader");
+        }
+      }
+      
       p.images.forEach((img, idx) => {
         const d = document.createElement("div");
         d.className = `thumb-card ${idx === 0 ? 'active' : ''}`;
-        d.innerHTML = `<img src="${img}">`;
+        d.innerHTML = `<img src="${img}" alt="صورة مصغرة" loading="lazy" decoding="async">`;
         d.onclick = () => {
           changeImage(idx);
         };
-        tr.appendChild(d);
+        if (tr) tr.appendChild(d);
       });
     }
 
-    // Out of stock check - do not allow opening out of stock product page
+    // Out of stock check
     if (p.outOfStock) {
       window.location.replace('/');
       return;
     }
 
-    document.getElementById("productContainer").style.display = "block";
     document.body.classList.add("loaded");
   }
 
@@ -92,20 +160,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (mainImg) {
       mainImg.src = targetImgUrl;
       mainImg.classList.remove("image-pop-anim");
-      void mainImg.offsetWidth; // trigger reflow
-      mainImg.classList.add("image-pop-anim");
+      requestAnimationFrame(() => {
+        mainImg.classList.add("image-pop-anim");
+      });
     }
     
     if (modalImg) {
       modalImg.src = targetImgUrl;
       modalImg.classList.remove("image-pop-anim");
-      void modalImg.offsetWidth; // trigger reflow
-      modalImg.classList.add("image-pop-anim");
-    }
-
-    const stickyProdImg = document.getElementById("stickyProdImg");
-    if (stickyProdImg) {
-      stickyProdImg.src = targetImgUrl;
+      requestAnimationFrame(() => {
+        modalImg.classList.add("image-pop-anim");
+      });
     }
     
     // Update active thumbnail

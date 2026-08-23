@@ -47,12 +47,12 @@
   <script src="/js/theme.js"></script>
 </head>
 <body>
-  <div class="page-wrap" id="productContainer" style="display: none;">
+  <div class="page-wrap" id="productContainer">
     <div class="product-layout">
       
       <div class="gallery-section">
-        <div class="main-image-wrap" id="mainImageWrap">
-          <img id="mainImage" src="" alt="صورة المنتج">
+        <div class="main-image-wrap skeleton-loader" id="mainImageWrap">
+          <img id="mainImage" src="" alt="صورة المنتج" decoding="async" loading="eager">
         </div>
         <div class="thumbs-row" id="thumbsRow"></div>
         <!-- سهم إشارة للنزول للأسفل في الموبايل -->
@@ -65,17 +65,17 @@
       <div class="info-section">
         <div>
           <div class="brand-tag">المحل العراقي المميزة</div>
-          <h1 class="prod-name" id="prodName">جاري التحميل...</h1>
+          <h1 class="prod-name skeleton-text" id="prodName">تحميل المنتج...</h1>
         </div>
         
         <div class="prod-price" style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
           <div style="display: flex; align-items: baseline; gap: 4px;">
-            <span id="prodPrice">0</span> <small>د.ع</small>
+            <span id="prodPrice" class="skeleton-text">...</span> <small>د.ع</small>
           </div>
-          <span id="prodDelivery" class="delivery-badge" style="display: none;"><i class="fas fa-truck"></i> 0 د.ع توصيل مجاني</span>
+          <span id="prodDelivery" class="delivery-badge" style="display: none;"><i class="fas fa-truck"></i> سعر التوصيل: 5,000 د.ع</span>
         </div>
         
-        <div class="desc-box" id="prodDesc">
+        <div class="desc-box skeleton-block" id="prodDesc">
         </div>
         
         <div class="specs-grid" id="specsGrid">
@@ -105,11 +105,11 @@
     <button class="modal-close" id="modalClose"><i class="fas fa-times"></i></button>
     <button class="modal-nav prev-img" id="modalPrev"><i class="fas fa-chevron-right"></i></button>
     <button class="modal-nav next-img" id="modalNext"><i class="fas fa-chevron-left"></i></button>
-    <img id="modalImg" src="" style="cursor: pointer;">
+    <img id="modalImg" src="" alt="عرض بالحجم الكامل" decoding="async" loading="lazy" style="cursor: pointer;">
   </div>
 
   <script src="/js/auth.js"></script>
   <script src="/js/navbar.js"></script>
-  <script src="/js/product.js?v=4"></script>
+  <script src="/js/product.js"></script>
 </body>
 </html>

@@ -80,8 +80,17 @@ function renderProducts(products) {
         return;
       }
       if (e.target.closest(".add-to-cart-btn")) return;
+      try {
+        sessionStorage.setItem('preview_prod_' + p.id, JSON.stringify(p));
+      } catch (err) {}
       window.location.href = '/product?id=' + p.id;
     });
+
+    card.addEventListener("pointerenter", () => {
+      try {
+        sessionStorage.setItem('preview_prod_' + p.id, JSON.stringify(p));
+      } catch (err) {}
+    }, { passive: true });
 
     const btn = card.querySelector(".add-to-cart-btn");
     if (btn) {
