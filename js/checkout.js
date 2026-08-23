@@ -19,28 +19,62 @@ document.addEventListener("DOMContentLoaded", function () {
   let currentOrder = null;
   let isProcessing = false;
 
-  function showLoading(msg = "جاري التحديث...") {
-    // We can use a simple generic loading approach here
+  // Simple, eloquent Toast Notification
+  function showToastMsg(msg, isError = false) {
+    let t = document.getElementById("checkout-toast");
+    if (!t) {
+      t = document.createElement("div");
+      t.id = "checkout-toast";
+      t.style.cssText = `
+        position: fixed;
+        bottom: 24px;
+        left: 50%;
+        transform: translateX(-50%) translateY(20px);
+        background: var(--neu-surface, #1e222d);
+        color: var(--neu-title, #fff);
+        padding: 10px 20px;
+        border-radius: 14px;
+        border: 1px solid var(--neu-glass-border, rgba(255,255,255,0.1));
+        box-shadow: 0 10px 25px rgba(0,0,0,0.35);
+        font-size: 0.88rem;
+        font-weight: 800;
+        z-index: 100000;
+        opacity: 0;
+        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        direction: rtl;
+        pointer-events: none;
+      `;
+      document.body.appendChild(t);
+    }
+    const icon = isError ? '<i class="fas fa-triangle-exclamation" style="color:#ef4444;"></i>' : '<i class="fas fa-check" style="color:#10b981;"></i>';
+    t.innerHTML = `${icon} <span>${msg}</span>`;
+    t.style.borderColor = isError ? "rgba(239, 68, 68, 0.4)" : "rgba(16, 185, 129, 0.4)";
+    t.style.opacity = "1";
+    t.style.transform = "translateX(-50%) translateY(0)";
+
+    setTimeout(() => {
+      t.style.opacity = "0";
+      t.style.transform = "translateX(-50%) translateY(20px)";
+    }, 2800);
+  }
+
+  function showLoading(msg = "جارٍ التحديث...") {
     submitBtn.textContent = msg;
     submitBtn.disabled = true;
   }
   function hideLoading() {
-    submitBtn.textContent = "تأكيد الطلب وإرسال";
+    submitBtn.innerHTML = 'تأكيد وإرسال <i class="fas fa-check"></i>';
     submitBtn.disabled = cart.length === 0;
   }
 
   async function init() {
-    const isLoggedIn = !!localStorage.getItem("isLoggedIn");
-    const username = localStorage.getItem("username") || "";
-    const isGuest = username.startsWith("guest_");
-    const guestPassword = localStorage.getItem("guestPassword") || "guestpassword123";
-    
-    // Completely hide the auth status banner in all cases as requested
     authStatus.style.display = "none";
-    
     checkoutContent.style.display = "block";
     await fetchCart();
-    goToStep(1); // Ensure first step initialized correctly
+    goToStep(1);
     document.body.classList.add("loaded");
   }
 
@@ -76,8 +110,8 @@ document.addEventListener("DOMContentLoaded", function () {
       productsList.innerHTML = `
         <div class="empty-state">
           <i class="fas fa-shopping-basket"></i>
-          <p>السلة فارغة، أضف بعض المنتجات!</p>
-          <a href="/" style="display:inline-block; margin-top:16px; color:var(--primary); font-weight:700;">تصفح المتجر</a>
+          <p>السلة فارغة</p>
+          <a href="/" style="display:inline-block; margin-top:10px; color:var(--neu-accent); font-weight:800; font-size:0.85rem;">تصفح المنتجات</a>
         </div>
       `;
       updateTotals();
@@ -93,12 +127,12 @@ document.addEventListener("DOMContentLoaded", function () {
         </div>
         <div class="item-actions">
           <div class="qty-control">
-            <button class="qty-btn minus-btn" data-index="${index}"><i class="fas fa-minus"></i></button>
+            <button class="qty-btn minus-btn" data-index="${index}" title="تقليل"><i class="fas fa-minus"></i></button>
             <span class="qty-val">${item.quantity}</span>
-            <button class="qty-btn plus-btn" data-index="${index}"><i class="fas fa-plus"></i></button>
+            <button class="qty-btn plus-btn" data-index="${index}" title="زيادة"><i class="fas fa-plus"></i></button>
           </div>
           <div class="item-price">${fmt(item.price * item.quantity)} د.ع</div>
-          <button class="del-btn" data-index="${index}"><i class="fas fa-trash"></i></button>
+          <button class="del-btn" data-index="${index}" title="حذف"><i class="fas fa-trash"></i></button>
         </div>
       `;
       productsList.appendChild(div);
@@ -128,64 +162,45 @@ document.addEventListener("DOMContentLoaded", function () {
     updateTotals();
   }
 
-  async function removeItem(index) {
-    if (isProcessing) return;
-    isProcessing = true;
-    try {
-      showLoading();
+  let syncTimeout = null;
+
+  function removeItem(index) {
+    cart.splice(index, 1);
+    renderCart();
+    debouncedSyncCart();
+  }
+
+  function decrementItem(index) {
+    if (cart[index].quantity > 1) {
+      cart[index].quantity -= 1;
+    } else {
       cart.splice(index, 1);
-      await syncCart();
-      renderCart();
-    } finally {
-      isProcessing = false;
-      hideLoading();
     }
+    renderCart();
+    debouncedSyncCart();
   }
 
-  async function decrementItem(index) {
-    if (isProcessing) return;
-    isProcessing = true;
-    try {
-      showLoading();
-      if (cart[index].quantity > 1) {
-        cart[index].quantity -= 1;
-      } else {
-        cart.splice(index, 1);
-      }
-      await syncCart();
-      renderCart();
-    } finally {
-      isProcessing = false;
-      hideLoading();
-    }
+  function incrementItem(index) {
+    cart[index].quantity += 1;
+    renderCart();
+    debouncedSyncCart();
   }
 
-  async function incrementItem(index) {
-    if (isProcessing) return;
-    isProcessing = true;
-    try {
-      showLoading();
-      cart[index].quantity += 1;
-      await syncCart();
-      renderCart();
-    } finally {
-      isProcessing = false;
-      hideLoading();
-    }
-  }
-
-  async function syncCart() {
+  function debouncedSyncCart() {
     localStorage.setItem("cart", JSON.stringify(cart));
-    const token = localStorage.getItem("userToken");
-    if (!token) return;
-    try {
-      await fetch("https://login.kanba.pw/cart", {
+    if (window.updateCartCount) window.updateCartCount();
+    document.dispatchEvent(new Event("cart-updated"));
+
+    clearTimeout(syncTimeout);
+    syncTimeout = setTimeout(() => {
+      const token = localStorage.getItem("userToken");
+      if (!token) return;
+      fetch("https://login.kanba.pw/cart", {
         method: "PUT",
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
         body: JSON.stringify({ cart })
-      });
-      document.dispatchEvent(new Event("cart-updated"));
-    } catch (e) {}
+      }).catch(() => {});
+    }, 400);
   }
 
   function updateTotals() {
@@ -214,7 +229,7 @@ document.addEventListener("DOMContentLoaded", function () {
     return new Intl.NumberFormat("en-US").format(num);
   }
 
-  // Google-Style Progressive Wizard Navigation Logic
+  // Wizard Elements
   const wizardStep1 = document.getElementById("wizardStep1");
   const wizardStep2 = document.getElementById("wizardStep2");
   const wizardStep3 = document.getElementById("wizardStep3");
@@ -232,26 +247,90 @@ document.addEventListener("DOMContentLoaded", function () {
   const address = document.getElementById("address");
   const notes = document.getElementById("notes");
 
-  // Phone Number Dynamic Filter & Format enforcement
+  const customerNameErr = document.getElementById("customerNameErr");
+  const phoneNumberErr = document.getElementById("phoneNumberErr");
+  const addressErr = document.getElementById("addressErr");
+
+  function setFieldError(field, errEl, msg) {
+    if (msg) {
+      if (errEl) {
+        errEl.textContent = msg;
+        errEl.style.display = "block";
+      }
+      field.classList.add("input-invalid");
+    } else {
+      if (errEl) {
+        errEl.textContent = "";
+        errEl.style.display = "none";
+      }
+      field.classList.remove("input-invalid");
+    }
+  }
+
+  function validateStep1() {
+    let valid = true;
+    const nameVal = customerName.value.trim();
+    const phoneVal = phoneNumber.value.trim();
+
+    if (!nameVal || nameVal.length < 3) {
+      setFieldError(customerName, customerNameErr, "يرجى كتابة الاسم الكامل");
+      valid = false;
+    } else {
+      setFieldError(customerName, customerNameErr, null);
+    }
+
+    if (!phoneVal) {
+      setFieldError(phoneNumber, phoneNumberErr, "يرجى إدخال رقم الهاتف");
+      valid = false;
+    } else if (!phoneVal.startsWith("07")) {
+      setFieldError(phoneNumber, phoneNumberErr, "يجب أن يبدأ الرقم بـ 07");
+      valid = false;
+    } else if (phoneVal.length !== 11) {
+      setFieldError(phoneNumber, phoneNumberErr, "الرقم يجب أن يكون 11 رقماً");
+      valid = false;
+    } else {
+      setFieldError(phoneNumber, phoneNumberErr, null);
+    }
+
+    return valid;
+  }
+
+  function validateStep2() {
+    let valid = true;
+    const addrVal = address.value.trim();
+    if (!addrVal || addrVal.length < 5) {
+      setFieldError(address, addressErr, "يرجى إدخال عنوان التوصيل بالتفصيل");
+      valid = false;
+    } else {
+      setFieldError(address, addressErr, null);
+    }
+    return valid;
+  }
+
+  if (customerName) {
+    customerName.addEventListener("input", () => {
+      if (customerName.value.trim().length >= 3) {
+        setFieldError(customerName, customerNameErr, null);
+      }
+    });
+  }
+
   if (phoneNumber) {
     phoneNumber.addEventListener("input", () => {
-      // Allow only digits
       let val = phoneNumber.value.replace(/\D/g, "");
-      
-      // Enforce max length of 11
-      if (val.length > 11) {
-        val = val.substring(0, 11);
-      }
-      
+      if (val.length > 11) val = val.substring(0, 11);
       phoneNumber.value = val;
-      
-      // Real-time custom validation feedback
-      if (val.length > 0 && !val.startsWith("07")) {
-        phoneNumber.setCustomValidity("يجب أن يبدأ رقم الهاتف العراقي بـ 07");
-      } else if (val.length > 0 && val.length !== 11) {
-        phoneNumber.setCustomValidity("يجب أن يكون رقم الهاتف مكوناً من 11 رقماً بالضبط");
-      } else {
-        phoneNumber.setCustomValidity("");
+
+      if (val.length === 11 && val.startsWith("07")) {
+        setFieldError(phoneNumber, phoneNumberErr, null);
+      }
+    });
+  }
+
+  if (address) {
+    address.addEventListener("input", () => {
+      if (address.value.trim().length >= 5) {
+        setFieldError(address, addressErr, null);
       }
     });
   }
@@ -264,7 +343,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const summaryAccordion = document.getElementById("summaryAccordion");
   const accordionTrigger = document.getElementById("accordionTrigger");
 
-  // Accordion Toggle
   if (accordionTrigger && summaryAccordion) {
     accordionTrigger.addEventListener("click", () => {
       summaryAccordion.classList.toggle("collapsed");
@@ -288,47 +366,30 @@ document.addEventListener("DOMContentLoaded", function () {
         stepIndicators[0].classList.add("active");
       }
       if (stepperProgress) stepperProgress.style.width = "0%";
-      
-      // Top Progress Bar: Red
       if (topProgressBar) {
         topProgressBar.style.width = "33.33%";
         topProgressBar.style.background = "#ef4444";
       }
     } else if (step === 2) {
       wizardStep2.classList.add("active");
-      if (stepIndicators && stepIndicators[0]) {
-        stepIndicators[0].classList.add("active");
-      }
-      if (stepIndicators && stepIndicators[1]) {
-        stepIndicators[1].classList.add("active");
-      }
+      if (stepIndicators && stepIndicators[0]) stepIndicators[0].classList.add("active");
+      if (stepIndicators && stepIndicators[1]) stepIndicators[1].classList.add("active");
       if (stepperProgress) stepperProgress.style.width = "50%";
-      
-      // Top Progress Bar: Orange/Amber
       if (topProgressBar) {
         topProgressBar.style.width = "66.66%";
         topProgressBar.style.background = "#f59e0b";
       }
     } else if (step === 3) {
-      // Bind Review Values
       reviewName.textContent = customerName.value.trim() || "—";
       reviewPhone.textContent = phoneNumber.value.trim() || "—";
       reviewAddress.textContent = address.value.trim() || "—";
-      reviewNotes.textContent = notes.value.trim() || "بدون ملاحظات إضافية";
+      reviewNotes.textContent = notes.value.trim() || "لا توجد ملاحظات";
 
       wizardStep3.classList.add("active");
-      if (stepIndicators && stepIndicators[0]) {
-        stepIndicators[0].classList.add("active");
-      }
-      if (stepIndicators && stepIndicators[1]) {
-        stepIndicators[1].classList.add("active");
-      }
-      if (stepIndicators && stepIndicators[2]) {
-        stepIndicators[2].classList.add("active");
-      }
+      if (stepIndicators && stepIndicators[0]) stepIndicators[0].classList.add("active");
+      if (stepIndicators && stepIndicators[1]) stepIndicators[1].classList.add("active");
+      if (stepIndicators && stepIndicators[2]) stepIndicators[2].classList.add("active");
       if (stepperProgress) stepperProgress.style.width = "100%";
-      
-      // Top Progress Bar: Full Green
       if (topProgressBar) {
         topProgressBar.style.width = "100%";
         topProgressBar.style.background = "#10b981";
@@ -338,15 +399,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
   if (toStep2) {
     toStep2.addEventListener("click", () => {
-      if (!customerName.checkValidity()) {
-        customerName.reportValidity();
-        return;
+      if (validateStep1()) {
+        goToStep(2);
       }
-      if (!phoneNumber.checkValidity()) {
-        phoneNumber.reportValidity();
-        return;
-      }
-      goToStep(2);
     });
   }
 
@@ -358,11 +413,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
   if (toStep3) {
     toStep3.addEventListener("click", () => {
-      if (!address.checkValidity()) {
-        address.reportValidity();
-        return;
+      if (validateStep2()) {
+        goToStep(3);
       }
-      goToStep(3);
     });
   }
 
@@ -372,7 +425,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Handle step click direct jumps if the user already reached them or inputs are valid
   if (stepIndicators && stepIndicators.length > 0) {
     stepIndicators.forEach((indicator, idx) => {
       indicator.addEventListener("click", () => {
@@ -380,23 +432,9 @@ document.addEventListener("DOMContentLoaded", function () {
         if (targetStep === 1) {
           goToStep(1);
         } else if (targetStep === 2) {
-          if (customerName.checkValidity() && phoneNumber.checkValidity()) {
-            goToStep(2);
-          } else {
-            customerName.reportValidity() || phoneNumber.reportValidity();
-          }
+          if (validateStep1()) goToStep(2);
         } else if (targetStep === 3) {
-          if (customerName.checkValidity() && phoneNumber.checkValidity() && address.checkValidity()) {
-            goToStep(3);
-          } else {
-            if (!customerName.checkValidity() || !phoneNumber.checkValidity()) {
-              goToStep(1);
-              customerName.reportValidity() || phoneNumber.reportValidity();
-            } else {
-              goToStep(2);
-              address.reportValidity();
-            }
-          }
+          if (validateStep1() && validateStep2()) goToStep(3);
         }
       });
     });
@@ -404,17 +442,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
   orderForm.addEventListener("submit", function(e) {
     e.preventDefault();
-    if (cart.length === 0) return;
+    if (cart.length === 0) {
+      showToastMsg("السلة فارغة", true);
+      return;
+    }
+    if (!validateStep1() || !validateStep2()) {
+      showToastMsg("يرجى إكمال البيانات المطلوبة", true);
+      return;
+    }
 
     const subtotal = cart.reduce((s, i) => s + i.price * i.quantity, 0);
     const deliveryFee = 5000;
     const grandTotal = subtotal + deliveryFee;
 
     currentOrder = {
-      customerName: customerName.value,
-      phoneNumber: phoneNumber.value,
-      address: address.value,
-      notes: notes.value,
+      customerName: customerName.value.trim(),
+      phoneNumber: phoneNumber.value.trim(),
+      address: address.value.trim(),
+      notes: notes.value.trim(),
       items: [...cart],
       total: grandTotal,
       quantity: cart.reduce((s, i) => s + i.quantity, 0),
@@ -423,13 +468,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let detailsHtml = "";
     currentOrder.items.forEach(i => {
-      detailsHtml += `<div style="display:flex;justify-content:space-between;margin-bottom:8px;"><span>${i.name}</span><span>${i.quantity} × ${fmt(i.price)} د.ع</span></div>`;
+      detailsHtml += `<div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span>${i.name}</span><span>${i.quantity} × ${fmt(i.price)} د.ع</span></div>`;
     });
-    detailsHtml += `<hr style="border-color:var(--border); margin:12px 0;">`;
-    detailsHtml += `<div style="display:flex;justify-content:space-between;margin-bottom:8px;color:var(--text-muted);"><span>مجموع المنتجات:</span><span>${fmt(subtotal)} د.ع</span></div>`;
-    detailsHtml += `<div style="display:flex;justify-content:space-between;margin-bottom:8px;color:#ef4444;font-weight:bold;"><span>سعر التوصيل:</span><span>5,000 د.ع</span></div>`;
-    detailsHtml += `<hr style="border-color:var(--border); margin:12px 0;">`;
-    detailsHtml += `<div style="display:flex;justify-content:space-between;font-weight:bold;color:var(--primary);font-size:1.1rem;"><span>المجموع النهائي الكلي:</span><span>${fmt(grandTotal)} د.ع</span></div>`;
+    detailsHtml += `<hr style="border:none; border-top:1px solid var(--neu-glass-border-sub, rgba(255,255,255,0.08)); margin:10px 0;">`;
+    detailsHtml += `<div style="display:flex;justify-content:space-between;margin-bottom:6px;color:var(--neu-sub);"><span>المنتجات:</span><span>${fmt(subtotal)} د.ع</span></div>`;
+    detailsHtml += `<div style="display:flex;justify-content:space-between;margin-bottom:6px;color:#ef4444;font-weight:700;"><span>التوصيل:</span><span>5,000 د.ع</span></div>`;
+    detailsHtml += `<hr style="border:none; border-top:1px solid var(--neu-glass-border-sub, rgba(255,255,255,0.08)); margin:10px 0;">`;
+    detailsHtml += `<div style="display:flex;justify-content:space-between;font-weight:900;color:var(--neu-accent);font-size:1rem;"><span>المجموع الكلي:</span><span>${fmt(grandTotal)} د.ع</span></div>`;
     
     confirmationDetails.innerHTML = detailsHtml;
     confirmationModal.style.display = "flex";
@@ -445,11 +490,10 @@ document.addEventListener("DOMContentLoaded", function () {
     confirmationModal.style.display = "none";
     
     try {
-      showLoading("جاري إرسال الطلب...");
+      showLoading("جارٍ الإرسال...");
       let token = localStorage.getItem("userToken");
       
       if (!token) {
-        // We are checking out as a guest. Register a guest account behind the scenes to get a valid authentication token.
         try {
           const tempUsername = "guest_" + Math.random().toString(36).substring(2, 8);
           const tempPassword = "guestpassword123";
@@ -471,28 +515,22 @@ document.addEventListener("DOMContentLoaded", function () {
               localStorage.setItem("guestPassword", tempPassword);
             }
           }
-        } catch (regErr) {
-          console.error("Failed background guest registration:", regErr);
-        }
+        } catch (regErr) {}
       }
       
       if (token) {
-        // Logged-in or guest order: send to backend
         const res = await fetch("https://login.kanba.pw/order", {
           method: "POST",
           headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
           body: JSON.stringify(currentOrder)
         });
         
-        if (!res.ok) throw new Error("فشل إرسال الطلب");
+        if (!res.ok) throw new Error("تعذر إرسال الطلب");
       } else {
-        // Guest order fallback: save locally
         let localOrders = JSON.parse(localStorage.getItem("orders") || "[]");
         localOrders.push(currentOrder);
         localStorage.setItem("orders", JSON.stringify(localOrders));
-        
-        // Brief simulated delay for professional feedback
-        await new Promise(resolve => setTimeout(resolve, 800));
+        await new Promise(resolve => setTimeout(resolve, 600));
       }
       
       cart = [];
@@ -503,7 +541,7 @@ document.addEventListener("DOMContentLoaded", function () {
       successModal.style.display = "flex";
       triggerCelebration();
     } catch (e) {
-      alert("فشل إرسال الطلب، تأكد من الاتصال وحاول مجدداً.");
+      showToastMsg("تعذر إرسال الطلب، يرجى المحاولة ثانية", true);
       confirmationModal.style.display = "flex";
     } finally {
       isProcessing = false;
@@ -515,7 +553,6 @@ document.addEventListener("DOMContentLoaded", function () {
     window.location.href = "/";
   });
 
-  // Beautiful High-performance Canvas Celebration Confetti
   function triggerCelebration() {
     const canvas = document.getElementById("confettiCanvas");
     if (!canvas) return;
@@ -523,7 +560,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const ctx = canvas.getContext("2d");
     let animationFrameId;
 
-    // Resize canvas to full window size
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     
@@ -536,11 +572,11 @@ document.addEventListener("DOMContentLoaded", function () {
     const colors = ["#f43f5e", "#10b981", "#3b82f6", "#eab308", "#a855f7", "#ff007f", "#00ffff"];
     const particles = [];
 
-    for (let i = 0; i < 150; i++) {
+    for (let i = 0; i < 120; i++) {
       particles.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height - canvas.height,
-        r: Math.random() * 6 + 4,
+        r: Math.random() * 5 + 3,
         d: Math.random() * canvas.height,
         color: colors[Math.floor(Math.random() * colors.length)],
         tilt: Math.random() * 10 - 5,
@@ -583,12 +619,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     draw();
 
-    // Clean stop after 8 seconds
     setTimeout(() => {
       cancelAnimationFrame(animationFrameId);
       canvas.style.display = "none";
       window.removeEventListener("resize", handleResize);
-    }, 8000);
+    }, 6000);
   }
 
   init();

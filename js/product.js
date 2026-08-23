@@ -327,12 +327,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Add to cart
   const btnAddCart = document.getElementById("btnAddCart");
   if (btnAddCart) {
-    btnAddCart.addEventListener("click", async () => {
-      const token = localStorage.getItem("userToken");
-
-      btnAddCart.disabled = true;
+    btnAddCart.addEventListener("click", () => {
       const orig = btnAddCart.innerHTML;
-      btnAddCart.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
 
       let cart = JSON.parse(localStorage.getItem("cart") || "[]");
       const idx = cart.findIndex(i => i.id === currentProduct.id);
@@ -341,18 +337,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       localStorage.setItem("cart", JSON.stringify(cart));
 
-      if (token) {
-        try {
-          await fetch("https://login.kanba.pw/cart", {
-            method: "PUT",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-            body: JSON.stringify({ cart })
-          });
-        } catch (e) {
-          console.warn("Could not sync cart to cloud:", e);
-        }
-      }
-
       if (window.updateCartCount) window.updateCartCount();
       showToast(`تمت إضافة ${qty} × ${currentProduct.title}`);
       
@@ -360,21 +344,32 @@ document.addEventListener("DOMContentLoaded", async () => {
       btnAddCart.classList.add('success-anim');
       
       if (window.confetti) {
-        confetti({
-          particleCount: 150,
-          spread: 80,
-          origin: { y: 0.6 },
-          colors: ['#10b981', '#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b']
-        });
+        try {
+          confetti({
+            particleCount: 80,
+            spread: 70,
+            origin: { y: 0.6 },
+            colors: ['#10b981', '#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b']
+          });
+        } catch (e) {}
       }
       
       setTimeout(() => { 
         btnAddCart.innerHTML = orig; 
         btnAddCart.classList.remove('success-anim');
-        btnAddCart.disabled = false; 
         qty = 1; 
         qtyVal.textContent = 1; 
-      }, 2000);
+      }, 1500);
+
+      // Non-blocking background sync
+      const token = localStorage.getItem("userToken");
+      if (token) {
+        fetch("https://login.kanba.pw/cart", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+          body: JSON.stringify({ cart })
+        }).catch(() => {});
+      }
     });
   }
 });

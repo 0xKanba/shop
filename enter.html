@@ -1,60 +1,163 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <script>
+    (function() {
+      try {
+        var s = localStorage.getItem('theme');
+        var d = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var t = s || (d ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', t);
+        document.documentElement.style.backgroundColor = t === 'dark' ? '#181b22' : '#e6ecf4';
+        document.documentElement.style.colorScheme = t === 'dark' ? 'dark' : 'light';
+      } catch (e) {}
+    })();
+  </script>
+  <style>
+    :root { color-scheme: light; }
+    html[data-theme="dark"] { color-scheme: dark; }
+    html, body { background-color: #e6ecf4; }
+    html[data-theme="dark"], html[data-theme="dark"] body { background-color: #181b22 !important; }
+  </style>
 
-  <meta name="description" content="المحل العراقي - أفضل وجهة للتسوق الإلكتروني في العراق، نوفر لك منتجات عالية الجودة بأسعار تنافسية مع خدمة توصيل سريعة وموثوقة.">
-  <meta name="keywords" content="تسوق, العراق, المحل العراقي, متجر الكتروني, منتجات, بغداد, توصيل, تسوق اونلاين">
+  <meta name="description" content="المحل العراقي — تسجيل الدخول وإنشاء حساب بتصميم ثلاثي الأبعاد فاخر وسلس.">
+  <meta name="keywords" content="تسوق, العراق, المحل العراقي, متجر الكتروني, تسجيل دخول, حساب جديد">
   <meta name="author" content="المحل العراقي">
-  <meta property="og:title" content="المحل العراقي">
-  <meta property="og:description" content="تسوق أفضل المنتجات بجودة عالية محلياً في العراق.">
+  <meta property="og:title" content="المحل العراقي — تسجيل الدخول">
+  <meta property="og:description" content="سجل الدخول إلى حسابك في المحل العراقي لتتبع طلباتك وإتمام الشراء بسهولة.">
   <meta property="og:image" content="https://cdn.jsdelivr.net/gh/0xKanba/assets@master/shop/pro.webp">
-  <meta property="og:url" content="https://shop.kanba.pw/">
   <meta property="og:type" content="website">
-  <meta property="og:site_name" content="المحل العراقي">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="المحل العراقي">
-  <meta name="twitter:description" content="تسوق أفضل المنتجات بجودة عالية محلياً في العراق.">
-  <meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/0xKanba/assets@master/shop/pro.webp">
+
+  <title>المحل العراقي — تسجيل الدخول / إنشاء حساب</title>
+  <link rel="icon" href="https://cdn.jsdelivr.net/gh/0xKanba/assets@master/shop/pro.webp" type="image/webp">
+  <link rel="apple-touch-icon" href="https://cdn.jsdelivr.net/gh/0xKanba/assets@master/shop/pro.webp">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#181b22">
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>المحل العراقي — تسجيل الدخول</title>
-  <link rel="icon" href="https://cdn.jsdelivr.net/gh/0xKanba/assets@master/shop/pro.webp">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/enter.css">
+  <script src="/js/theme.js"></script>
 </head>
-<body><a href="javascript:history.back()" class="global-back-btn"><i class="fas fa-arrow-right"></i></a>
-  <div id="stars"></div>
+<body class="neumorphic-body">
 
-  <section id="panel">
-    <img id="logo" src="https://cdn.jsdelivr.net/gh/0xKanba/assets@master/shop/pro.webp" alt="المحل العراقي">
-    <h1><span class="g">المحل</span> العراقي</h1>
+  <!-- Top Floating Controls -->
+  <header class="neu-top-nav">
+    <a href="/" class="neu-circle-btn" title="العودة للمتجر" aria-label="الرئيسية">
+      <i class="fas fa-arrow-right"></i>
+    </a>
+    
+    <button type="button" class="neu-circle-btn" id="themeToggleBtn" title="تبديل المظهر" aria-label="تغيير المظهر">
+      <i class="fas fa-moon" id="themeIcon"></i>
+    </button>
+  </header>
 
-    <!-- تسجيل الدخول -->
-    <form class="form active" id="loginForm">
-      <input type="text" id="login-username" placeholder="اسم المستخدم" autocomplete="username" required>
-      <input type="password" id="login-password" placeholder="كلمة المرور" autocomplete="current-password" required>
-      <button type="submit">تسجيل الدخول</button>
-      <span class="flip" data-to="signup">ليس لديك حساب؟ إنشاء حساب</span>
-    </form>
+  <!-- Main 3D Neumorphic Card -->
+  <main class="neu-wrapper">
+    <div class="neu-card" id="authCard">
+      
+      <!-- Top 3D Embossed Avatar with Project Logo -->
+      <div class="neu-avatar-container">
+        <div class="neu-avatar-disc" id="avatarBadge">
+          <img src="https://cdn.jsdelivr.net/gh/0xKanba/assets@master/shop/pro.webp" alt="المحل العراقي" class="neu-avatar-img">
+        </div>
+      </div>
 
-    <!-- إنشاء حساب -->
-    <form class="form" id="signupForm">
-      <input type="text" id="signup-username" placeholder="مثال: abc" autocomplete="username" required minlength="3">
-      <input type="password" id="signup-password" placeholder="مثال: abcxyz" autocomplete="new-password" required minlength="6">
-      <button type="submit">إنشاء حساب</button>
-      <span class="flip" data-to="login">لدي حساب بالفعل</span>
-    </form>
+      <!-- Header Titles -->
+      <div class="neu-heading-group">
+        <h1 class="neu-main-title" id="authTitle">أهلاً بك مجدداً</h1>
+        <p class="neu-sub-title" id="authSubtitle">يرجى تسجيل الدخول للمتابعة</p>
+      </div>
 
-    <div id="error" class="hidden"></div>
-  </section>
+      <!-- 3D Segmented Tab Switcher -->
+      <div class="neu-tab-switch" id="neuTabSwitch" role="tablist">
+        <div class="neu-tab-indicator" id="tabIndicator"></div>
+        <button type="button" class="neu-tab-btn active" id="tabLogin" role="tab" aria-selected="true">
+          <i class="fas fa-sign-in-alt"></i>
+          <span>تسجيل الدخول</span>
+        </button>
+        <button type="button" class="neu-tab-btn" id="tabSignup" role="tab" aria-selected="false">
+          <i class="fas fa-user-plus"></i>
+          <span>إنشاء حساب</span>
+        </button>
+      </div>
+
+      <!-- Alert Notification Banner -->
+      <div id="error" class="neu-alert-box hidden" role="alert">
+        <i class="fas fa-exclamation-circle alert-icon"></i>
+        <span class="alert-msg"></span>
+      </div>
+
+      <!-- LOGIN FORM -->
+      <form id="loginForm" class="neu-auth-form active" novalidate>
+        <!-- Username Inset Field -->
+        <div class="neu-input-group">
+          <div class="neu-inset-field">
+            <i class="far fa-user neu-field-icon"></i>
+            <input type="text" id="login-username" class="neu-input" placeholder="اسم المستخدم (3 أحرف أو أرقام على الأقل)" autocomplete="username" required>
+          </div>
+        </div>
+
+        <!-- Password Inset Field -->
+        <div class="neu-input-group">
+          <div class="neu-inset-field">
+            <i class="fas fa-lock neu-field-icon"></i>
+            <input type="password" id="login-password" class="neu-input password-field" placeholder="كلمة المرور (6 خانات على الأقل)" autocomplete="current-password" required>
+            <button type="button" class="neu-eye-trigger toggle-password-btn" aria-label="إظهار كلمة المرور" tabindex="-1">
+              <i class="far fa-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Options Row -->
+        <div class="neu-options-row">
+          <label class="neu-checkbox">
+            <input type="checkbox" id="rememberMe" checked>
+            <span class="neu-check-box"></span>
+            <span class="neu-check-label">تذكرني</span>
+          </label>
+          <a href="javascript:void(0)" class="neu-sub-link" id="forgotPasswordBtn">نسيت كلمة المرور؟</a>
+        </div>
+
+        <!-- 3D Submit Button -->
+        <button type="submit" class="neu-action-btn" id="loginSubmitBtn">
+          <span class="btn-text">تسجيل الدخول</span>
+        </button>
+      </form>
+
+      <!-- SIGNUP FORM -->
+      <form id="signupForm" class="neu-auth-form" novalidate>
+        <!-- Username Inset Field -->
+        <div class="neu-input-group">
+          <div class="neu-inset-field">
+            <i class="fas fa-user-tag neu-field-icon"></i>
+            <input type="text" id="signup-username" class="neu-input" placeholder="اسم المستخدم الجديد (3 أحرف أو أرقام)" autocomplete="username" required minlength="3">
+            <span class="neu-val-status" id="usernameStatus"></span>
+          </div>
+        </div>
+
+        <!-- Password Inset Field -->
+        <div class="neu-input-group">
+          <div class="neu-inset-field">
+            <i class="fas fa-shield-alt neu-field-icon"></i>
+            <input type="password" id="signup-password" class="neu-input password-field" placeholder="كلمة المرور (6 أحرف أو أرقام على الأقل)" autocomplete="new-password" required minlength="6">
+            <button type="button" class="neu-eye-trigger toggle-password-btn" aria-label="إظهار كلمة المرور" tabindex="-1">
+              <i class="far fa-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- 3D Submit Button -->
+        <button type="submit" class="neu-action-btn" id="signupSubmitBtn">
+          <span class="btn-text">إنشاء الحساب</span>
+        </button>
+      </form>
+
+    </div>
+  </main>
 
   <script src="/js/auth.js"></script>
-  <script src="/js/navbar.js"></script>
-  <script src="/js/enter.js?v=3"></script>
-    <script src="/js/theme.js"></script>
+  <script src="/js/enter.js?v=7"></script>
 </body>
 </html>

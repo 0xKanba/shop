@@ -525,11 +525,11 @@ function showGuestInfoModal() {
       const val = btn.getAttribute("data-copy");
       navigator.clipboard.writeText(val).then(() => {
         const origText = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-check"></i> تم!';
+        btn.innerHTML = '<i class="fas fa-check"></i> تم';
         btn.style.background = "#10b981";
         btn.style.borderColor = "#10b981";
         btn.style.color = "#fff";
-        toastFallback("تم النسخ للحافظة! 📋");
+        toastFallback("تم النسخ بنجاح");
         setTimeout(() => {
           btn.innerHTML = origText;
           btn.style.background = "";
@@ -543,13 +543,13 @@ function showGuestInfoModal() {
   const copyFullBtn = document.getElementById("btnCopyGuestFullModal");
   if (copyFullBtn) {
     copyFullBtn.onclick = () => {
-      const fullText = `المحل العراقي - حساب الضيف الخاص بي:\nاسم المستخدم: ${username}\nكلمة المرور: ${guestPassword}\nرابط المتجر: ${window.location.origin}`;
+      const fullText = `المحل العراقي - حساب الضيف:\nالمستخدم: ${username}\nكلمة المرور: ${guestPassword}\nالمتجر: ${window.location.origin}`;
       navigator.clipboard.writeText(fullText).then(() => {
-        toastFallback("تم نسخ كامل بيانات الحساب للمشاركة! 👥📋");
-        copyFullBtn.innerHTML = '<i class="fas fa-check"></i> تم نسخ كامل البيانات!';
+        toastFallback("تم نسخ بيانات الحساب");
+        copyFullBtn.innerHTML = '<i class="fas fa-check"></i> تم النسخ';
         copyFullBtn.style.background = "#10b981";
         setTimeout(() => {
-          copyFullBtn.innerHTML = '<i class="fas fa-share-alt"></i> نسخ البيانات كاملة للمشاركة مع الأهل 👥';
+          copyFullBtn.innerHTML = '<i class="fas fa-share-alt"></i> نسخ البيانات كاملة للمشاركة 👥';
           copyFullBtn.style.background = "";
         }, 1500);
       });
@@ -559,14 +559,14 @@ function showGuestInfoModal() {
   const shareStoreBtn = document.getElementById("btnShareStoreModal");
   if (shareStoreBtn) {
     shareStoreBtn.onclick = () => {
-      const fullText = `المحل العراقي - متجري المفضل:\nرابط المتجر: ${window.location.origin}`;
+      const fullText = `المحل العراقي:\n${window.location.origin}`;
       navigator.clipboard.writeText(fullText).then(() => {
-        toastFallback("تم نسخ رابط المتجر للمشاركة مع العائلة! 👥📋");
-        shareStoreBtn.innerHTML = '<i class="fas fa-check"></i> تم النسخ!';
+        toastFallback("تم نسخ رابط المتجر");
+        shareStoreBtn.innerHTML = '<i class="fas fa-check"></i> تم النسخ';
         shareStoreBtn.style.background = "#10b981";
         shareStoreBtn.style.color = "#fff";
         setTimeout(() => {
-          shareStoreBtn.innerHTML = '<i class="fas fa-share-alt"></i> مشاركة رابط المتجر مع العائلة 👥';
+          shareStoreBtn.innerHTML = '<i class="fas fa-share-alt"></i> مشاركة رابط المتجر 👥';
           shareStoreBtn.style.background = "";
           shareStoreBtn.style.color = "";
         }, 1500);
@@ -598,6 +598,10 @@ function initAppHeader() {
   if (window.appHeaderInitialized) return;
   window.appHeaderInitialized = true;
 
+  // Do not inject navbar or header on enter / auth page
+  const isAuthPage = window.location.pathname.includes("/enter");
+  if (isAuthPage) return;
+
   if(document.querySelector(".app-header")) {
     updateLoginButton();
     updateGuestButton();
@@ -605,6 +609,8 @@ function initAppHeader() {
   }
   
   const isMainPage = window.location.pathname === "/" || window.location.pathname.endsWith("/index.html") || window.location.pathname.endsWith("/index") || window.location.pathname === "";
+  const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+  const themeIconClass = currentTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
   
   const header = document.createElement("header");
   header.className = "app-header";
@@ -623,8 +629,8 @@ function initAppHeader() {
           <span class="cart-count" style="display:none;">0</span>
         </button>
         
-        <button class="header-btn theme-toggle" title="تغيير المظهر">
-          <!-- hydrated dynamically by theme.js -->
+        <button class="header-btn theme-toggle" title="${currentTheme === 'dark' ? 'الوضع الفاتح' : 'الوضع الداكن'}" aria-label="تغيير المظهر">
+          <i class="${themeIconClass}" id="themeIcon"></i>
         </button>
         
         ${isMainPage ? `<button class="header-btn login-btn" title="الحساب"></button>` : ''}
@@ -638,6 +644,9 @@ function initAppHeader() {
   updateLoginButton();
   updateCartCount();
   updateGuestButton();
+  if (typeof window.syncThemeButtons === 'function') {
+    window.syncThemeButtons();
+  }
   
   document.addEventListener("auth-status-changed", () => {
     updateLoginButton();

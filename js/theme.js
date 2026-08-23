@@ -1,57 +1,113 @@
-function initTheme() {
-  const savedTheme = localStorage.getItem('theme');
-  if (savedTheme) {
-    document.documentElement.setAttribute('data-theme', savedTheme);
-  } else {
-    // If no saved theme, rely on media query
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
-  }
-}
+/* ================================================================
+   المحل العراقي — Universal Theme Engine (Zero-Flicker Architecture)
+   ================================================================ */
 
-initTheme();
-
-document.addEventListener('DOMContentLoaded', () => {
-  // Add or find theme toggle button
-  let btn = document.querySelector('.theme-toggle');
-  let appended = false;
-  
-  if (!btn) {
-    btn = document.createElement('button');
-    btn.className = 'theme-toggle';
-    btn.title = 'تغيير المظهر';
-    appended = true;
-  }
-  
-  const updateIcon = () => {
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    btn.innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
-  };
-  updateIcon();
-
-  btn.addEventListener('click', () => {
-    let currentTheme = document.documentElement.getAttribute('data-theme');
-    if (currentTheme === 'dark') {
-      document.documentElement.setAttribute('data-theme', 'light');
-      localStorage.setItem('theme', 'light');
-    } else {
-      document.documentElement.setAttribute('data-theme', 'dark');
-      localStorage.setItem('theme', 'dark');
+function getResolvedTheme() {
+  try {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark' || savedTheme === 'light') {
+      return savedTheme;
     }
-    updateIcon();
-  });
-
-  if (appended) {
-    document.body.appendChild(btn);
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    return prefersDark ? 'dark' : 'light';
+  } catch (e) {
+    return 'dark';
   }
-});
+}
 
-// Register Service Worker for local image caching and fast loading
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then(reg => console.log('Service Worker registered successfully:', reg.scope))
-      .catch(err => console.error('Service Worker registration failed:', err));
+function applyTheme(theme) {
+  if (!theme) theme = getResolvedTheme();
+  document.documentElement.setAttribute('data-theme', theme);
+  document.documentElement.style.backgroundColor = theme === 'dark' ? '#181b22' : '#e6ecf4';
+  document.documentElement.style.colorScheme = theme === 'dark' ? 'dark' : 'light';
+
+  // Dynamic meta theme-color sync
+  let metaTheme = document.querySelector('meta[name="theme-color"]');
+  if (!metaTheme) {
+    metaTheme = document.createElement('meta');
+    metaTheme.name = 'theme-color';
+    document.head.appendChild(metaTheme);
+  }
+  metaTheme.setAttribute('content', theme === 'dark' ? '#181b22' : '#e6ecf4');
+}
+
+// Immediately apply theme upon script evaluation
+applyTheme();
+
+function syncThemeButtons() {
+  const currentTheme = document.documentElement.getAttribute('data-theme') || getResolvedTheme();
+  const isDark = currentTheme === 'dark';
+  const iconClass = isDark ? 'fas fa-sun' : 'fas fa-moon';
+
+  document.querySelectorAll('.theme-toggle, #themeToggleBtn, [data-theme-toggle]').forEach(btn => {
+    const i = btn.querySelector('#themeIcon') || btn.querySelector('i');
+    if (i) {
+      i.className = iconClass;
+    } else {
+      btn.innerHTML = `<i class="${iconClass}" id="themeIcon"></i>`;
+    }
+    btn.setAttribute('aria-label', isDark ? 'التحويل للوضع الفاتح' : 'التحويل للوضع الداكن');
+    btn.setAttribute('title', isDark ? 'الوضع الفاتح' : 'الوضع الداكن');
   });
 }
 
+function toggleAppTheme() {
+  document.documentElement.classList.add('theme-transitioning');
+  const currentTheme = document.documentElement.getAttribute('data-theme') || getResolvedTheme();
+  const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  
+  try {
+    localStorage.setItem('theme', nextTheme);
+  } catch (e) {}
+
+  applyTheme(nextTheme);
+  syncThemeButtons();
+
+  setTimeout(() => {
+    document.documentElement.classList.remove('theme-transitioning');
+  }, 350);
+}
+
+window.toggleAppTheme = toggleAppTheme;
+window.applyTheme = applyTheme;
+window.initTheme = applyTheme;
+window.syncThemeButtons = syncThemeButtons;
+
+// Global Delegated Event Listener so dynamically created buttons immediately work
+document.addEventListener('click', (e) => {
+  const toggleBtn = e.target.closest('.theme-toggle, #themeToggleBtn, [data-theme-toggle]');
+  if (toggleBtn) {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleAppTheme();
+  }
+}, true);
+
+// Initial sync
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', syncThemeButtons);
+} else {
+  syncThemeButtons();
+}
+
+// Ensure clean URL without any lingering hash tags like #us
+if (window.location.hash) {
+  try {
+    history.replaceState(null, document.title, window.location.pathname + window.location.search);
+  } catch (e) {}
+}
+
+// Clean up any lingering service workers or caches to avoid redirect or cache glitches
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(registrations => {
+    for (let registration of registrations) {
+      registration.unregister();
+    }
+  }).catch(() => {});
+  
+  if (window.caches) {
+    caches.keys().then(keys => {
+      keys.forEach(key => caches.delete(key));
+    }).catch(() => {});
+  }
+}

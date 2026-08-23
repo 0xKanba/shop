@@ -1,6 +1,26 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    (function() {
+      try {
+        var s = localStorage.getItem('theme');
+        var d = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var t = s || (d ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', t);
+        document.documentElement.style.backgroundColor = t === 'dark' ? '#181b22' : '#e6ecf4';
+        document.documentElement.style.colorScheme = t === 'dark' ? 'dark' : 'light';
+      } catch (e) {}
+    })();
+  </script>
+  <style>
+    :root { color-scheme: light; }
+    html[data-theme="dark"] { color-scheme: dark; }
+    html, body { background-color: #e6ecf4; }
+    html[data-theme="dark"], html[data-theme="dark"] body { background-color: #181b22 !important; }
+  </style>
 
   <meta name="description" content="المحل العراقي - أفضل وجهة للتسوق الإلكتروني في العراق، نوفر لك منتجات عالية الجودة بأسعار تنافسية مع خدمة توصيل سريعة وموثوقة.">
   <meta name="keywords" content="تسوق, العراق, المحل العراقي, متجر الكتروني, منتجات, بغداد, توصيل, تسوق اونلاين">
@@ -16,81 +36,76 @@
   <meta name="twitter:description" content="تسوق أفضل المنتجات بجودة عالية محلياً في العراق.">
   <meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/0xKanba/assets@master/shop/pro.webp">
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تفاصيل المنتج — المحل العراقي</title>
-    <link rel="icon" href="https://cdn.jsdelivr.net/gh/0xKanba/assets@master/shop/pro.webp" type="image/webp">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="/css/product.css">
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <title>تفاصيل المنتج — المحل العراقي</title>
+  <link rel="icon" href="https://cdn.jsdelivr.net/gh/0xKanba/assets@master/shop/pro.webp" type="image/webp">
+  <link rel="apple-touch-icon" href="https://cdn.jsdelivr.net/gh/0xKanba/assets@master/shop/pro.webp">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#181b22">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/product.css">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script src="/js/theme.js"></script>
 </head>
 <body>
-    <div class="loader" id="loader"><div class="lr"></div></div>
-    <div class="background-gradient"></div>
-    <a href="javascript:history.back()" class="global-back-btn"><i class="fas fa-arrow-right"></i></a>
-
-    <div class="page-wrap" id="productContainer" style="display: none;">
-        <div class="product-layout">
-            
-            <div class="gallery-section">
-                <div class="main-image-wrap" id="mainImageWrap">
-                    <img id="mainImage" src="" alt="صورة المنتج">
-                </div>
-                <div class="thumbs-row" id="thumbsRow"></div>
-                <!-- سهم إشارة للنزول للأسفل في الموبايل -->
-                <div class="mobile-scroll-hint" id="mobileScrollHint">
-                    <span>التفاصيل والمميزات في الأسفل</span>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-            </div>
-            
-            <div class="info-section">
-                <div>
-                    <div class="brand-tag">المحل العراقي المميزة</div>
-                    <h1 class="prod-name" id="prodName">جاري التحميل...</h1>
-                </div>
-                
-                <div class="prod-price" style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-                    <div style="display: flex; align-items: baseline; gap: 4px;">
-                        <span id="prodPrice">0</span> <small>د.ع</small>
-                    </div>
-                    <span id="prodDelivery" class="delivery-badge" style="display: none;"><i class="fas fa-truck"></i> 0 د.ع توصيل مجاني</span>
-                </div>
-                
-                <div class="actions-bar" id="actionsBar">
-                    <div class="qty-ctrl">
-                        <button id="btnMinus"><i class="fas fa-minus"></i></button>
-                        <span id="qtyVal">1</span>
-                        <button id="btnPlus"><i class="fas fa-plus"></i></button>
-                    </div>
-                    <button class="add-btn" id="btnAddCart">
-                        <i class="fas fa-cart-arrow-down"></i> أضف للسلة
-                    </button>
-                </div>
-                
-                <div class="desc-box" id="prodDesc">
-                </div>
-                
-                <div class="specs-grid" id="specsGrid">
-                </div>
-            </div>
-            
+  <div class="page-wrap" id="productContainer" style="display: none;">
+    <div class="product-layout">
+      
+      <div class="gallery-section">
+        <div class="main-image-wrap" id="mainImageWrap">
+          <img id="mainImage" src="" alt="صورة المنتج">
         </div>
+        <div class="thumbs-row" id="thumbsRow"></div>
+        <!-- سهم إشارة للنزول للأسفل في الموبايل -->
+        <div class="mobile-scroll-hint" id="mobileScrollHint">
+          <span>التفاصيل والمميزات في الأسفل</span>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+      </div>
+      
+      <div class="info-section">
+        <div>
+          <div class="brand-tag">المحل العراقي المميزة</div>
+          <h1 class="prod-name" id="prodName">جاري التحميل...</h1>
+        </div>
+        
+        <div class="prod-price" style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+          <div style="display: flex; align-items: baseline; gap: 4px;">
+            <span id="prodPrice">0</span> <small>د.ع</small>
+          </div>
+          <span id="prodDelivery" class="delivery-badge" style="display: none;"><i class="fas fa-truck"></i> 0 د.ع توصيل مجاني</span>
+        </div>
+        
+        <div class="actions-bar" id="actionsBar">
+          <div class="qty-ctrl">
+            <button id="btnMinus"><i class="fas fa-minus"></i></button>
+            <span id="qtyVal">1</span>
+            <button id="btnPlus"><i class="fas fa-plus"></i></button>
+          </div>
+          <button class="add-btn" id="btnAddCart">
+            <i class="fas fa-cart-arrow-down"></i> أضف للسلة
+          </button>
+        </div>
+        
+        <div class="desc-box" id="prodDesc">
+        </div>
+        
+        <div class="specs-grid" id="specsGrid">
+        </div>
+      </div>
+      
     </div>
+  </div>
 
-    <!-- Modal for fullscreen image -->
-    <!-- Modal for fullscreen image -->
-    <div id="gallery-modal">
-        <button class="modal-close" id="modalClose"><i class="fas fa-times"></i></button>
-        <button class="modal-nav prev-img" id="modalPrev"><i class="fas fa-chevron-right"></i></button>
-        <button class="modal-nav next-img" id="modalNext"><i class="fas fa-chevron-left"></i></button>
-        <img id="modalImg" src="" style="cursor: pointer;">
-    </div>
+  <!-- Modal for fullscreen image -->
+  <div id="gallery-modal">
+    <button class="modal-close" id="modalClose"><i class="fas fa-times"></i></button>
+    <button class="modal-nav prev-img" id="modalPrev"><i class="fas fa-chevron-right"></i></button>
+    <button class="modal-nav next-img" id="modalNext"><i class="fas fa-chevron-left"></i></button>
+    <img id="modalImg" src="" style="cursor: pointer;">
+  </div>
 
-
-    <script src="/js/auth.js"></script>
-    <script src="/js/navbar.js"></script>
-    <script src="/js/product.js?v=4"></script>
-    <script src="/js/theme.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/navbar.js"></script>
+  <script src="/js/product.js?v=4"></script>
 </body>
 </html>

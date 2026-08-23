@@ -1,6 +1,26 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    (function() {
+      try {
+        var s = localStorage.getItem('theme');
+        var d = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var t = s || (d ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', t);
+        document.documentElement.style.backgroundColor = t === 'dark' ? '#181b22' : '#e6ecf4';
+        document.documentElement.style.colorScheme = t === 'dark' ? 'dark' : 'light';
+      } catch (e) {}
+    })();
+  </script>
+  <style>
+    :root { color-scheme: light; }
+    html[data-theme="dark"] { color-scheme: dark; }
+    html, body { background-color: #e6ecf4; }
+    html[data-theme="dark"], html[data-theme="dark"] body { background-color: #181b22 !important; }
+  </style>
 
   <meta name="description" content="المحل العراقي - أفضل وجهة للتسوق الإلكتروني في العراق، نوفر لك منتجات عالية الجودة بأسعار تنافسية مع خدمة توصيل سريعة وموثوقة.">
   <meta name="keywords" content="تسوق, العراق, المحل العراقي, متجر الكتروني, منتجات, بغداد, توصيل, تسوق اونلاين">
@@ -16,60 +36,23 @@
   <meta name="twitter:description" content="تسوق أفضل المنتجات بجودة عالية محلياً في العراق.">
   <meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/0xKanba/assets@master/shop/pro.webp">
 
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>المحل العراقي — الرئيسية</title>
   <link rel="icon" href="https://cdn.jsdelivr.net/gh/0xKanba/assets@master/shop/pro.webp" type="image/webp">
   <link rel="apple-touch-icon" href="https://cdn.jsdelivr.net/gh/0xKanba/assets@master/shop/pro.webp">
-  <link rel="manifest" href="/manifest.json" crossorigin="use-credentials">
-  <meta name="theme-color" content="#0a0f0d">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#181b22">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="/css/index.css">
-
-
-
-
-
-  <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Store",
-  "name": "المحل العراقي",
-  "url": "https://shop.kanba.pw/",
-  "image": "https://cdn.jsdelivr.net/gh/0xKanba/assets@master/shop/pro.webp",
-  "description": "تسوق منتجات بجودة عالية محلياً",
-  "brand": {
-    "@type": "Brand",
-    "name": "المحل العراقي"
-  }
-}
-  </script>
+  <script src="/js/theme.js"></script>
 </head>
- <body>
-  <div class="loader" id="loader"><div class="lr"></div></div>
-  <div class="background-gradient"></div>
-
+<body>
   <div class="container">
-
-    <div class="shop-header">
-      <a href="/md" target="_blank" class="brand-wrap">
-        <img src="https://cdn.jsdelivr.net/gh/0xKanba/assets@master/shop/pro.webp" alt="المحل العراقي" class="brand-logo">
-        <span class="brand-name"><span class="g">المحل</span> العراقي</span>
-      </a>
-    </div>
-
     <div class="product-grid" id="productGrid"></div>
-
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <script src="/js/auth.js"></script>
   <script src="/js/navbar.js"></script>
   <script type="module" src="/js/index.js"></script>
-    <script src="/js/theme.js"></script>
 </body> 
-
 </html>

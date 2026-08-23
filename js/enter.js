@@ -1,69 +1,182 @@
 // ================================================================
-// enter.js — تسجيل الدخول وإنشاء الحساب | username + password
+// enter.js — 3D Neumorphic Auth Engine | المحل العراقي
 // ================================================================
 
 const API = 'https://login.kanba.pw';
 
-const panel  = document.getElementById('panel');
-const forms  = [...panel.querySelectorAll('.form')];
-const errBox = document.getElementById('error');
+// Elements
+const authCard          = document.getElementById('authCard');
+const neuTabSwitch      = document.getElementById('neuTabSwitch');
+const tabLogin          = document.getElementById('tabLogin');
+const tabSignup         = document.getElementById('tabSignup');
+const loginForm         = document.getElementById('loginForm');
+const signupForm        = document.getElementById('signupForm');
+const authTitle         = document.getElementById('authTitle');
+const authSubtitle      = document.getElementById('authSubtitle');
+const errBox            = document.getElementById('error');
+const alertMsg          = errBox ? errBox.querySelector('.alert-msg') : null;
 
-// ── نجوم الخلفية ──
-(function stars() {
-  const el = document.getElementById('stars');
-  if (!el) return;
-  for (let i = 0; i < 160; i++) {
-    const s = document.createElement('div');
-    s.className = 'star';
-    s.style.left   = Math.random() * 100 + '%';
-    s.style.top    = Math.random() * 100 + '%';
-    const sz = Math.random() * 2.5;
-    s.style.width  = sz + 'px';
-    s.style.height = sz + 'px';
-    s.style.setProperty('--dur', (2 + Math.random() * 4) + 's');
-    el.appendChild(s);
-  }
-})();
-
-// ── التبديل بين النماذج ──
-function showForm(id) {
-  forms.forEach(f => f.classList.toggle('active', f.id === id));
+// ── Switch between Login & Signup seamlessly ──
+function switchMode(targetMode) {
   hideError();
+  const isSignup = targetMode === 'signup';
+
+  if (isSignup) {
+    if (neuTabSwitch) neuTabSwitch.classList.add('signup-mode');
+    if (tabLogin) {
+      tabLogin.classList.remove('active');
+      tabLogin.setAttribute('aria-selected', 'false');
+    }
+    if (tabSignup) {
+      tabSignup.classList.add('active');
+      tabSignup.setAttribute('aria-selected', 'true');
+    }
+
+    if (loginForm) loginForm.classList.remove('active');
+    if (signupForm) signupForm.classList.add('active');
+
+    if (authTitle) authTitle.textContent = 'إنشاء حساب جديد';
+    if (authSubtitle) authSubtitle.textContent = 'أدخل بياناتك لإنشاء حساب والبدء بالتسوق';
+  } else {
+    if (neuTabSwitch) neuTabSwitch.classList.remove('signup-mode');
+    if (tabSignup) {
+      tabSignup.classList.remove('active');
+      tabSignup.setAttribute('aria-selected', 'false');
+    }
+    if (tabLogin) {
+      tabLogin.classList.add('active');
+      tabLogin.setAttribute('aria-selected', 'true');
+    }
+
+    if (signupForm) signupForm.classList.remove('active');
+    if (loginForm) loginForm.classList.add('active');
+
+    if (authTitle) authTitle.textContent = 'أهلاً بك مجدداً';
+    if (authSubtitle) authSubtitle.textContent = 'يرجى تسجيل الدخول للمتابعة';
+  }
 }
 
-panel.addEventListener('click', e => {
-  if (e.target.classList.contains('flip'))
-    showForm(e.target.dataset.to + 'Form');
+if (tabLogin) {
+  tabLogin.addEventListener('click', (e) => {
+    e.preventDefault();
+    switchMode('login');
+  });
+}
+
+if (tabSignup) {
+  tabSignup.addEventListener('click', (e) => {
+    e.preventDefault();
+    switchMode('signup');
+  });
+}
+
+// ── Password Visibility Toggles ──
+document.querySelectorAll('.toggle-password-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const input = btn.parentElement.querySelector('.password-field');
+    const icon = btn.querySelector('i');
+    if (!input) return;
+
+    if (input.type === 'password') {
+      input.type = 'text';
+      icon.className = 'far fa-eye-slash';
+      btn.setAttribute('aria-label', 'إخفاء كلمة المرور');
+    } else {
+      input.type = 'password';
+      icon.className = 'far fa-eye';
+      btn.setAttribute('aria-label', 'إظهار كلمة المرور');
+    }
+  });
 });
 
-// ── عرض الخطأ ──
-function showError(msg) {
-  errBox.textContent = msg;
-  errBox.classList.remove('hidden');
-}
-function hideError() {
-  errBox.textContent = '';
-  errBox.classList.add('hidden');
-}
-
-// ── تحقق من اسم المستخدم ──
+// ── Validation: Username (3+ chars/numbers) & Password (6+ chars/numbers) ──
 function validateUsername(u) {
-  if (u.length < 3) return 'اسم المستخدم يجب أن يكون 3 أحرف على الأقل';
-  if (!/^[a-z0-9_]+$/.test(u)) return 'يُسمح فقط بـ: أحرف إنجليزية، أرقام، شرطة سفلية';
+  if (!u || u.length < 3) return 'اسم المستخدم 3 خانات على الأقل';
+  if (!/^[a-zA-Z0-9_\u0600-\u06FF]+$/.test(u)) {
+    return 'أحرف وأرقام فقط';
+  }
   return null;
 }
 
-// ── تسجيل الدخول ──
+function validatePassword(p) {
+  if (!p || p.length < 6) return 'كلمة المرور 6 خانات على الأقل';
+  return null;
+}
+
+// ── Live Username Validation in Signup ──
+const signupUsernameInput = document.getElementById('signup-username');
+const usernameStatus      = document.getElementById('usernameStatus');
+
+if (signupUsernameInput && usernameStatus) {
+  signupUsernameInput.addEventListener('input', () => {
+    const val = signupUsernameInput.value.trim();
+    if (!val) {
+      usernameStatus.innerHTML = '';
+      usernameStatus.className = 'neu-val-status';
+      return;
+    }
+    const err = validateUsername(val);
+    if (!err) {
+      usernameStatus.innerHTML = '<i class="fas fa-check-circle"></i>';
+      usernameStatus.className = 'neu-val-status valid';
+    } else {
+      usernameStatus.innerHTML = '<i class="fas fa-times-circle"></i>';
+      usernameStatus.className = 'neu-val-status invalid';
+    }
+  });
+}
+
+// ── Forgot Password Helper ──
+const forgotPasswordBtn = document.getElementById('forgotPasswordBtn');
+if (forgotPasswordBtn) {
+  forgotPasswordBtn.addEventListener('click', () => {
+    showError('تواصل مع الدعم الفني لاستعادة كلمة المرور.');
+  });
+}
+
+// ── Error Alert Helper ──
+function showError(msg) {
+  if (!errBox) return;
+  if (alertMsg) alertMsg.textContent = msg;
+  else errBox.textContent = msg;
+  errBox.classList.remove('hidden');
+}
+
+function hideError() {
+  if (!errBox) return;
+  if (alertMsg) alertMsg.textContent = '';
+  else errBox.textContent = '';
+  errBox.classList.add('hidden');
+}
+
+// ── Button Loading State ──
+function setButtonLoading(btn, isLoading, defaultText) {
+  if (!btn) return;
+  if (isLoading) {
+    btn.disabled = true;
+    btn.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> <span>جارٍ المعالجة...</span>`;
+  } else {
+    btn.disabled = false;
+    btn.innerHTML = `<span class="btn-text">${defaultText}</span>`;
+  }
+}
+
+// ── Perform Login ──
 async function doLogin(username, password, btn) {
-  btn.disabled = true; btn.textContent = 'جارٍ...';
+  setButtonLoading(btn, true, 'تسجيل الدخول');
   try {
-    const res  = await fetch(`${API}/login`, {
+    const res = await fetch(`${API}/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password })
     });
     const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'فشل تسجيل الدخول');
+    if (!res.ok) {
+      let errText = 'اسم المستخدم أو كلمة المرور غير صحيحة';
+      if (data.error && data.error.includes('not found')) errText = 'الحساب غير موجود';
+      else if (data.error && data.error.includes('password')) errText = 'كلمة المرور غير صحيحة';
+      throw new Error(errText);
+    }
 
     localStorage.setItem('isLoggedIn', 'true');
     localStorage.setItem('userToken',  data.token);
@@ -74,21 +187,27 @@ async function doLogin(username, password, btn) {
     await handlePendingCart(data.token);
   } catch (e) {
     showError(e.message);
-    btn.disabled = false; btn.textContent = 'تسجيل الدخول';
+    setButtonLoading(btn, false, 'تسجيل الدخول');
   }
 }
 
-// ── إنشاء الحساب ──
+// ── Perform Register ──
 async function doRegister(username, password, btn) {
-  btn.disabled = true; btn.textContent = 'جارٍ...';
+  setButtonLoading(btn, true, 'إنشاء الحساب');
   try {
-    const res  = await fetch(`${API}/register`, {
+    const res = await fetch(`${API}/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password })
     });
     const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'فشل إنشاء الحساب');
+    if (!res.ok) {
+      let errText = 'تعذر إنشاء الحساب، يرجى المحاولة ثانية';
+      if (data.error && (data.error.includes('exists') || data.error.includes('already'))) {
+        errText = 'اسم المستخدم مسجل مسبقاً، اختر اسماً آخر';
+      }
+      throw new Error(errText);
+    }
 
     localStorage.setItem('isLoggedIn', 'true');
     localStorage.setItem('userToken',  data.token);
@@ -99,36 +218,48 @@ async function doRegister(username, password, btn) {
     await handlePendingCart(data.token);
   } catch (e) {
     showError(e.message);
-    btn.disabled = false; btn.textContent = 'إنشاء حساب';
+    setButtonLoading(btn, false, 'إنشاء الحساب');
   }
 }
 
-// ── Submit ──
-panel.addEventListener('submit', async e => {
-  e.preventDefault();
-  hideError();
-  const form = e.target;
-  const btn  = form.querySelector('button[type=submit]');
-
-  if (form.id === 'loginForm') {
-    const username = document.getElementById('login-username').value.trim().toLowerCase();
+// ── Form Submit Event Listeners ──
+if (loginForm) {
+  loginForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    hideError();
+    const username = document.getElementById('login-username').value.trim();
     const password = document.getElementById('login-password').value;
-    if (!username || !password) return showError('يرجى تعبئة جميع الحقول');
+    const btn      = document.getElementById('loginSubmitBtn');
+
+    const uErr = validateUsername(username);
+    if (uErr) return showError(uErr);
+
+    const pErr = validatePassword(password);
+    if (pErr) return showError(pErr);
+
     await doLogin(username, password, btn);
-  }
+  });
+}
 
-  if (form.id === 'signupForm') {
-    const username = document.getElementById('signup-username').value.trim().toLowerCase();
+if (signupForm) {
+  signupForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    hideError();
+    const username = document.getElementById('signup-username').value.trim();
     const password = document.getElementById('signup-password').value;
-    if (!username || !password) return showError('يرجى تعبئة جميع الحقول');
-    const err = validateUsername(username);
-    if (err) return showError(err);
-    if (password.length < 6) return showError('كلمة المرور يجب أن تكون 6 أحرف على الأقل');
+    const btn      = document.getElementById('signupSubmitBtn');
+
+    const uErr = validateUsername(username);
+    if (uErr) return showError(uErr);
+
+    const pErr = validatePassword(password);
+    if (pErr) return showError(pErr);
+
     await doRegister(username, password, btn);
-  }
-});
+  });
+}
 
-
+// ── Handle Pending Cart Additions ──
 async function handlePendingCart(token) {
   const pending = localStorage.getItem('pendingCartAdd');
   if (pending) {
@@ -148,7 +279,7 @@ async function handlePendingCart(token) {
         localStorage.setItem('cart', JSON.stringify(cart));
       }
     } catch (e) {
-      console.error(e);
+      console.error('Pending cart error:', e);
     }
     localStorage.removeItem('pendingCartAdd');
   }
@@ -156,8 +287,3 @@ async function handlePendingCart(token) {
   localStorage.removeItem('redirectAfterLogin');
   location.replace(redirectUrl);
 }
-
-document.addEventListener("DOMContentLoaded", () => {
-  document.body.classList.add("loaded");
-});
-

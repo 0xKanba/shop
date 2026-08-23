@@ -102,86 +102,50 @@ function renderProducts(products) {
   document.body.classList.add("loaded");
 }
 
-async function addToCart(p, btn) {
-  btn.disabled = true;
+function addToCart(p, btn) {
   const orig = btn.innerHTML;
-  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
 
   let cart = JSON.parse(localStorage.getItem("cart") || "[]");
   const idx = cart.findIndex(i => i.id === p.id);
-  idx >= 0 ? cart[idx].quantity++ : cart.push({ id:p.id, name:p.title, price:p.price, quantity:1 });
+  idx >= 0 ? cart[idx].quantity++ : cart.push({ id: p.id, name: p.title, price: p.price, quantity: 1 });
 
   localStorage.setItem("cart", JSON.stringify(cart));
-  const token = localStorage.getItem("userToken");
+  if (window.updateCartCount) window.updateCartCount();
+  showToast(`تمت إضافة "${p.title}" للسلة`);
 
-  if (!token) {
-    // Guest addition: perfectly instant and offline-ready
-    if (window.updateCartCount) window.updateCartCount();
-    showToast(`تمت إضافة "${p.title}" للسلة`);
-    
-    btn.innerHTML = '<i class="fas fa-check"></i>';
-    btn.classList.add("dancing");
-    if (window.confetti) {
+  btn.innerHTML = '<i class="fas fa-check"></i>';
+  btn.classList.add("dancing");
+
+  if (window.confetti) {
+    try {
       const rect = btn.getBoundingClientRect();
       const x = (rect.left + rect.width / 2) / window.innerWidth;
       const y = (rect.top + rect.height / 2) / window.innerHeight;
       confetti({
-        particleCount: 50,
-        spread: 60,
+        particleCount: 35,
+        spread: 50,
         origin: { x, y },
-        colors: ['#2d8cf0', '#f59e0b', '#10b981']
+        colors: ['#10b981', '#2d8cf0', '#f59e0b']
       });
-    }
-    setTimeout(() => { btn.innerHTML = orig; btn.classList.remove("dancing"); btn.disabled = false; }, 2000);
-    return;
+    } catch (e) {}
   }
 
-  try {
-    const res = await fetch("https://login.kanba.pw/cart", {
+  setTimeout(() => {
+    btn.innerHTML = orig;
+    btn.classList.remove("dancing");
+  }, 1200);
+
+  // Background Cloud Sync without blocking the user
+  const token = localStorage.getItem("userToken");
+  if (token) {
+    fetch("https://login.kanba.pw/cart", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`
       },
       body: JSON.stringify({ cart })
-    });
-    if (!res.ok) throw new Error();
-    if (window.updateCartCount) window.updateCartCount();
-    showToast(`تمت إضافة "${p.title}" للسلة`);
-    
-    btn.innerHTML = '<i class="fas fa-check"></i>';
-    btn.style.cssText = "background:var(--primary);color:#000;border-color:var(--primary)";
-    btn.classList.add("dancing");
-    if (window.confetti) {
-      const rect = btn.getBoundingClientRect();
-      const x = (rect.left + rect.width / 2) / window.innerWidth;
-      const y = (rect.top + rect.height / 2) / window.innerHeight;
-      confetti({
-        particleCount: 50,
-        spread: 60,
-        origin: { x, y },
-        colors: ['#2d8cf0', '#f59e0b', '#10b981']
-      });
-    }
-    setTimeout(() => { btn.innerHTML = orig; btn.style.cssText = ""; btn.classList.remove("dancing"); btn.disabled = false; }, 2000);
-  } catch (e) {
-    if (window.updateCartCount) window.updateCartCount();
-    showToast(`تمت إضافة "${p.title}" للسلة`);
-    
-    btn.innerHTML = '<i class="fas fa-check"></i>';
-    btn.classList.add("dancing");
-    if (window.confetti) {
-      const rect = btn.getBoundingClientRect();
-      const x = (rect.left + rect.width / 2) / window.innerWidth;
-      const y = (rect.top + rect.height / 2) / window.innerHeight;
-      confetti({
-        particleCount: 50,
-        spread: 60,
-        origin: { x, y },
-        colors: ['#2d8cf0', '#f59e0b', '#10b981']
-      });
-    }
-    setTimeout(() => { btn.innerHTML = orig; btn.classList.remove("dancing"); btn.disabled = false; }, 2000);
+    }).catch(() => {});
   }
 }
 

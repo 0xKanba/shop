@@ -1,132 +1,113 @@
-/* ==============================================
-   المحل العراقي — Modern Luxury UI / Index
-   ============================================== */
+/* ================================================================
+   المحل العراقي — 3D Glassmorphic Index & Product Grid
+   ================================================================ */
 @import url('theme.css');
 
 .container {
   max-width: 1000px;
   margin: 0 auto;
-  padding: 80px 16px 40px;
+  padding: 24px 16px 40px !important;
 }
-
-/* Header */
-.shop-header {
-  text-align: center;
-  margin-bottom: 40px;
-  animation: fadeDown 0.8s ease backwards;
-}
-@keyframes fadeDown {
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.brand-wrap {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  text-decoration: none;
-  background: var(--surface-1);
-  padding: 8px 24px;
-  border-radius: var(--radius-full);
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow-lg);
-  backdrop-filter: blur(12px);
-  transition: var(--transition);
-}
-.brand-wrap:hover {
-  transform: translateY(-2px);
-  border-color: var(--border-focus);
-}
-.brand-logo {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-.brand-name {
-  font-size: 1.3rem;
-  font-weight: 800;
-  color: var(--text-main);
-  letter-spacing: -0.5px;
-}
-.brand-name .g { color: var(--primary); }
 
 /* Product Grid */
 .product-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 20px;
+  gap: 22px;
 }
 
-/* Product Card */
+/* 3D Neumorphic & Glassmorphic Product Card */
 .card {
-  --font-color: var(--text-main);
-  --font-color-sub: var(--text-muted);
-  --bg-color: var(--surface-0);
-  --main-color: var(--primary);
-  --main-focus: var(--primary);
-  background: var(--bg-color);
-  border: 2px solid var(--main-color);
-  box-shadow: 4px 4px var(--main-color);
-  border-radius: 12px;
+  --font-color: var(--neu-title);
+  --font-color-sub: var(--neu-sub);
+  --bg-color: var(--neu-surface);
+  --main-color: var(--neu-accent);
+  --main-focus: var(--neu-accent-hover);
+  
+  background: var(--neu-surface);
+  background-image: var(--neu-surface-grad);
+  border: 1px solid var(--neu-glass-border);
+  box-shadow: var(--neu-shadow-card);
+  border-radius: 24px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  padding: 8px;
-  gap: 4px;
+  padding: 14px;
+  gap: 8px;
   font-family: inherit;
-  transition: all 0.5s;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: pointer;
   opacity: 0;
-  transform: translateY(20px);
+  transform: translateY(16px);
+  position: relative;
 }
-.card.revealed { opacity: 1; transform: translateY(0); }
-.card:hover { transform: translateY(-4px); box-shadow: 6px 6px var(--main-focus); border-color: var(--main-focus); }
 
+.card.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 12px 12px 26px var(--neu-sd-dark), -12px -12px 26px var(--neu-sd-light);
+  border-color: var(--border-focus);
+}
+
+/* 3D Inset Image Well */
 .card-img {
-  transition: all 0.5s;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
   justify-content: center;
   align-items: center;
   overflow: hidden;
-  border-radius: 8px;
+  border-radius: 18px;
   aspect-ratio: 1;
-  background: var(--surface-1);
+  background: var(--neu-surface);
+  box-shadow: var(--neu-shadow-inset-lg);
+  border: 1px solid var(--neu-glass-border-sub);
+  position: relative;
 }
 
 .card-img .img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.card:hover .img { transform: scale(1.05); }
+
+.card:hover .img {
+  transform: scale(1.06);
+}
 
 .card-title {
-  font-size: 0.95rem;
-  font-weight: 700;
+  font-size: 1rem;
+  font-weight: 800;
   text-align: right;
-  color: var(--font-color);
+  color: var(--neu-title);
   line-height: 1.4;
-  margin: 2px 0;
-  padding: 0 2px;
+  margin: 4px 0 2px;
+  padding: 0 4px;
+  transition: color 0.2s ease;
 }
 
 .card-subtitle {
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--font-color-sub);
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--neu-sub);
   text-align: right;
+  padding: 0 4px;
 }
 
+/* 3D Inset Groove Divider */
 .card-divider {
   width: 100%;
-  border: 1px solid var(--border);
-  border-radius: 50px;
-  margin: 2px 0;
-  transition: border-color 0.3s;
+  height: 2px;
+  background: var(--neu-surface);
+  box-shadow: inset 1px 1px 2px var(--neu-sd-dark), inset -1px -1px 2px var(--neu-sd-light);
+  border-radius: 2px;
+  border: none;
+  margin: 4px 0;
 }
-.card:hover .card-divider { border-color: var(--main-focus); }
 
 .card-footer {
   display: flex;
@@ -134,125 +115,195 @@
   justify-content: space-between;
   align-items: center;
   margin-top: auto;
+  padding: 2px 4px 0;
 }
 
 .card-price {
-  font-size: 1.2rem;
-  font-weight: 800;
-  color: var(--primary);
-}
-.card-price span {
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: var(--text-muted);
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: var(--neu-accent);
+  letter-spacing: -0.3px;
 }
 
+.card-price span {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--neu-sub);
+  margin-right: 2px;
+}
+
+/* 3D Round Convex Cart Button — Natural Green & High-Performance GPU Dancing Icon */
 .card-btn {
-  height: 52px;
-  width: 52px;
-  background: var(--primary);
-  border: 2px solid var(--primary);
+  height: 46px;
+  width: 46px;
+  background: var(--neu-surface);
+  background-image: linear-gradient(135deg, rgba(16, 185, 129, 0.14), rgba(5, 150, 105, 0.04));
+  border: 1.5px solid rgba(16, 185, 129, 0.35);
   border-radius: 50%;
   padding: 0;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s, border-color 0.2s;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #ffffff !important;
-  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.35);
+  color: #10b981 !important;
+  box-shadow: 4px 4px 10px var(--neu-sd-dark), -4px -4px 10px var(--neu-sd-light), 0 0 12px rgba(16, 185, 129, 0.2);
+  position: relative;
+  overflow: visible;
+  touch-action: manipulation;
+  will-change: transform;
 }
+
+/* Rhythmic Dancing & Shaking Keyframes — GPU Accelerated (Transform Only) */
+@keyframes cartWiggleDance {
+  0%, 100% {
+    transform: translateZ(0) rotate(0deg) scale(1);
+  }
+  10% {
+    transform: translateZ(0) rotate(-15deg) scale(1.14);
+  }
+  20% {
+    transform: translateZ(0) rotate(13deg) scale(1.16);
+  }
+  30% {
+    transform: translateZ(0) rotate(-10deg) scale(1.12);
+  }
+  40% {
+    transform: translateZ(0) rotate(8deg) scale(1.08);
+  }
+  50% {
+    transform: translateZ(0) rotate(-3deg) scale(1.04);
+  }
+  60% {
+    transform: translateZ(0) rotate(0deg) scale(1);
+  }
+  80% {
+    transform: translateZ(0) translateY(-2px) scale(1.03);
+  }
+  90% {
+    transform: translateZ(0) translateY(0px) scale(1);
+  }
+}
+
+/* Natural Green SVG Icon with GPU Composite Layer */
 .card-btn svg {
-  width: 26px;
-  height: 26px;
-  fill: #ffffff !important;
-  transition: all 0.3s;
+  width: 23px;
+  height: 23px;
+  fill: #10b981 !important;
+  filter: drop-shadow(0 2px 4px rgba(16, 185, 129, 0.45));
+  transition: fill 0.2s ease, filter 0.2s ease;
   margin: 0;
+  display: block;
+  transform-origin: center bottom;
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+/* Active Dancing Animation on Available Products */
+.card:not(.card-out-of-stock) .card-btn:not([disabled]) svg {
+  animation: cartWiggleDance 2.8s cubic-bezier(0.36, 0.07, 0.19, 0.97) infinite;
+}
+
+/* Stagger animations for visual variety across the grid */
+.card:nth-child(2n) .card-btn svg {
+  animation-delay: 0.4s;
+}
+.card:nth-child(3n) .card-btn svg {
+  animation-delay: 0.9s;
+}
+.card:nth-child(4n) .card-btn svg {
+  animation-delay: 1.4s;
 }
 
 .card-btn:hover:not([disabled]) {
-  background: var(--primary-hover);
-  border-color: var(--primary-hover);
   color: #ffffff !important;
-  box-shadow: 0 8px 12px -2px rgba(37, 99, 235, 0.3);
-  transform: translateY(-2px);
-}
-.card-btn:hover:not([disabled]) svg { fill: #ffffff !important; }
-.card-btn:active:not([disabled]) { transform: translateY(1px); }
-.card-btn[disabled] { opacity: 0.6; cursor: not-allowed; }
-
-@keyframes dance {
-  0% { transform: scale(1) rotate(0deg); }
-  20% { transform: scale(1.2) rotate(-15deg); }
-  40% { transform: scale(1.2) rotate(15deg); }
-  60% { transform: scale(1.2) rotate(-15deg); }
-  80% { transform: scale(1.2) rotate(15deg); }
-  100% { transform: scale(1) rotate(0deg); }
+  background-image: linear-gradient(135deg, #10b981, #059669) !important;
+  transform: translateZ(0) translateY(-2px) scale(1.06);
+  border-color: #10b981 !important;
 }
 
-.dancing {
-  animation: dance 0.6s ease;
-  border-color: var(--main-focus) !important;
-  color: var(--main-focus) !important;
-}
-.dancing svg {
-  fill: var(--main-focus) !important;
+.card-btn:hover:not([disabled]) svg {
+  fill: #ffffff !important;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.25));
+  animation: cartWiggleDance 0.8s cubic-bezier(0.36, 0.07, 0.19, 0.97) infinite !important;
 }
 
-/* Loader */
-.loader { position: fixed; top: 0; left: 0; width: 100%; height: 2px; background: var(--surface-2); z-index: 9999; }
-.lr { width: 30%; height: 100%; background: var(--primary); animation: loading 1.5s infinite; }
-@keyframes loading { 0% { transform: translateX(-100%); } 100% { transform: translateX(400%); } }
-.loaded .loader { opacity: 0; }
+.card-btn:active:not([disabled]) {
+  transform: translateY(0) scale(0.96);
+  box-shadow: var(--neu-shadow-inset);
+}
 
-@media (max-width: 640px) {
-  .product-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-  .container { padding: 70px 12px 30px; }
-  .product-title { font-size: 0.95rem; }
-  .price { font-size: 1.05rem; }
+.card-btn[disabled] {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  animation: none !important;
+  border-color: var(--neu-glass-border);
+  box-shadow: var(--neu-shadow-card);
+}
+
+.card-btn[disabled] svg {
+  fill: var(--neu-sub) !important;
+  filter: none;
+  animation: none !important;
 }
 
 /* Out of Stock Card Overlay and Coloring */
 .card-out-of-stock {
-  --main-color: var(--out-of-stock-border) !important;
-  --main-focus: var(--out-of-stock-border) !important;
-  background: var(--out-of-stock-bg) !important;
-  border-color: var(--out-of-stock-border) !important;
-  box-shadow: 4px 4px var(--out-of-stock-border) !important;
-}
-.card-out-of-stock:hover {
-  box-shadow: 6px 6px var(--out-of-stock-border) !important;
-  border-color: var(--out-of-stock-border) !important;
-}
-
-.card-img {
-  position: relative !important;
+  opacity: 0.85;
 }
 
 .out-of-stock-badge {
   position: absolute;
   inset: 0;
-  background: rgba(244, 63, 94, 0.08); /* Transparent soft rose tint */
+  background: rgba(239, 68, 68, 0.12);
   display: flex;
   align-items: center;
   justify-content: center;
   backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
+  border-radius: 16px;
 }
 
 .out-of-stock-text {
-  background: #f43f5e;
+  background: #ef4444;
   color: #ffffff !important;
   font-weight: 900;
-  font-size: 0.85rem;
-  padding: 4px 10px;
-  border-radius: var(--radius-sm);
-  box-shadow: 0 4px 8px rgba(244, 63, 94, 0.3);
-  animation: pulse 1.5s infinite;
+  font-size: 0.82rem;
+  padding: 5px 12px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(239, 68, 68, 0.4);
 }
 
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
+/* Responsive Grid */
+@media (max-width: 640px) {
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+  .container {
+    padding: 16px 10px 30px !important;
+  }
+  .card {
+    padding: 10px;
+    border-radius: 20px;
+    gap: 6px;
+  }
+  .card-img {
+    border-radius: 14px;
+  }
+  .card-title {
+    font-size: 0.88rem;
+  }
+  .card-price {
+    font-size: 1.05rem;
+  }
+  .card-btn {
+    width: 38px;
+    height: 38px;
+  }
+  .card-btn svg {
+    width: 18px;
+    height: 18px;
+  }
 }
