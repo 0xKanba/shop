@@ -6,6 +6,7 @@ on:
       - "**.html"
       - "css/**"
       - "js/**"
+      - "data/**"
       - "manifest.json"
       - "!sw.js"
   workflow_dispatch:

@@ -97,17 +97,25 @@ if (window.location.hash) {
   } catch (e) {}
 }
 
-// Clean up any lingering service workers or caches to avoid redirect or cache glitches
+// Automatic Service Worker Registration for Ultra-Fast Local Caching & Background Updates
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.getRegistrations().then(registrations => {
-    for (let registration of registrations) {
-      registration.unregister();
-    }
-  }).catch(() => {});
-  
-  if (window.caches) {
-    caches.keys().then(keys => {
-      keys.forEach(key => caches.delete(key));
-    }).catch(() => {});
-  }
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then((reg) => {
+        // Check for updates automatically
+        reg.onupdatefound = () => {
+          const installingWorker = reg.installing;
+          if (installingWorker) {
+            installingWorker.onstatechange = () => {
+              if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                console.log('[SW] New version available and cached.');
+              }
+            };
+          }
+        };
+      })
+      .catch((err) => {
+        console.warn('[SW] Registration failed:', err);
+      });
+  });
 }
